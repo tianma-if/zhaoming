@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f2ea;
+  --foreground: #161411;
+  --card: rgba(255, 255, 255, 0.6);
+  --muted: #ebe5d8;
+  --muted-foreground: #756d61;
+  --border: rgba(22, 20, 17, 0.08);
+  --accent: #d9d1bf;
+  --accent-foreground: #161411;
+  --wood: #85715c;
+  --fire: #9f5f47;
+  --earth: #8b7f58;
+  --metal: #717784;
+  --water: #536b7b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-wood: var(--wood);
+  --color-fire: var(--fire);
+  --color-earth: var(--earth);
+  --color-metal: var(--metal);
+  --color-water: var(--water);
+  --font-sans: "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans-app), "Noto Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
+  background-image:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.85), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 30%),
+    linear-gradient(135deg, rgba(217, 209, 191, 0.24), transparent 55%);
+}
+
+a {
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+::selection {
+  background: rgba(133, 113, 92, 0.16);
+}
+
+.prose-minimal {
+  color: var(--foreground);
+}
+
+.prose-minimal p {
+  margin-top: 0.875rem;
+  line-height: 1.85;
+  color: rgba(22, 20, 17, 0.88);
+}
+
+.prose-minimal h1,
+.prose-minimal h2,
+.prose-minimal h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  color: var(--foreground);
+}
+
+.prose-minimal ul {
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  color: rgba(22, 20, 17, 0.84);
+}
+
+.prose-minimal li {
+  margin-top: 0.375rem;
+}
+
+.prose-minimal code {
+  border-radius: 999px;
+  background: rgba(22, 20, 17, 0.06);
+  padding: 0.1rem 0.45rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.9em;
+}
+
+.grain-mask {
+  position: relative;
+}
+
+.grain-mask::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23161411' fill-opacity='0.08'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='64' cy='24' r='1'/%3E%3Ccircle cx='92' cy='66' r='1'/%3E%3Ccircle cx='35' cy='82' r='1'/%3E%3Ccircle cx='105' cy='105' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
