@@ -13,6 +13,11 @@
 
 界面风格走极简、低饱和、排印优先路线，避免传统算命站视觉语言。
 
+## 在线访问
+
+- 生产域名：[https://zhiwei.tianma-if.uk](https://zhiwei.tianma-if.uk)
+- 部署平台：`Vercel`
+
 ## 当前能力
 
 - Google OAuth 登录入口已接入 Better Auth
