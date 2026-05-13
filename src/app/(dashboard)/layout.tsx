@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { SignOutButton } from "@/components/auth/sign-out-button";
+import { WorkspaceSidebar } from "@/components/layout/workspace-sidebar";
 import { requireUser } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -13,24 +12,22 @@ export default async function DashboardLayout({
 
   return (
     <main className="min-h-screen">
-      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-10">
-        <div>
-          <p className="text-xs tracking-[0.36em] text-muted-foreground">WORKSPACE</p>
-          <h1 className="font-display text-3xl tracking-[0.12em]">知微工作台</h1>
+      <div className="mx-auto grid min-h-screen w-full max-w-[1520px] gap-8 px-4 py-4 md:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8">
+        <div className="hidden lg:block">
+          <div className="sticky top-4 h-[calc(100vh-2rem)] rounded-[2.2rem] border border-border/80 bg-white/34 p-5 backdrop-blur">
+            <WorkspaceSidebar email={user.email} name={user.name} />
+          </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <Link href="/dashboard">概览</Link>
-          <Link href="/divinations">记录</Link>
-          <Link href="/divinations/new">新测算</Link>
-          <Link href="/profile" className="max-w-[14rem] truncate">
-            {user.email}
-          </Link>
-          <SignOutButton variant="ghost" size="sm" className="h-auto px-0 text-sm text-muted-foreground hover:text-foreground">
-            退出
-          </SignOutButton>
-        </div>
-      </header>
-      <section className="mx-auto w-full max-w-7xl px-6 pb-20 md:px-10">{children}</section>
+
+        <section className="min-w-0">
+          <div className="lg:hidden">
+            <div className="mb-6 rounded-[2rem] border border-border/80 bg-white/34 p-5 backdrop-blur">
+              <WorkspaceSidebar email={user.email} name={user.name} />
+            </div>
+          </div>
+          <div className="pb-20">{children}</div>
+        </section>
+      </div>
     </main>
   );
 }
