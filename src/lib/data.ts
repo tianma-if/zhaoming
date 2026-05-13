@@ -25,6 +25,9 @@ interface DbUserProfile {
 export async function ensureUserProfile(user: User) {
   await query(
     `
+      with sync_lock as (
+        select pg_advisory_xact_lock(hashtextextended($2, 0))
+      )
       insert into public.users (
         id,
         email,
@@ -32,7 +35,8 @@ export async function ensureUserProfile(user: User) {
         avatar_url,
         auth_provider
       )
-      values ($1, $2, $3, $4, $5)
+      select $1, $2, $3, $4, $5
+      from sync_lock
       on conflict (id) do update
       set
         email = excluded.email,

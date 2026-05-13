@@ -1,28 +1,11 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { auth } from "@/lib/auth";
 import { ensureUserProfile } from "@/lib/data";
 import { hasAuthEnv, hasDatabaseEnv } from "@/lib/env";
 
-export async function requireUser() {
-  if (!hasAuthEnv() || !hasDatabaseEnv()) {
-    redirect("/login");
-  }
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  await ensureUserProfile(session.user);
-
-  return session.user;
-}
-
-export async function getAuthSession() {
+const getSessionWithProfile = cache(async () => {
   if (!hasAuthEnv() || !hasDatabaseEnv()) {
     return null;
   }
@@ -31,9 +14,25 @@ export async function getAuthSession() {
     headers: await headers(),
   });
 
-  if (session?.user) {
-    await ensureUserProfile(session.user);
+  if (!session?.user) {
+    return null;
   }
 
+  await ensureUserProfile(session.user);
+
   return session;
+});
+
+export async function requireUser() {
+  const session = await getSessionWithProfile();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  return session.user;
+}
+
+export async function getAuthSession() {
+  return getSessionWithProfile();
 }
