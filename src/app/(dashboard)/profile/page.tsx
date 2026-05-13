@@ -1,4 +1,5 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile } from "@/lib/data";
 
@@ -28,6 +29,9 @@ export default async function ProfilePage() {
           <dd>{data?.stripe_customer_id ?? "未绑定"}</dd>
         </div>
       </dl>
+      <div className="pt-2">
+        <SignOutButton variant="outline">退出当前账户</SignOutButton>
+      </div>
     </Card>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { requireUser } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +18,16 @@ export default async function DashboardLayout({
           <p className="text-xs tracking-[0.36em] text-muted-foreground">WORKSPACE</p>
           <h1 className="font-display text-3xl tracking-[0.12em]">知微工作台</h1>
         </div>
-        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <Link href="/dashboard">概览</Link>
           <Link href="/divinations">记录</Link>
           <Link href="/divinations/new">新测算</Link>
-          <Link href="/profile">{user.email}</Link>
+          <Link href="/profile" className="max-w-[14rem] truncate">
+            {user.email}
+          </Link>
+          <SignOutButton variant="ghost" size="sm" className="h-auto px-0 text-sm text-muted-foreground hover:text-foreground">
+            退出
+          </SignOutButton>
         </div>
       </header>
       <section className="mx-auto w-full max-w-7xl px-6 pb-20 md:px-10">{children}</section>
