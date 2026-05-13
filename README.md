@@ -49,7 +49,7 @@ cp .env.example .env.local
 ```env
 DATABASE_URL=
 BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_URL=http://localhost:5555
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
@@ -65,7 +65,7 @@ AUTOMATION_API_KEY=
 
 - `DATABASE_URL`：Neon Postgres 连接串
 - `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串
-- `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:3000`
+- `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:5555`
 - `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
 - `AI_PROVIDER`：
   - `gateway` 表示走 AI Gateway 风格的模型名
@@ -109,7 +109,7 @@ npm run dev
 
 打开：
 
-- [http://localhost:3000](http://localhost:3000)
+- [http://localhost:5555](http://localhost:5555)
 
 常用检查命令：
 
@@ -141,7 +141,7 @@ Google OAuth 回调路径为：
 本地 Google Console 需要把这个 URI 加到白名单：
 
 ```text
-http://localhost:3000/api/auth/callback/google
+http://localhost:5555/api/auth/callback/google
 ```
 
 ## AI Provider 说明
