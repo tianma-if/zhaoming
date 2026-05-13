@@ -94,9 +94,7 @@ AUTOMATION_API_KEY=
 
 初始化 SQL 基线在：
 
-- [supabase/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/supabase/migrations/0001_init.sql)
-
-虽然目录名还叫 `supabase/migrations`，但内容已经迁移为 `Neon + Better Auth` 版本，后面可以再顺手改名成 `db/migrations`。
+- [db/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/db/migrations/0001_init.sql)
 
 ## 本地开发
 
@@ -181,7 +179,7 @@ src/
     auth.ts
     auth-client.ts
   types/
-supabase/
+db/
   migrations/
 ```
 
@@ -198,7 +196,6 @@ supabase/
 
 ## 下一步建议
 
-- 把 README 里的迁移目录名从 `supabase/migrations` 改成更中性的 `db/migrations`
 - 补上 Better Auth 的正式 schema/migrate 流程，避免只依赖手写 SQL
 - 接通真实 Google OAuth 后做一次完整登录验收
 - 把积分扣减与 Stripe 订阅状态真正落库
