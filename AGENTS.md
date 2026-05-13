@@ -1,5 +1,15 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+## 项目背景与技术栈
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+涉及本项目的背景、定位、部署信息与技术栈说明时，请优先参考 `README.md`。
+
+## 线上部署与生产排障
+
+当处理本项目的线上部署、生产环境排查与故障修复时，优先使用 `Vercel MCP` 与 `Neon Postgres` 插件/工具，再考虑通用假设或仅依赖本地排查。
+
+该约定适用于但不限于以下场景：
+- 生产环境变量核对
+- 部署状态与构建结果检查
+- 运行日志排查
+- 域名绑定与路由问题
+- 数据库连通性验证
+- 远程数据核验
