@@ -15,7 +15,10 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
       <div className="grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {view.pillars.map((pillar) => (
-            <article key={pillar.key} className="space-y-3 rounded-[1.5rem] bg-white/55 p-4">
+            <article
+              key={pillar.key}
+              className="space-y-3 rounded-[1.1rem] border border-border bg-white p-4"
+            >
               <div className="text-xs tracking-[0.28em] text-muted-foreground">
                 {pillar.label}
               </div>
@@ -46,7 +49,7 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
           ))}
         </div>
 
-        <aside className="space-y-4 rounded-[1.75rem] bg-white/55 p-5">
+        <aside className="space-y-4 rounded-[1.25rem] border border-border bg-muted p-5">
           <div className="text-xs tracking-[0.28em] text-muted-foreground">盘面摘要</div>
           <dl className="space-y-3 text-sm">
             {view.summary.map((item) => (

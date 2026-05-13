@@ -27,11 +27,13 @@ export function AiReadingPanel({
   }, [complete, divinationId, question]);
 
   return (
-    <Card className="space-y-5">
+    <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
       <div className="flex items-center justify-between gap-4">
         <div className="space-y-2">
-          <CardTitle>AI 解盘</CardTitle>
-          <CardDescription>使用流式输出保留“缓慢揭示”的阅读节奏。</CardDescription>
+          <CardTitle className="text-3xl tracking-[0.04em]">AI 解盘</CardTitle>
+          <CardDescription className="text-sm leading-7">
+            结合当前命盘结构，按流式方式展开解读。
+          </CardDescription>
         </div>
         <Button variant="outline" onClick={() => void complete(question, { body: { divinationId } })}>
           {isLoading ? "生成中…" : "重新解读"}

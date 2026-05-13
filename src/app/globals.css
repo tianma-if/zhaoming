@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f2ea;
+  --background: #ffffff;
   --foreground: #161411;
-  --card: rgba(255, 255, 255, 0.6);
-  --muted: #ebe5d8;
-  --muted-foreground: #756d61;
-  --border: rgba(22, 20, 17, 0.08);
-  --accent: #d9d1bf;
+  --card: #ffffff;
+  --muted: #f6f6f4;
+  --muted-foreground: #6e6a64;
+  --border: rgba(22, 20, 17, 0.1);
+  --accent: #f2f2ef;
   --accent-foreground: #161411;
   --wood: #85715c;
   --fire: #9f5f47;
@@ -48,10 +48,6 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans-app), "Noto Sans SC", ui-sans-serif, system-ui,
     sans-serif;
-  background-image:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.85), transparent 38%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 30%),
-    linear-gradient(135deg, rgba(217, 209, 191, 0.24), transparent 55%);
 }
 
 a {
@@ -61,7 +57,7 @@ a {
 }
 
 ::selection {
-  background: rgba(133, 113, 92, 0.16);
+  background: rgba(22, 20, 17, 0.12);
 }
 
 .prose-minimal {
@@ -109,7 +105,7 @@ a {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  opacity: 0.08;
+  opacity: 0.04;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23161411' fill-opacity='0.08'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='64' cy='24' r='1'/%3E%3Ccircle cx='92' cy='66' r='1'/%3E%3Ccircle cx='35' cy='82' r='1'/%3E%3Ccircle cx='105' cy='105' r='1'/%3E%3C/g%3E%3C/svg%3E");

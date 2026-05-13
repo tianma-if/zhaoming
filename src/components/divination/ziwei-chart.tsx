@@ -15,7 +15,7 @@ export function ZiweiChartView({ chart }: { chart: ZiweiChart }) {
           palace ? (
             <article
               key={`${palace.name}-${index}`}
-              className="min-h-36 rounded-[1.4rem] bg-white/55 p-3"
+              className="min-h-36 rounded-[1rem] border border-border bg-white p-3"
             >
               <div className="mb-2 flex items-center justify-between text-xs tracking-[0.18em] text-muted-foreground">
                 <span>{palace.name}</span>
@@ -36,7 +36,7 @@ export function ZiweiChartView({ chart }: { chart: ZiweiChart }) {
           ) : (
             <div
               key={`empty-${index}`}
-              className="min-h-36 rounded-[1.4rem] border border-dashed border-border bg-transparent"
+              className="min-h-36 rounded-[1rem] border border-dashed border-border bg-muted/50"
             />
           ),
         )}

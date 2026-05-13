@@ -11,11 +11,11 @@ export function ChartShell({
   children: ReactNode;
 }) {
   return (
-    <Card className="grain-mask overflow-hidden">
+    <Card className="overflow-hidden rounded-[1.6rem] border border-border bg-white shadow-none">
       <div className="relative space-y-5">
         <div className="space-y-2">
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle className="text-3xl tracking-[0.04em]">{title}</CardTitle>
+          <CardDescription className="text-sm leading-7">{description}</CardDescription>
         </div>
         {children}
       </div>

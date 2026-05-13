@@ -8,12 +8,12 @@ export async function SiteHeader() {
   const user = session?.user ?? null;
 
   return (
-    <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-10">
-      <Link href="/" className="font-display text-3xl tracking-[0.22em]">
+    <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 md:px-10">
+      <Link href="/" className="font-display text-3xl tracking-[0.18em]">
         知微
       </Link>
 
-      <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+      <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
         {siteConfig.nav.map((item) => (
           <Link key={item.href} href={item.href} className="hover:text-foreground">
             {item.label}
@@ -24,7 +24,7 @@ export async function SiteHeader() {
       <div className="flex items-center gap-3">
         {user ? (
           <Link href="/dashboard">
-            <Button variant="outline">进入工作台</Button>
+            <Button>进入工作台</Button>
           </Link>
         ) : (
           <Link href="/login">
