@@ -20,7 +20,7 @@ export default async function LoginPage() {
           <p className="text-xs tracking-[0.36em] text-muted-foreground">AUTH</p>
           <CardTitle>登录知微</CardTitle>
           <CardDescription>
-            当前阶段接入 Supabase Google OAuth，后续可直接承接付费与积分体系。
+            当前阶段接入 Google OAuth，后续可直接承接付费与积分体系。
           </CardDescription>
         </div>
         <GoogleSignInButton />

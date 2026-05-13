@@ -28,6 +28,11 @@ export const auth = betterAuth({
     env.BETTER_AUTH_SECRET ??
     "development-placeholder-secret-change-me-123456",
   database,
+  advanced: {
+    database: {
+      generateId: "uuid",
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },
