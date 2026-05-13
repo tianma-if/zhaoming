@@ -1,26 +1,26 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { hasAuthEnv } from "@/lib/env";
 import { protectedPrefixes } from "@/lib/constants";
-import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
-  if (!hasSupabasePublicEnv()) {
+  if (!hasAuthEnv()) {
     return NextResponse.next();
   }
 
-  const response = await updateSession(request);
-  const accessToken = request.cookies
-    .getAll()
-    .find((cookie) => cookie.name.includes("access-token"))?.value;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const isProtected = protectedPrefixes.some((prefix) =>
     request.nextUrl.pathname.startsWith(prefix),
   );
 
-  if (isProtected && !accessToken) {
+  if (isProtected && !session?.user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

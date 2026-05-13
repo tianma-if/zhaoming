@@ -1,24 +1,12 @@
 import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/session";
+import { listDivinations } from "@/lib/data";
 import { formatDateTime } from "@/lib/utils";
 
 export default async function DivinationsPage() {
   const user = await requireUser();
-  const supabase = await getServerSupabaseClient();
-  const { data: rawData } = await supabase
-    .from("divinations")
-    .select("id, divination_type, question, created_at, status")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-  const data = (rawData ?? []) as Array<{
-    id: string;
-    divination_type: string;
-    question: string;
-    created_at: string;
-    status: string;
-  }>;
+  const data = await listDivinations(user.id);
 
   return (
     <Card className="space-y-5">

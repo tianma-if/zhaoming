@@ -3,10 +3,9 @@ import { AiReadingPanel } from "@/components/divination/ai-reading-panel";
 import { BaziChartView } from "@/components/divination/bazi-chart";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/session";
+import { getDivinationById } from "@/lib/data";
 import type { BaziChart, ZiweiChart } from "@/types/divination";
-import type { Database } from "@/types/database";
 
 export default async function DivinationDetailPage({
   params,
@@ -15,14 +14,7 @@ export default async function DivinationDetailPage({
 }) {
   const { id } = await params;
   const user = await requireUser();
-  const supabase = await getServerSupabaseClient();
-  const { data: rawData } = await supabase
-    .from("divinations")
-    .select("*")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .maybeSingle();
-  const data = rawData as Database["public"]["Tables"]["divinations"]["Row"] | null;
+  const data = await getDivinationById(user.id, id);
 
   if (!data) {
     notFound();

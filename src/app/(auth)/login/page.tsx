@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { getOptionalServerSupabaseClient } from "@/lib/supabase/server";
+import { getAuthSession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
-  const supabase = await getOptionalServerSupabaseClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const session = await getAuthSession();
+  const user = session?.user ?? null;
 
   if (user) {
     redirect("/dashboard");

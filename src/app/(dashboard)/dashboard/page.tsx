@@ -1,29 +1,14 @@
 import Link from "next/link";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/session";
-import type { Database } from "@/types/database";
+import { getUserProfile, listRecentDivinations } from "@/lib/data";
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const supabase = await getServerSupabaseClient();
-
-  const [{ data: rawProfile }, { data: rawDivinations }] = await Promise.all([
-    supabase.from("users").select("*").eq("id", user.id).maybeSingle(),
-    supabase
-      .from("divinations")
-      .select("id, divination_type, question, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(5),
+  const [profile, divinations] = await Promise.all([
+    getUserProfile(user.id),
+    listRecentDivinations(user.id, 5),
   ]);
-  const profile = rawProfile as Database["public"]["Tables"]["users"]["Row"] | null;
-  const divinations = (rawDivinations ?? []) as Array<{
-    id: string;
-    divination_type: string;
-    question: string;
-    created_at: string;
-  }>;
 
   return (
     <div className="space-y-8">

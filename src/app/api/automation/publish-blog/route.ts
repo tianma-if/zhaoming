@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { revalidateBlogRoutes } from "@/lib/blog/revalidate";
+import { upsertAutomationPost } from "@/lib/data";
 import { getEnv } from "@/lib/env";
-import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { slugify } from "@/lib/utils";
 
 const publishSchema = z.object({
@@ -32,26 +32,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdminClient();
   const slug = parsed.data.slug ? slugify(parsed.data.slug) : slugify(parsed.data.title);
 
-  const { data, error } = await supabase
-    .from("posts")
-    .upsert({
-      slug,
-      title: parsed.data.title,
-      content: parsed.data.content,
-      meta_description: parsed.data.metaDescription ?? null,
-      tags: parsed.data.tags,
-      source: "automation",
-      published_at: parsed.data.publishedAt ?? new Date().toISOString(),
-    } as never)
-    .select("*")
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  const data = await upsertAutomationPost({
+    slug,
+    title: parsed.data.title,
+    content: parsed.data.content,
+    metaDescription: parsed.data.metaDescription ?? null,
+    tags: parsed.data.tags,
+    publishedAt: parsed.data.publishedAt ?? new Date().toISOString(),
+  });
 
   revalidateBlogRoutes(slug);
 

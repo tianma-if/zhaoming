@@ -10,43 +10,12 @@ begin
 end;
 $$;
 
-create or replace function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  insert into public.users (
-    id,
-    email,
-    full_name,
-    avatar_url,
-    auth_provider,
-    subscription_status,
-    credits
-  )
-  values (
-    new.id,
-    new.email,
-    coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name'),
-    new.raw_user_meta_data->>'avatar_url',
-    coalesce(new.app_metadata->>'provider', 'email'),
-    'free',
-    0
-  )
-  on conflict (id) do nothing;
-
-  return new;
-end;
-$$;
-
 create table if not exists public.users (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id uuid primary key references neon_auth."user"(id) on delete cascade,
   email text not null unique,
   full_name text,
   avatar_url text,
-  auth_provider text not null default 'email',
+  auth_provider text not null default 'better_auth',
   locale text,
   timezone text,
   stripe_customer_id text unique,
@@ -64,12 +33,6 @@ create trigger set_users_updated_at
 before update on public.users
 for each row
 execute function public.set_updated_at();
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
-for each row
-execute function public.handle_new_user();
 
 create table if not exists public.divinations (
   id uuid primary key default gen_random_uuid(),
@@ -130,51 +93,3 @@ create trigger set_posts_updated_at
 before update on public.posts
 for each row
 execute function public.set_updated_at();
-
-alter table public.users enable row level security;
-alter table public.divinations enable row level security;
-alter table public.posts enable row level security;
-
-create policy "Users can view own profile"
-on public.users
-for select
-to authenticated
-using (auth.uid() = id);
-
-create policy "Users can update own profile"
-on public.users
-for update
-to authenticated
-using (auth.uid() = id)
-with check (auth.uid() = id);
-
-create policy "Users can view own divinations"
-on public.divinations
-for select
-to authenticated
-using (auth.uid() = user_id);
-
-create policy "Users can insert own divinations"
-on public.divinations
-for insert
-to authenticated
-with check (auth.uid() = user_id);
-
-create policy "Users can update own divinations"
-on public.divinations
-for update
-to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
-
-create policy "Users can delete own divinations"
-on public.divinations
-for delete
-to authenticated
-using (auth.uid() = user_id);
-
-create policy "Published posts are publicly readable"
-on public.posts
-for select
-to anon, authenticated
-using (published_at is not null);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useCompletion } from "@ai-sdk/react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ export function AiReadingPanel({
   divinationId: string;
   question: string;
 }) {
+  const router = useRouter();
   const startedRef = useRef(false);
   const { completion, complete, isLoading, error } = useCompletion({
     api: "/api/ai/divination",
@@ -50,6 +52,12 @@ export function AiReadingPanel({
         <p className="text-sm text-fire">
           {error.message || "模型暂时不可用，请检查 AI_PROVIDER 与模型配置。"}
         </p>
+      ) : null}
+
+      {!isLoading && completion ? (
+        <Button variant="ghost" onClick={() => router.refresh()}>
+          刷新服务端记录
+        </Button>
       ) : null}
     </Card>
   );

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/constants";
-import { getOptionalServerSupabaseClient } from "@/lib/supabase/server";
+import { getAuthSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 
 export async function SiteHeader() {
-  const supabase = await getOptionalServerSupabaseClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const session = await getAuthSession();
+  const user = session?.user ?? null;
 
   return (
     <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 md:px-10">

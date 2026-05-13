@@ -1,17 +1,10 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/session";
-import type { Database } from "@/types/database";
+import { getUserProfile } from "@/lib/data";
 
 export default async function ProfilePage() {
   const user = await requireUser();
-  const supabase = await getServerSupabaseClient();
-  const { data: rawProfile } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-  const data = rawProfile as Database["public"]["Tables"]["users"]["Row"] | null;
+  const data = await getUserProfile(user.id);
 
   return (
     <Card className="space-y-4">

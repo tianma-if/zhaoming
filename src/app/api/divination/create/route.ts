@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
 import { canConsumeCredits, reserveDivinationCredits } from "@/lib/billing/credits";
+import { auth } from "@/lib/auth";
 import { buildBaziChart } from "@/lib/divination/adapters/bazi";
 import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
 import { divinationInputSchema } from "@/lib/divination/schemas";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
+import { ensureUserProfile, getUserProfile, insertDivination } from "@/lib/data";
 
 export async function POST(request: Request) {
-  const supabase = await getServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  const user = session?.user ?? null;
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  await ensureUserProfile(user);
 
   const parsed = divinationInputSchema.safeParse(await request.json());
 
@@ -24,8 +27,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const profileResult = await supabase.from("users").select("*").eq("id", user.id).maybeSingle();
-  const permission = canConsumeCredits(profileResult.data ?? null);
+  const profile = await getUserProfile(user.id);
+  const permission = canConsumeCredits(profile);
 
   if (!permission.allowed) {
     return NextResponse.json({ error: permission.reason }, { status: 402 });
@@ -38,26 +41,17 @@ export async function POST(request: Request) {
 
   await reserveDivinationCredits();
 
-  const { data, error } = await supabase
-    .from("divinations")
-    .insert({
-      user_id: user.id,
-      divination_type: parsed.data.divinationType,
-      subject_name: parsed.data.subjectName || null,
-      birth_gregorian: birthGregorian,
-      birth_lunar: birthLunar,
-      gender: parsed.data.gender,
-      question: parsed.data.question,
-      input_params: parsed.data,
-      chart_json: chart,
-      status: "pending",
-    } as never)
-    .select("id, divination_type, question, chart_json")
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  const data = await insertDivination({
+    userId: user.id,
+    divinationType: parsed.data.divinationType,
+    subjectName: parsed.data.subjectName || null,
+    birthGregorian,
+    birthLunar,
+    gender: parsed.data.gender,
+    question: parsed.data.question,
+    inputParams: parsed.data,
+    chartJson: chart,
+  });
 
   return NextResponse.json({ divination: data });
 }

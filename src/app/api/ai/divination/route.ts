@@ -1,21 +1,23 @@
 import { streamText } from "ai";
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { buildDivinationPrompt } from "@/lib/ai/prompts";
 import { getAiModel } from "@/lib/ai/provider";
 import { textResponse } from "@/lib/ai/stream";
+import { ensureUserProfile, getDivinationById, updateDivinationResult } from "@/lib/data";
 import { hasAiProviderEnv } from "@/lib/env";
-import { getServerSupabaseClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/database";
 
 export async function POST(request: Request) {
-  const supabase = await getServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  const user = session?.user ?? null;
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  await ensureUserProfile(user);
 
   const payload = (await request.json()) as { divinationId?: string };
 
@@ -23,13 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing divinationId" }, { status: 400 });
   }
 
-  const { data: rawRecord } = await supabase
-    .from("divinations")
-    .select("*")
-    .eq("id", payload.divinationId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-  const record = rawRecord as Database["public"]["Tables"]["divinations"]["Row"] | null;
+  const record = await getDivinationById(user.id, payload.divinationId);
 
   if (!record) {
     return NextResponse.json({ error: "Record not found." }, { status: 404 });
@@ -53,15 +49,12 @@ export async function POST(request: Request) {
     system: prompt.system,
     prompt: prompt.prompt,
     onFinish: async ({ text }) => {
-      await supabase
-        .from("divinations")
-        .update({
-          ai_result_markdown: text,
-          ai_model: process.env.AI_MODEL ?? "unknown",
-          status: "completed",
-        } as never)
-        .eq("id", record.id)
-        .eq("user_id", user.id);
+      await updateDivinationResult({
+        id: record.id,
+        userId: user.id,
+        markdown: text,
+        aiModel: process.env.AI_MODEL ?? "unknown",
+      });
     },
   });
 
