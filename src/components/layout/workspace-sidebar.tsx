@@ -56,12 +56,69 @@ export function WorkspaceSidebar({
   email,
   name,
   image,
+  compact = false,
 }: {
   email: string;
   name?: string | null;
   image?: string | null;
+  compact?: boolean;
 }) {
   const pathname = usePathname();
+  const availableItems = groups.flatMap((group) => group.items).filter((item) => item.href);
+
+  if (compact) {
+    return (
+      <aside className="space-y-5">
+        <div className="flex items-center gap-4">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-black text-base text-white">
+            知
+          </span>
+          <div className="min-w-0">
+            <Link href="/" className="block text-2xl font-semibold tracking-[-0.02em]">
+              知微
+            </Link>
+            <p className="truncate text-sm text-muted-foreground">{name || email}</p>
+          </div>
+        </div>
+
+        <nav className="grid grid-cols-2 gap-3">
+          {availableItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href!}
+                className={cn(
+                  "flex min-h-14 items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition",
+                  isActive
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border bg-white text-foreground hover:bg-muted",
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="flex gap-3">
+          <Link href="/profile" className="flex-1">
+            <Button variant="outline" className="w-full rounded-xl">
+              个人资料
+            </Button>
+          </Link>
+          <SignOutButton variant="outline" className="rounded-xl">
+            退出
+          </SignOutButton>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="flex h-full flex-col">
@@ -111,12 +168,17 @@ export function WorkspaceSidebar({
                       {content}
                     </Link>
                   ) : (
-                    <span
+                    <div
                       key={`${group.label}-${item.label}`}
-                      className="flex cursor-default items-center gap-3 rounded-lg px-3 py-2.5 text-base text-foreground/88"
+                      className="flex items-center justify-between gap-3 rounded-lg border border-dashed border-border/80 px-3 py-2.5 text-base text-muted-foreground"
                     >
-                      {content}
-                    </span>
+                      <span className="flex items-center gap-3">
+                        {content}
+                      </span>
+                      <span className="rounded-full bg-muted px-2.5 py-1 text-xs tracking-[0.2em]">
+                        即将开放
+                      </span>
+                    </div>
                   );
                 })}
               </nav>

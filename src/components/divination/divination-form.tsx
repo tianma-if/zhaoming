@@ -26,6 +26,8 @@ export function DivinationForm() {
   const [form, setForm] = useState(initialState);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const submitLabel =
+    form.divinationType === "ziwei" ? "开始计算紫微斗数" : "开始计算八字";
 
   function updateField<K extends keyof typeof initialState>(
     key: K,
@@ -64,7 +66,7 @@ export function DivinationForm() {
   return (
     <div className="mx-auto max-w-4xl space-y-14">
       <Card className="rounded-[1.75rem] border border-border bg-white p-6 shadow-[0_18px_36px_-32px_rgba(22,20,17,0.12)] md:p-8">
-        <form className="space-y-8" onSubmit={handleSubmit}>
+        <form className="space-y-8" onSubmit={handleSubmit} aria-busy={isPending}>
           <div className="grid gap-10 lg:grid-cols-2">
             <section className="space-y-5">
               <div className="space-y-1">
@@ -79,6 +81,7 @@ export function DivinationForm() {
                     value={form.subjectName}
                     onChange={(event) => updateField("subjectName", event.target.value)}
                     placeholder="请输入姓名或称呼"
+                    autoComplete="name"
                   />
                 </label>
 
@@ -138,34 +141,41 @@ export function DivinationForm() {
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">出生日期</span>
+                    <span className="text-muted-foreground">出生日期 *</span>
                     <Input
                       type="date"
                       value={form.birthDate}
                       onChange={(event) => updateField("birthDate", event.target.value)}
                       required
+                      aria-invalid={error ? true : undefined}
                     />
                   </label>
                   <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">出生时间</span>
+                    <span className="text-muted-foreground">出生时间 *</span>
                     <Input
                       type="time"
                       value={form.birthTime}
                       onChange={(event) => updateField("birthTime", event.target.value)}
                       required
+                      aria-invalid={error ? true : undefined}
                     />
                   </label>
                 </div>
 
                 {form.calendarType === "lunar" ? (
-                  <label className="flex items-center gap-3 rounded-xl border border-border bg-white/68 px-4 py-3 text-sm text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={form.isLeapMonth}
-                      onChange={(event) => updateField("isLeapMonth", event.target.checked)}
-                    />
-                    农历闰月
-                  </label>
+                  <div className="space-y-2 rounded-2xl border border-border bg-white/68 px-4 py-3">
+                    <label className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <input
+                        type="checkbox"
+                        checked={form.isLeapMonth}
+                        onChange={(event) => updateField("isLeapMonth", event.target.checked)}
+                      />
+                      农历闰月
+                    </label>
+                    <p className="text-xs leading-6 text-muted-foreground">
+                      仅当你的农历出生月份本身是闰月时勾选；如果不确定，可以先不勾选。
+                    </p>
+                  </div>
                 ) : null}
               </div>
             </section>
@@ -183,24 +193,29 @@ export function DivinationForm() {
             </div>
 
             <label className="space-y-2 text-sm">
-              <span className="text-muted-foreground">问题描述</span>
+              <span className="text-muted-foreground">问题描述 *</span>
               <Textarea
                 value={form.question}
                 onChange={(event) => updateField("question", event.target.value)}
                 placeholder="例如：我想看接下来一年事业方向是否适合调整，以及关系中的核心矛盾在哪里。"
                 required
+                aria-invalid={error ? true : undefined}
               />
             </label>
           </section>
 
           <div className="space-y-3">
             <Button className="w-full" size="lg" type="submit" disabled={isPending}>
-              {isPending ? "正在计算..." : "开始计算八字"}
+              {isPending ? "正在生成命盘与解读入口..." : submitLabel}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
               提交后将进入命盘与 AI 解读页面。
             </p>
-            {error ? <p className="text-center text-sm text-fire">{error}</p> : null}
+            {error ? (
+              <p className="text-center text-sm text-fire" role="alert" aria-live="polite">
+                {error} 请检查出生信息后重试。
+              </p>
+            ) : null}
           </div>
         </form>
       </Card>
