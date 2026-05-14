@@ -58,9 +58,9 @@ BETTER_AUTH_URL=http://localhost:5555
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-AI_PROVIDER=gateway
+AI_PROVIDER=openai-compatible
 AI_MODEL=openai/gpt-5.4
-AI_BASE_URL=
+AI_BASE_URL=https://openrouter.ai/api/v1
 AI_API_KEY=
 
 AUTOMATION_API_KEY=
@@ -74,7 +74,8 @@ AUTOMATION_API_KEY=
 - `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
 - `AI_PROVIDER`：
   - `gateway` 表示走 AI Gateway 风格的模型名
-  - `openai-compatible` 表示走自定义 OpenAI 兼容接口
+  - `openai-compatible` 表示走 OpenRouter 或其他 OpenAI 兼容接口
+- `AI_BASE_URL`：如果使用 `openai-compatible`，OpenRouter 可填写 `https://openrouter.ai/api/v1`
 - `AUTOMATION_API_KEY`：保护 `/api/automation/publish-blog`
 
 ## 数据库结构
@@ -153,6 +154,15 @@ http://localhost:5555/api/auth/callback/google
 
 1. `AI_PROVIDER=gateway`
 2. `AI_PROVIDER=openai-compatible`
+
+目前推荐的接法是 `OpenRouter + OpenAI-compatible`：
+
+```env
+AI_PROVIDER=openai-compatible
+AI_MODEL=openai/gpt-5.4
+AI_BASE_URL=https://openrouter.ai/api/v1
+AI_API_KEY=your_openrouter_key
+```
 
 对应实现入口：
 

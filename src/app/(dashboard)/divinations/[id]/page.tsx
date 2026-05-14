@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AiReadingPanel } from "@/components/divination/ai-reading-panel";
 import { BaziChartView } from "@/components/divination/bazi-chart";
+import { BaziInsights } from "@/components/divination/bazi-insights";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -63,7 +64,10 @@ export default async function DivinationDetailPage({
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_24rem]">
         <div className="space-y-6">
           {data.divination_type === "bazi" ? (
-            <BaziChartView chart={data.chart_json as unknown as BaziChart} />
+            <>
+              <BaziChartView chart={data.chart_json as unknown as BaziChart} />
+              <BaziInsights chart={data.chart_json as unknown as BaziChart} />
+            </>
           ) : (
             <ZiweiChartView chart={data.chart_json as unknown as ZiweiChart} />
           )}
