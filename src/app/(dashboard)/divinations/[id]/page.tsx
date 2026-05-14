@@ -26,7 +26,7 @@ export default async function DivinationDetailPage({
 
   return (
     <div className="space-y-8">
-      <Card className="space-y-5 rounded-[1.75rem] border border-border bg-white p-6 shadow-none md:p-8">
+      <Card className="section-surface space-y-5 rounded-[1.75rem] border border-border/80 p-6 shadow-none md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="space-y-2">
             <Badge>READING VIEW</Badge>
@@ -63,6 +63,12 @@ export default async function DivinationDetailPage({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_24rem]">
         <div className="space-y-6">
+          <div className="space-y-2">
+            <p className="text-xs tracking-[0.32em] text-muted-foreground">CHART STRUCTURE</p>
+            <p className="text-sm leading-7 text-muted-foreground">
+              先看盘面，再看解释。左侧保留结构信息，帮助你判断 AI 解读是否贴近问题本身。
+            </p>
+          </div>
           {data.divination_type === "bazi" ? (
             <>
               <BaziChartView chart={data.chart_json as unknown as BaziChart} />
@@ -73,7 +79,13 @@ export default async function DivinationDetailPage({
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 xl:sticky xl:top-8 xl:self-start">
+          <div className="space-y-2">
+            <p className="text-xs tracking-[0.32em] text-muted-foreground">GUIDED READING</p>
+            <p className="text-sm leading-7 text-muted-foreground">
+              右侧是围绕当前问题展开的解读区，适合边看边对照左侧结构信息理解。
+            </p>
+          </div>
           <AiReadingPanel divinationId={data.id} question={data.question} />
         </div>
       </div>

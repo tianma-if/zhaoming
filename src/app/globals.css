@@ -44,7 +44,9 @@ html {
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at top, rgba(242, 239, 232, 0.72), transparent 32%),
+    linear-gradient(180deg, #fcfbf8 0%, #ffffff 26%, #fcfbf8 100%);
   color: var(--foreground);
   font-family: var(--font-sans-app), "Noto Sans SC", ui-sans-serif, system-ui,
     sans-serif;
@@ -110,4 +112,9 @@ a {
     linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23161411' fill-opacity='0.08'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='64' cy='24' r='1'/%3E%3Ccircle cx='92' cy='66' r='1'/%3E%3Ccircle cx='35' cy='82' r='1'/%3E%3Ccircle cx='105' cy='105' r='1'/%3E%3C/g%3E%3C/svg%3E");
   mix-blend-mode: multiply;
+}
+
+.section-surface {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
 }
