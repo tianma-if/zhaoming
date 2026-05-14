@@ -41,6 +41,14 @@
 - `lunar-typescript`
 - `iztro`
 
+## 包管理器
+
+项目已统一切换到 `pnpm`，默认不再使用 `npm`。
+
+- 锁文件使用 `pnpm-lock.yaml`
+- 安装、开发、构建、Lint 均使用 `pnpm`
+- 这样可以减少重复依赖占用，降低本地 `node_modules` 的磁盘空间压力
+
 ## 环境变量
 
 复制 `.env.example` 为 `.env.local`：
@@ -98,6 +106,12 @@ AUTOMATION_API_KEY=
 - [db/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/db/migrations/0001_init.sql)
 
 ## 本地开发
+
+如果本机还没启用 `pnpm`，建议先执行：
+
+```bash
+corepack enable
+```
 
 安装依赖：
 
