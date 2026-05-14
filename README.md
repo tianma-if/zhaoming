@@ -102,13 +102,13 @@ AUTOMATION_API_KEY=
 安装依赖：
 
 ```bash
-npm install
+pnpm install
 ```
 
 启动开发服务器：
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 打开：
@@ -118,8 +118,8 @@ npm run dev
 常用检查命令：
 
 ```bash
-npm run lint
-npm run build
+pnpm lint
+pnpm build
 ```
 
 ## 鉴权说明
