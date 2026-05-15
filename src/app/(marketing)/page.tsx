@@ -233,39 +233,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 pb-24 pt-8 md:px-10">
-        <div className="rounded-[2rem] bg-[#f7f7f7] px-8 py-12 text-center md:px-12 md:py-16">
-          <h2 className="font-display text-4xl leading-[1.15] tracking-[0.01em] text-[#111111] md:text-6xl">
-            从命盘开始，
-            <br />
-            理解你正在经历的人生结构。
-          </h2>
-          <p className="mx-auto mt-5 max-w-3xl text-lg leading-9 text-[#7a7a7a]">
-            不用先相信任何神秘叙事。先从一张结构化命盘开始，再决定哪些解释值得你继续阅读。
-          </p>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
-            <Link href="/divinations/new">
-              <Button
-                size="lg"
-                className="h-14 min-w-56 rounded-2xl bg-[#111111] px-7 text-lg text-white hover:bg-[#111111]/95"
-              >
-                开始体验
-              </Button>
-            </Link>
-            <Link href="/blog">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 min-w-56 rounded-2xl border-[#bfbfbf] bg-white px-7 text-lg text-[#111111] hover:bg-[#fafafa]"
-              >
-                查看样例
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <SiteFooter />
     </main>
   );
