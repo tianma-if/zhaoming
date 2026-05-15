@@ -3,7 +3,6 @@ import {
   Brain,
   ChevronRight,
   Lightbulb,
-  Quote,
   Sparkles,
   Target,
 } from "lucide-react";
@@ -14,21 +13,21 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 const philosophy = [
   {
-    title: "AI 智能，理性辅助",
+    title: "AI 语义建模",
     body:
-      "先完成命盘生成，再由 AI 用更易读的方式解释盘面结构，帮助你把复杂术语转成可理解的信息。",
+      "告别晦涩的口诀，将复杂的干支宫位转化为多维的数据洞察。",
     icon: Brain,
   },
   {
-    title: "传统体系，现代阅读",
+    title: "客观逻辑叙事",
     body:
-      "八字与紫微不再依赖旧式命理网站的嘈杂表达，而是回到更清楚、更克制的页面层级与排版之中。",
+      "剥离主观臆断与玄学滤镜，用算力还原数理推演的本质。",
     icon: Lightbulb,
   },
   {
-    title: "自我探索，独立判断",
+    title: "决策辅助主权",
     body:
-      "我们更在意帮助你看清结构，而不是替你宣告结论。参考可以被提供，判断仍然应当属于你自己。",
+      "每一个变量都清晰可见，把人生的解释权重新归还给你自己。",
     icon: Sparkles,
   },
 ];
@@ -73,7 +72,7 @@ export default async function HomePage() {
           知微
         </h1>
         <p className="mt-5 text-2xl text-[#7d7d7d] md:text-[2rem]">
-          AI 驱动的东方命理分析系统
+          知微见著，重构传统命理的理性坐标。
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:gap-8">
@@ -107,27 +106,14 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <Card
-          className={`mt-18 w-full rounded-[2rem] border-[#efefef] bg-[#f7f7f7] px-8 py-10 shadow-none md:px-14 md:py-14 ${interactiveCardClassName}`}
-        >
-          <div className="mb-5 flex justify-start text-[#d4d4d4]">
-            <Quote className="size-8 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[#b9b9b9]" />
-          </div>
-          <p className="font-display text-3xl leading-[1.45] tracking-[0.01em] text-[#222222] md:text-5xl">
-            排盘不是为了替你宣告命运，
-            <br />
-            而是帮助你更清楚地看见自己。
-          </p>
-          <p className="mt-6 text-xl text-[#8a8a8a]">知微 · AI 命理解读</p>
-        </Card>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-12 md:px-10 md:py-16">
+      <section className="mx-auto w-full max-w-6xl px-6 pb-12 pt-4 md:px-10 md:pb-16 md:pt-8">
         <div className="space-y-3 text-center">
           <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
             核心理念
           </h2>
-          <p className="text-lg text-[#8a8a8a]">用更现代的方式理解传统命理</p>
+          <p className="text-lg text-[#8a8a8a]">用更清晰的变量与逻辑，重新理解传统命理</p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
