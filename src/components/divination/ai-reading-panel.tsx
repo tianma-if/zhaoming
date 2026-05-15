@@ -35,11 +35,7 @@ export function AiReadingPanel({
             结合当前命盘结构，按流式方式展开解读。
           </CardDescription>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => void complete(question, { body: { divinationId } })}
-          disabled={isLoading}
-        >
+        <Button variant="outline" onClick={() => void complete(question, { body: { divinationId } })}>
           {isLoading ? "生成中…" : "重新解读"}
         </Button>
       </div>
@@ -47,28 +43,15 @@ export function AiReadingPanel({
       {completion ? (
         <MarkdownRenderer content={completion} />
       ) : (
-        <div aria-live="polite" className="space-y-3">
-          {isLoading ? (
-            <>
-              <p className="text-sm leading-8 text-muted-foreground">
-                正在根据排盘结构生成分析，请稍候。
-              </p>
-              <div className="space-y-2">
-                <div className="h-4 w-full animate-pulse rounded-full bg-muted" />
-                <div className="h-4 w-[92%] animate-pulse rounded-full bg-muted" />
-                <div className="h-4 w-[78%] animate-pulse rounded-full bg-muted" />
-              </div>
-            </>
-          ) : (
-            <p className="text-sm leading-8 text-muted-foreground">
-              提交测算后，这里会出现流式解盘结果。
-            </p>
-          )}
-        </div>
+        <p className="text-sm leading-8 text-muted-foreground">
+          {isLoading
+            ? "正在根据排盘结构生成分析，请稍候。"
+            : "提交测算后，这里会出现流式解盘结果。"}
+        </p>
       )}
 
       {error ? (
-        <p className="text-sm text-fire" role="alert" aria-live="polite">
+        <p className="text-sm text-fire">
           {error.message || "模型暂时不可用，请检查 AI_PROVIDER 与模型配置。"}
         </p>
       ) : null}

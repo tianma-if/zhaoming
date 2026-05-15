@@ -37,11 +37,7 @@ export function GoogleSignInButton() {
       <Button className="w-full" onClick={handleSignIn} disabled={isLoading}>
         {isLoading ? "正在跳转…" : "使用 Google 登录"}
       </Button>
-      {error ? (
-        <p className="text-sm text-fire" role="alert" aria-live="polite">
-          {error} 请稍后重试，或检查当前网络与 OAuth 配置。
-        </p>
-      ) : null}
+      {error ? <p className="text-sm text-fire">{error}</p> : null}
     </div>
   );
 }

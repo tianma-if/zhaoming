@@ -22,12 +22,7 @@ export default async function DashboardLayout({
         <section className="min-w-0 px-4 py-4 md:px-8 md:py-8">
           <div className="lg:hidden">
             <div className="mb-6 rounded-[1.2rem] border border-border bg-[#fcfcfb] p-4">
-              <WorkspaceSidebar
-                email={user.email}
-                name={user.name}
-                image={user.image}
-                compact
-              />
+              <WorkspaceSidebar email={user.email} name={user.name} image={user.image} />
             </div>
           </div>
           <div className="pb-20">{children}</div>
