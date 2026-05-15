@@ -7,6 +7,7 @@ import {
   CalendarDays,
   Calculator,
   HeartHandshake,
+  Hand,
   LogOut,
   Orbit,
   Sparkles,
@@ -20,25 +21,26 @@ import { cn } from "@/lib/utils";
 
 const groups = [
   {
-    label: "八字命盘",
+    label: "命理类",
     items: [
-      { href: "/divinations/new", label: "八字计算", icon: Calculator },
-      { href: null, label: "八字合婚", icon: HeartHandshake },
-      { href: null, label: "每日运势", icon: CalendarDays },
+      { href: "/divinations/new", label: "八字算命", note: "四柱推命", icon: Calculator },
+      { href: null, label: "紫微斗数", icon: Sparkles },
+      { href: null, label: "袁天罡称骨算命", icon: CalendarDays },
     ],
   },
   {
-    label: "紫微斗数",
+    label: "占卜类",
     items: [
-      { href: null, label: "紫微排盘", icon: Sparkles },
-      { href: null, label: "紫微合婚", icon: HeartHandshake },
+      { href: null, label: "六爻占卜", note: "纳甲筮法", icon: Ticket },
+      { href: null, label: "梅花易数", icon: Orbit },
+      { href: null, label: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
     ],
   },
   {
-    label: "周易占卜",
+    label: "相术类",
     items: [
-      { href: null, label: "梅花易数·每日决策", icon: Orbit },
-      { href: null, label: "六爻", icon: Ticket },
+      { href: null, label: "面相学", icon: UserRound },
+      { href: null, label: "手相学", icon: Hand },
     ],
   },
   {
@@ -93,7 +95,19 @@ export function WorkspaceSidebar({
                   const content = (
                     <>
                       <Icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
+                      <span className="min-w-0">
+                        <span className="block">{item.label}</span>
+                        {"note" in item && item.note ? (
+                          <span
+                            className={cn(
+                              "mt-0.5 block text-xs tracking-[0.04em]",
+                              isActive ? "text-white/72" : "text-muted-foreground",
+                            )}
+                          >
+                            {item.note}
+                          </span>
+                        ) : null}
+                      </span>
                     </>
                   );
 
@@ -102,7 +116,7 @@ export function WorkspaceSidebar({
                       key={`${group.label}-${item.label}`}
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-base transition",
+                        "flex items-start gap-3 rounded-lg px-3 py-2.5 text-base transition",
                         isActive
                           ? "bg-black text-white"
                           : "text-foreground hover:bg-muted",
@@ -113,7 +127,7 @@ export function WorkspaceSidebar({
                   ) : (
                     <span
                       key={`${group.label}-${item.label}`}
-                      className="flex cursor-default items-center gap-3 rounded-lg px-3 py-2.5 text-base text-foreground/88"
+                      className="flex cursor-default items-start gap-3 rounded-lg px-3 py-2.5 text-base text-foreground/88"
                     >
                       {content}
                     </span>
