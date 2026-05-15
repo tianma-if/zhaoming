@@ -44,7 +44,9 @@ html {
 }
 
 body {
-  background: #ffffff;
+  background:
+    radial-gradient(circle at top, rgba(242, 239, 232, 0.72), transparent 32%),
+    linear-gradient(180deg, #fcfbf8 0%, #ffffff 26%, #fcfbf8 100%);
   color: var(--foreground);
   font-family: var(--font-sans-app), "Noto Sans SC", ui-sans-serif, system-ui,
     sans-serif;
@@ -113,5 +115,6 @@ a {
 }
 
 .section-surface {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
 }
