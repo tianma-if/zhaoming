@@ -71,7 +71,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
 
   return (
     <div className="space-y-6">
-      <Card className="section-surface space-y-5 rounded-[1.6rem] border border-border/80 shadow-none">
+      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
         <div className="space-y-2">
           <Badge>八字概要</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">先看日主与五行倾向</CardTitle>
@@ -114,7 +114,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
         </div>
       </Card>
 
-      <Card className="section-surface space-y-5 rounded-[1.6rem] border border-border/80 shadow-none">
+      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
         <div className="space-y-2">
           <Badge>五行分布</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">命盘里的结构比例</CardTitle>
@@ -123,7 +123,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           {elementCounts.map((item) => (
             <div
               key={item.element}
-              className="space-y-3 rounded-[1rem] border border-border/70 bg-muted/50 p-4"
+              className="space-y-3 rounded-[1rem] border border-border bg-muted/50 p-4"
             >
               <WuxingBadge element={item.element} />
               <p className="font-display text-4xl">{item.count}</p>
@@ -133,7 +133,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
         </div>
       </Card>
 
-      <Card className="section-surface space-y-5 rounded-[1.6rem] border border-border/80 shadow-none">
+      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
         <div className="space-y-2">
           <Badge>四柱详解</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">每一柱分别在说什么</CardTitle>
@@ -142,7 +142,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           {chart.pillars.map((pillar) => (
             <article
               key={pillar.key}
-              className="space-y-4 rounded-[1rem] border border-border/70 bg-white/78 p-4"
+              className="space-y-4 rounded-[1rem] border border-border bg-white p-4"
             >
               <div className="space-y-1">
                 <p className="text-xs tracking-[0.28em] text-muted-foreground">{pillar.label}</p>

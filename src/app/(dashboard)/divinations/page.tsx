@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
@@ -10,12 +9,9 @@ export default async function DivinationsPage() {
   const data = await listDivinations(user.id);
 
   return (
-    <Card className="section-surface space-y-5 rounded-[2rem] border-border/80 shadow-none">
-      <div className="flex items-center justify-between gap-4">
-        <div className="space-y-2">
-          <Badge>Archive</Badge>
-          <CardTitle>测算记录</CardTitle>
-        </div>
+    <Card className="space-y-5">
+      <div className="flex items-center justify-between">
+        <CardTitle>测算记录</CardTitle>
         <Link href="/divinations/new" className="text-sm text-muted-foreground">
           发起新测算
         </Link>
@@ -25,7 +21,7 @@ export default async function DivinationsPage() {
           <Link
             key={item.id}
             href={`/divinations/${item.id}`}
-            className="block rounded-[1.4rem] border border-border/70 bg-white/78 p-4 transition hover:-translate-y-0.5 hover:bg-white"
+            className="block rounded-[1.4rem] bg-white/55 p-4 hover:bg-white/78"
           >
             <div className="flex items-center justify-between gap-4">
               <div>

@@ -23,57 +23,37 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="section-surface space-y-3 rounded-[1.6rem] border-border/80 p-5 shadow-none">
-          <p className="text-xs tracking-[0.28em] text-muted-foreground">CREDITS</p>
-          <p className="font-display text-5xl">{profile?.credits ?? 0}</p>
-          <CardDescription>当前账户可用于继续发起新测算的剩余额度。</CardDescription>
-        </Card>
-        <Card className="section-surface space-y-3 rounded-[1.6rem] border-border/80 p-5 shadow-none">
-          <p className="text-xs tracking-[0.28em] text-muted-foreground">STATUS</p>
-          <p className="font-display text-5xl">{profile?.subscription_status ?? "free"}</p>
-          <CardDescription>订阅与积分能力已预留，后续可直接接入付费能力。</CardDescription>
-        </Card>
-        <Card className="section-surface space-y-3 rounded-[1.6rem] border-border/80 p-5 shadow-none">
-          <p className="text-xs tracking-[0.28em] text-muted-foreground">RECENT</p>
-          <p className="font-display text-5xl">{divinations?.length ?? 0}</p>
-          <CardDescription>最近 5 条命盘阅读记录会集中展示在下方，方便回看。</CardDescription>
-        </Card>
-      </div>
-
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <Card className="section-surface space-y-6 rounded-[2rem] border-border/80 p-6 shadow-none">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <Card className="space-y-5 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
+          <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <Badge>Primary Flow</Badge>
               <CardTitle className="text-3xl">开始新测算</CardTitle>
               <CardDescription className="text-sm leading-7">
                 输入出生信息与问题，进入一张新的命盘阅读页。
               </CardDescription>
             </div>
             <Link href="/divinations/new">
-              <Button className="min-w-36">进入测算</Button>
+              <Button>进入测算</Button>
             </Link>
           </div>
           <Separator />
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-[1.35rem] border border-border/70 bg-white/72 p-4">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">输入</p>
-              <p className="mt-2 text-sm leading-7">出生信息、问题、历法与系统选择</p>
+            <div className="space-y-2">
+              <p className="text-xs tracking-[0.28em] text-muted-foreground">CREDITS</p>
+              <p className="font-display text-4xl">{profile?.credits ?? 0}</p>
             </div>
-            <div className="rounded-[1.35rem] border border-border/70 bg-white/72 p-4">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">生成</p>
-              <p className="mt-2 text-sm leading-7">结构化盘面会先落地，再进入阅读界面</p>
+            <div className="space-y-2">
+              <p className="text-xs tracking-[0.28em] text-muted-foreground">STATUS</p>
+              <p className="font-display text-4xl">{profile?.subscription_status ?? "free"}</p>
             </div>
-            <div className="rounded-[1.35rem] border border-border/70 bg-white/72 p-4">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">阅读</p>
-              <p className="mt-2 text-sm leading-7">结合 AI 流式解读回看关系、事业与阶段变化</p>
+            <div className="space-y-2">
+              <p className="text-xs tracking-[0.28em] text-muted-foreground">RECENT</p>
+              <p className="font-display text-4xl">{divinations?.length ?? 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="section-surface space-y-4 rounded-[2rem] border-border/80 p-6 shadow-none">
-          <Badge>Account Snapshot</Badge>
+        <Card className="space-y-4 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
           <CardTitle className="text-2xl">账户摘要</CardTitle>
           <CardDescription className="text-sm leading-7">
             当前账户可继续发起测算，订阅与积分能力已预留。
@@ -87,12 +67,9 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="section-surface space-y-5 rounded-[2rem] border-border/80 p-6 shadow-none">
+      <Card className="space-y-5 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
         <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <Badge>Recent Readings</Badge>
-            <CardTitle className="text-3xl">最近记录</CardTitle>
-          </div>
+          <CardTitle className="text-3xl">最近记录</CardTitle>
           <Link href="/divinations/new">
             <Button variant="outline">新建测算</Button>
           </Link>
@@ -104,7 +81,7 @@ export default async function DashboardPage() {
               <Link
                 key={item.id}
                 href={`/divinations/${item.id}`}
-                className="block rounded-[1.25rem] border border-border/70 bg-white/78 p-4 transition hover:-translate-y-0.5 hover:bg-white"
+                className="block rounded-[1.25rem] border border-border/70 bg-white/68 p-4 transition hover:bg-white"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="space-y-2">
