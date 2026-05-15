@@ -61,6 +61,9 @@ const systems = [
 ];
 
 export default async function HomePage() {
+  const interactiveCardClassName =
+    "group transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#111111] hover:shadow-[0_24px_44px_-30px_rgba(17,17,17,0.28)]";
+
   return (
     <main className="min-h-screen bg-white">
       <SiteHeader />
@@ -104,9 +107,11 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <Card className="mt-18 w-full rounded-[2rem] border-[#efefef] bg-[#f7f7f7] px-8 py-10 shadow-none md:px-14 md:py-14">
+        <Card
+          className={`mt-18 w-full rounded-[2rem] border-[#efefef] bg-[#f7f7f7] px-8 py-10 shadow-none md:px-14 md:py-14 ${interactiveCardClassName}`}
+        >
           <div className="mb-5 flex justify-start text-[#d4d4d4]">
-            <Quote className="size-8" />
+            <Quote className="size-8 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[#b9b9b9]" />
           </div>
           <p className="font-display text-3xl leading-[1.45] tracking-[0.01em] text-[#222222] md:text-5xl">
             排盘不是为了替你宣告命运，
@@ -132,9 +137,9 @@ export default async function HomePage() {
             return (
               <Card
                 key={item.title}
-                className="rounded-[1.8rem] border-[#f0f0f0] bg-white p-7 shadow-none"
+                className={`rounded-[1.8rem] border-[#f0f0f0] bg-white p-7 shadow-none ${interactiveCardClassName}`}
               >
-                <div className="flex size-14 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111]">
+                <div className="flex size-14 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111] transition-colors duration-300 group-hover:bg-[#111111] group-hover:text-white">
                   <Icon className="size-6" />
                 </div>
                 <CardTitle className="mt-7 font-sans text-[2rem] leading-[1.35] tracking-[-0.02em] text-[#111111]">
@@ -161,7 +166,7 @@ export default async function HomePage() {
           {systems.map((item) => (
             <Card
               key={item.title}
-              className="rounded-[1.8rem] border-[#f0f0f0] bg-white p-8 shadow-none"
+              className={`rounded-[1.8rem] border-[#f0f0f0] bg-white p-8 shadow-none ${interactiveCardClassName}`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="max-w-xl">
@@ -172,17 +177,17 @@ export default async function HomePage() {
                     {item.body}
                   </CardDescription>
                 </div>
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111]">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111] transition-colors duration-300 group-hover:bg-[#111111] group-hover:text-white">
                   <Target className="size-5" />
                 </div>
               </div>
 
               <Link
                 href={item.href}
-                className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition hover:opacity-70"
+                className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3"
               >
                 {item.cta}
-                <ChevronRight className="size-5" />
+                <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </Card>
           ))}
