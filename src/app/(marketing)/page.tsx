@@ -11,6 +11,17 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
+type SystemItem = {
+  title: string;
+  alias?: string;
+  body: string;
+};
+
+type SystemGroup = {
+  category: string;
+  items: SystemItem[];
+};
+
 const philosophy = [
   {
     title: "AI 语义建模",
@@ -32,30 +43,56 @@ const philosophy = [
   },
 ];
 
-const systems = [
+const systemGroups: SystemGroup[] = [
   {
-    title: "八字分析",
-    body: "基于出生信息生成四柱命盘，查看五行关系、结构特点与 AI 解读。",
-    href: "/divinations/new",
-    cta: "开始分析",
+    category: "命理类",
+    items: [
+      {
+        title: "八字算命",
+        alias: "四柱推命",
+        body: "以出生年、月、日、时建立四柱结构，分析五行流转、格局重心与人生阶段线索。",
+      },
+      {
+        title: "紫微斗数",
+        body: "围绕十二宫位与主星分布，呈现更适合现代阅读的个人命盘结构。",
+      },
+      {
+        title: "袁天罡称骨算命",
+        body: "从更简化的传统规则切入，适合作为轻量级命理体验入口。",
+      },
+    ],
   },
   {
-    title: "紫微斗数",
-    body: "生成紫微命盘，查看宫位与主星分布，用更现代的方式理解传统结构。",
-    href: "/divinations/new",
-    cta: "进入体验",
+    category: "占卜类",
+    items: [
+      {
+        title: "六爻占卜",
+        alias: "纳甲筮法",
+        body: "适合面向具体问题推演变化路径，用更结构化的方式整理卦象信息。",
+      },
+      {
+        title: "梅花易数",
+        body: "偏向即时起念与场景判断，适合作为日常问题的快速观察工具。",
+      },
+      {
+        title: "三式",
+        alias: "奇门遁甲、太乙神数、大六壬",
+        body: "更高阶的数术体系，适合后续扩展为进阶决策与时空判断模块。",
+      },
+    ],
   },
   {
-    title: "博客样例",
-    body: "通过实际解读样例了解知微的表达方式、页面风格与命理内容组织。",
-    href: "/blog",
-    cta: "阅读样例",
-  },
-  {
-    title: "后续能力",
-    body: "查看产品路线、套餐与可扩展系统，理解知微接下来会提供什么能力。",
-    href: "/pricing",
-    cta: "查看定价",
+    category: "相术类",
+    items: [
+      {
+        title: "面相学",
+        body: "从五官、骨相与气质信息入手，提供偏观察型的人格与运势参考。",
+      },
+      {
+        title: "手相学",
+        body: "围绕掌纹、手型与线条特征，补充另一种更直观的个体解读方式。",
+      },
+    ],
   },
 ];
 
@@ -145,37 +182,53 @@ export default async function HomePage() {
           <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
             分析系统
           </h2>
-          <p className="text-lg text-[#8a8a8a]">探索知微当前提供的核心能力</p>
+          <p className="text-lg text-[#8a8a8a]">以命理、占卜、相术三条主线组织你的产品能力地图</p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {systems.map((item) => (
-            <Card
-              key={item.title}
-              className={`rounded-[1.8rem] border-[#f0f0f0] bg-white p-8 shadow-none ${interactiveCardClassName}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="max-w-xl">
-                  <CardTitle className="font-sans text-[2rem] leading-[1.3] tracking-[-0.02em] text-[#111111]">
-                    {item.title}
-                  </CardTitle>
-                  <CardDescription className="mt-5 text-lg leading-10 text-[#707070]">
-                    {item.body}
-                  </CardDescription>
-                </div>
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111] transition-colors duration-300 group-hover:bg-[#111111] group-hover:text-white">
-                  <Target className="size-5" />
-                </div>
+        <div className="mt-14 space-y-12">
+          {systemGroups.map((group) => (
+            <div key={group.category} className="space-y-6">
+              <div className="flex items-center gap-5">
+                <div className="h-px flex-1 bg-[#ececec]" />
+                <h3 className="shrink-0 text-2xl font-semibold tracking-[0.06em] text-[#111111]">
+                  {group.category}
+                </h3>
+                <div className="h-px flex-1 bg-[#ececec]" />
               </div>
 
-              <Link
-                href={item.href}
-                className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3"
-              >
-                {item.cta}
-                <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Card>
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {group.items.map((item) => (
+                  <Card
+                    key={item.title}
+                    className={`rounded-[1.8rem] border-[#f0f0f0] bg-white p-8 shadow-none ${interactiveCardClassName}`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="max-w-xl">
+                        <div className="flex size-12 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111] transition-colors duration-300 group-hover:bg-[#111111] group-hover:text-white">
+                          <Target className="size-5" />
+                        </div>
+                        <CardTitle className="mt-6 font-sans text-[1.9rem] leading-[1.3] tracking-[-0.02em] text-[#111111]">
+                          {item.title}
+                        </CardTitle>
+                        {item.alias ? (
+                          <p className="mt-2 text-sm tracking-[0.08em] text-[#8a8a8a]">
+                            {item.alias}
+                          </p>
+                        ) : null}
+                        <CardDescription className="mt-5 text-lg leading-10 text-[#707070]">
+                          {item.body}
+                        </CardDescription>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3">
+                      敬请期待
+                      <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
