@@ -15,6 +15,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@types/tz-lookup": "^6.1.2",
     "ai": "^6.0.177",
     "better-auth": "^1.6.11",
     "class-variance-authority": "^0.7.1",
@@ -30,6 +31,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
+    "tz-lookup": "^6.1.25",
     "zod": "^4.4.3"
   },
   "devDependencies": {

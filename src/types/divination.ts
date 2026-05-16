@@ -18,11 +18,14 @@ export interface BaziChart {
   meta: {
     calendarType: "solar" | "lunar";
     solar: string;
+    inputSolar?: string;
     lunar: string;
     zodiac: string;
     gender: string;
     question: string;
     birthPlace?: string;
+    timezone?: string;
+    longitudeCorrectionMinutes?: number;
   };
   pillars: BaziPillar[];
   derived: {
@@ -48,12 +51,15 @@ export interface ZiweiChart {
   kind: "ziwei";
   meta: {
     solar: string;
+    inputSolar?: string;
     lunar: string;
     chineseDate: string;
     time: string;
     sign: string;
     zodiac: string;
     birthPlace?: string;
+    timezone?: string;
+    longitudeCorrectionMinutes?: number;
   };
   palaces: ZiweiPalace[];
 }

@@ -1,17 +1,18 @@
 import { astro } from "iztro";
 import type { ZiweiChart } from "@/types/divination";
 import type { DivinationInput } from "../schemas";
-import { buildBaziChart } from "./bazi";
 import { hourToZiWeiIndex } from "../normalize";
+import { resolveBirthContext } from "../time-correction";
 
 export function buildZiweiChart(input: DivinationInput): {
   chart: ZiweiChart;
   birthGregorian: string;
   birthLunar: Record<string, unknown>;
 } {
-  const bazi = buildBaziChart(input);
-  const [datePart] = bazi.birthGregorian.split(" ");
-  const hour = Number(input.birthTime.split(":")[0]);
+  const { inputSolar, correctedSolar, timezone, longitudeCorrectionMinutes } =
+    resolveBirthContext(input);
+  const datePart = correctedSolar.toYmd();
+  const hour = correctedSolar.getHour();
 
   const astrolabe =
     input.calendarType === "solar"
@@ -36,12 +37,15 @@ export function buildZiweiChart(input: DivinationInput): {
       kind: "ziwei",
       meta: {
         solar: astrolabe.solarDate,
+        inputSolar: inputSolar.toYmdHms(),
         lunar: astrolabe.lunarDate,
         chineseDate: astrolabe.chineseDate,
         time: astrolabe.time,
         sign: astrolabe.sign,
         zodiac: astrolabe.zodiac,
         birthPlace: input.birthPlace || undefined,
+        timezone: timezone || undefined,
+        longitudeCorrectionMinutes,
       },
       palaces: astrolabe.palaces.map((palace) => ({
         index: palace.index,
@@ -54,7 +58,12 @@ export function buildZiweiChart(input: DivinationInput): {
         changsheng12: palace.changsheng12,
       })),
     },
-    birthGregorian: bazi.birthGregorian,
-    birthLunar: bazi.birthLunar,
+    birthGregorian: correctedSolar.toYmdHms(),
+    birthLunar: {
+      timezone: timezone || undefined,
+      longitudeCorrectionMinutes,
+      inputSolar: inputSolar.toYmdHms(),
+      correctedSolar: correctedSolar.toYmdHms(),
+    },
   };
 }

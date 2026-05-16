@@ -1,6 +1,6 @@
-import { Lunar, Solar } from "lunar-typescript";
 import type { BaziChart, BaziPillar } from "@/types/divination";
 import type { DivinationInput } from "../schemas";
+import { resolveBirthContext } from "../time-correction";
 
 function buildPillar(
   key: BaziPillar["key"],
@@ -28,21 +28,9 @@ export function buildBaziChart(input: DivinationInput): {
   birthGregorian: string;
   birthLunar: Record<string, unknown>;
 } {
-  const [year, month, day] = input.birthDate.split("-").map(Number);
-  const [hour, minute] = input.birthTime.split(":").map(Number);
-
-  const lunar =
-    input.calendarType === "solar"
-      ? Solar.fromYmdHms(year, month, day, hour, minute, 0).getLunar()
-      : Lunar.fromYmdHms(
-          year,
-          input.isLeapMonth ? -month : month,
-          day,
-          hour,
-          minute,
-          0,
-        );
-
+  const { inputSolar, correctedSolar, timezone, longitudeCorrectionMinutes } =
+    resolveBirthContext(input);
+  const lunar = correctedSolar.getLunar();
   const solar = lunar.getSolar();
   const eightChar = lunar.getEightChar();
 
@@ -95,11 +83,14 @@ export function buildBaziChart(input: DivinationInput): {
       meta: {
         calendarType: input.calendarType,
         solar: solar.toYmdHms(),
+        inputSolar: inputSolar.toYmdHms(),
         lunar: lunar.toString(),
         zodiac: lunar.getYearShengXiao(),
         gender: input.gender,
         question: input.question,
         birthPlace: input.birthPlace || undefined,
+        timezone: timezone || undefined,
+        longitudeCorrectionMinutes,
       },
       pillars,
       derived: {
@@ -116,6 +107,10 @@ export function buildBaziChart(input: DivinationInput): {
       month: lunar.getMonth(),
       day: lunar.getDay(),
       isLeapMonth: input.isLeapMonth,
+      timezone: timezone || undefined,
+      longitudeCorrectionMinutes,
+      inputSolar: inputSolar.toYmdHms(),
+      correctedSolar: solar.toYmdHms(),
     },
   };
 }
