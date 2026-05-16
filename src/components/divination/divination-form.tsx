@@ -6,7 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -87,29 +93,36 @@ export function DivinationForm() {
                     <span className="text-muted-foreground">测算系统</span>
                     <Select
                       value={form.divinationType}
-                      onChange={(event) =>
-                        updateField("divinationType", event.target.value as "bazi" | "ziwei")
+                      onValueChange={(value) =>
+                        updateField("divinationType", value as "bazi" | "ziwei")
                       }
                     >
-                      <option value="bazi">八字</option>
-                      <option value="ziwei">紫微斗数</option>
+                      <SelectTrigger>
+                        <SelectValue placeholder="请选择测算系统" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bazi">八字</SelectItem>
+                        <SelectItem value="ziwei">紫微斗数</SelectItem>
+                      </SelectContent>
                     </Select>
                   </label>
                   <label className="space-y-2 text-sm">
                     <span className="text-muted-foreground">性别</span>
                     <Select
                       value={form.gender}
-                      onChange={(event) =>
-                        updateField(
-                          "gender",
-                          event.target.value as "male" | "female" | "other" | "unknown",
-                        )
+                      onValueChange={(value) =>
+                        updateField("gender", value as "male" | "female" | "other" | "unknown")
                       }
                     >
-                      <option value="male">男</option>
-                      <option value="female">女</option>
-                      <option value="other">其他</option>
-                      <option value="unknown">未知</option>
+                      <SelectTrigger>
+                        <SelectValue placeholder="请选择性别" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">男</SelectItem>
+                        <SelectItem value="female">女</SelectItem>
+                        <SelectItem value="other">其他</SelectItem>
+                        <SelectItem value="unknown">未知</SelectItem>
+                      </SelectContent>
                     </Select>
                   </label>
                 </div>
@@ -127,12 +140,17 @@ export function DivinationForm() {
                   <span className="text-muted-foreground">历法</span>
                   <Select
                     value={form.calendarType}
-                    onChange={(event) =>
-                      updateField("calendarType", event.target.value as "solar" | "lunar")
+                    onValueChange={(value) =>
+                      updateField("calendarType", value as "solar" | "lunar")
                     }
                   >
-                    <option value="solar">公历</option>
-                    <option value="lunar">农历</option>
+                    <SelectTrigger>
+                      <SelectValue placeholder="请选择历法" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solar">公历</SelectItem>
+                      <SelectItem value="lunar">农历</SelectItem>
+                    </SelectContent>
                   </Select>
                 </label>
 
