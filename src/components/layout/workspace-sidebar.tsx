@@ -55,6 +55,18 @@ const groups = [
   },
 ];
 
+const navigableHrefs = groups
+  .flatMap((group) => group.items)
+  .map((item) => item.href)
+  .filter((href): href is string => Boolean(href))
+  .sort((a, b) => b.length - a.length);
+
+function getActiveHref(pathname: string) {
+  return (
+    navigableHrefs.find((href) => pathname === href || pathname.startsWith(`${href}/`)) ?? null
+  );
+}
+
 export function WorkspaceSidebar({
   email,
   name,
@@ -65,8 +77,16 @@ export function WorkspaceSidebar({
   image?: string | null;
 }) {
   const pathname = usePathname();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
-  const activePath = pendingHref ?? pathname;
+  const [pendingNavigation, setPendingNavigation] = useState<{
+    from: string;
+    to: string;
+  } | null>(null);
+  const displayPath =
+    pendingNavigation && pendingNavigation.from === pathname
+      ? pendingNavigation.to
+      : pathname;
+
+  const activeHref = getActiveHref(displayPath);
 
   return (
     <aside className="flex h-full flex-col">
@@ -89,10 +109,7 @@ export function WorkspaceSidebar({
               <p className="text-sm font-medium text-muted-foreground">{group.label}</p>
               <nav className="space-y-1">
                 {group.items.map((item) => {
-                  const isActive = item.href
-                    ? activePath === item.href ||
-                      (item.href !== "/dashboard" && activePath.startsWith(`${item.href}/`))
-                    : false;
+                  const isActive = item.href ? activeHref === item.href : false;
                   const Icon = item.icon;
 
                   const content = (
@@ -131,7 +148,10 @@ export function WorkspaceSidebar({
                         }
 
                         if (item.href !== pathname) {
-                          setPendingHref(item.href);
+                          setPendingNavigation({
+                            from: pathname,
+                            to: item.href,
+                          });
                         }
                       }}
                       className={cn(
