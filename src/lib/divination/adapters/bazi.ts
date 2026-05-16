@@ -99,6 +99,7 @@ export function buildBaziChart(input: DivinationInput): {
         zodiac: lunar.getYearShengXiao(),
         gender: input.gender,
         question: input.question,
+        birthPlace: input.birthPlace || undefined,
       },
       pillars,
       derived: {

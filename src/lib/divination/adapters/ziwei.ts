@@ -41,6 +41,7 @@ export function buildZiweiChart(input: DivinationInput): {
         time: astrolabe.time,
         sign: astrolabe.sign,
         zodiac: astrolabe.zodiac,
+        birthPlace: input.birthPlace || undefined,
       },
       palaces: astrolabe.palaces.map((palace) => ({
         index: palace.index,

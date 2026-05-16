@@ -1,4 +1,6 @@
 "use client";
+import type { BirthPlaceSuggestion } from "@/components/divination/birth-place-input";
+import { BirthPlaceInput } from "@/components/divination/birth-place-input";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -12,17 +14,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 
 const initialState = {
   divinationType: "bazi",
   calendarType: "solar",
   birthDate: "",
   birthTime: "09:30",
+  birthPlace: "",
+  birthPlaceMeta: null as BirthPlaceSuggestion | null,
   gender: "male",
   subjectName: "",
-  question: "",
+  question: "请给我一份整体命盘解读。",
   isLeapMonth: false,
 };
 
@@ -213,160 +215,157 @@ export function DivinationForm() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-14">
-      <Card className="rounded-[1.75rem] border border-border bg-white p-6 shadow-[0_18px_36px_-32px_rgba(22,20,17,0.12)] md:p-8">
-        <form className="space-y-8" onSubmit={handleSubmit}>
-          <div className="grid gap-10 lg:grid-cols-2">
-            <section className="space-y-5">
-              <div className="space-y-1">
-                <Badge>基本信息</Badge>
-                <CardTitle className="text-3xl tracking-[0.04em]">输入对象信息</CardTitle>
-              </div>
-
-              <div className="space-y-4">
-                <label className="space-y-2 text-sm">
-                  <span className="text-muted-foreground">姓名或称呼</span>
-                  <Input
-                    value={form.subjectName}
-                    onChange={(event) => updateField("subjectName", event.target.value)}
-                    placeholder="请输入姓名或称呼"
-                  />
-                </label>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">测算系统</span>
-                    <Select
-                      value={form.divinationType}
-                      onValueChange={(value) =>
-                        updateField("divinationType", value as "bazi" | "ziwei")
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="请选择测算系统" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="bazi">八字</SelectItem>
-                        <SelectItem value="ziwei">紫微斗数</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </label>
-                  <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">性别</span>
-                    <Select
-                      value={form.gender}
-                      onValueChange={(value) =>
-                        updateField("gender", value as "male" | "female" | "other" | "unknown")
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="请选择性别" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">男</SelectItem>
-                        <SelectItem value="female">女</SelectItem>
-                        <SelectItem value="other">其他</SelectItem>
-                        <SelectItem value="unknown">未知</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </label>
-                </div>
-              </div>
-            </section>
-
-            <section className="space-y-5">
-              <div className="space-y-1">
-                <Badge>时间信息</Badge>
-                <CardTitle className="text-3xl tracking-[0.04em]">填写出生时间</CardTitle>
-              </div>
-
-              <div className="space-y-4">
-                <label className="space-y-2 text-sm">
-                  <span className="text-muted-foreground">历法</span>
-                  <Select
-                    value={form.calendarType}
-                    onValueChange={(value) =>
-                      updateField("calendarType", value as "solar" | "lunar")
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="请选择历法" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="solar">公历</SelectItem>
-                      <SelectItem value="lunar">农历</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </label>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">出生日期</span>
-                    <Input
-                      type="date"
-                      value={form.birthDate}
-                      onChange={(event) => updateField("birthDate", event.target.value)}
-                      required
-                    />
-                  </label>
-                  <label className="space-y-2 text-sm">
-                    <span className="text-muted-foreground">出生时间</span>
-                    <Input
-                      type="time"
-                      value={form.birthTime}
-                      onChange={(event) => updateField("birthTime", event.target.value)}
-                      required
-                    />
-                  </label>
-                </div>
-
-                {form.calendarType === "lunar" ? (
-                  <label className="flex items-center gap-3 rounded-xl border border-border bg-white/68 px-4 py-3 text-sm text-muted-foreground">
-                    <input
-                      type="checkbox"
-                      checked={form.isLeapMonth}
-                      onChange={(event) => updateField("isLeapMonth", event.target.checked)}
-                    />
-                    农历闰月
-                  </label>
-                ) : null}
-              </div>
-            </section>
+    <div className="mx-auto max-w-5xl space-y-16">
+      <form className="space-y-10" onSubmit={handleSubmit}>
+        <section className="space-y-6">
+          <div className="space-y-1">
+            <h3 className="text-3xl font-semibold tracking-[0.02em] text-muted-foreground">
+              基本信息
+            </h3>
           </div>
 
-          <Separator />
+          <div className="grid gap-6 md:grid-cols-2">
+            <label className="space-y-3 text-sm">
+              <span className="text-lg font-medium">姓名</span>
+              <div className="space-y-3">
+                <Input
+                  value={form.subjectName}
+                  onChange={(event) => updateField("subjectName", event.target.value)}
+                  placeholder="请输入姓名（可选）"
+                  className="h-13 rounded-2xl px-5 text-base"
+                />
+                <p className="text-sm leading-7 text-muted-foreground">
+                  姓名仅用于记录，不影响排盘结果
+                </p>
+              </div>
+            </label>
 
-          <section className="space-y-5">
-            <div className="space-y-1">
-              <Badge>测算意图</Badge>
-              <CardTitle className="text-3xl tracking-[0.04em]">你想看什么</CardTitle>
-              <CardDescription className="text-sm leading-7">
-                输入你真正想弄清楚的问题，AI 会围绕这部分重点展开解释。
-              </CardDescription>
+            <div className="grid gap-6">
+              <label className="space-y-3 text-sm">
+                <span className="text-lg font-medium">性别 *</span>
+                <Select
+                  value={form.gender}
+                  onValueChange={(value) =>
+                    updateField("gender", value as "male" | "female" | "other" | "unknown")
+                  }
+                >
+                  <SelectTrigger className="h-13 rounded-2xl px-5 text-base">
+                    <SelectValue placeholder="请选择性别" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">男</SelectItem>
+                    <SelectItem value="female">女</SelectItem>
+                    <SelectItem value="other">其他</SelectItem>
+                    <SelectItem value="unknown">未知</SelectItem>
+                  </SelectContent>
+                </Select>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <div className="space-y-1">
+            <h3 className="text-3xl font-semibold tracking-[0.02em] text-muted-foreground">
+              时间信息
+            </h3>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-6">
+              <div className="space-y-3 text-sm">
+                <span className="text-lg font-medium">出生日期 *</span>
+                <div className="inline-flex rounded-2xl bg-muted p-1">
+                  <button
+                    type="button"
+                    className={`min-w-28 rounded-[0.9rem] px-6 py-3 text-base transition ${
+                      form.calendarType === "solar"
+                        ? "bg-white text-foreground shadow-[0_10px_24px_-20px_rgba(22,20,17,0.45)]"
+                        : "text-muted-foreground"
+                    }`}
+                    onClick={() => updateField("calendarType", "solar")}
+                  >
+                    阳历
+                  </button>
+                  <button
+                    type="button"
+                    className={`min-w-28 rounded-[0.9rem] px-6 py-3 text-base transition ${
+                      form.calendarType === "lunar"
+                        ? "bg-white text-foreground shadow-[0_10px_24px_-20px_rgba(22,20,17,0.45)]"
+                        : "text-muted-foreground"
+                    }`}
+                    onClick={() => updateField("calendarType", "lunar")}
+                  >
+                    农历
+                  </button>
+                </div>
+
+                <Input
+                  type="date"
+                  value={form.birthDate}
+                  onChange={(event) => updateField("birthDate", event.target.value)}
+                  required
+                  className="h-13 rounded-2xl px-5 text-base"
+                />
+              </div>
+
+              <div className="space-y-3 text-sm">
+                <span className="text-lg font-medium">出生地点 *</span>
+                <BirthPlaceInput
+                  value={form.birthPlace}
+                  onChange={(value) => updateField("birthPlace", value)}
+                  onSelectSuggestion={(suggestion) => updateField("birthPlaceMeta", suggestion)}
+                  showLabel={false}
+                  helperText={null}
+                />
+              </div>
             </div>
 
-            <label className="space-y-2 text-sm">
-              <span className="text-muted-foreground">问题描述</span>
-              <Textarea
-                value={form.question}
-                onChange={(event) => updateField("question", event.target.value)}
-                placeholder="例如：我想看接下来一年事业方向是否适合调整，以及关系中的核心矛盾在哪里。"
-                required
-              />
-            </label>
-          </section>
+            <div className="space-y-6">
+              <label className="space-y-3 text-sm">
+                <span className="text-lg font-medium">出生时辰 *</span>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Input
+                    type="time"
+                    value={form.birthTime}
+                    onChange={(event) => updateField("birthTime", event.target.value)}
+                    required
+                    className="h-13 rounded-2xl px-5 text-base"
+                  />
+                  <div className="flex items-center rounded-2xl border border-border bg-muted/30 px-5 text-sm text-muted-foreground">
+                    当前测算系统：八字
+                  </div>
+                </div>
+                <p className="text-sm leading-7 text-muted-foreground">
+                  八字测算建议尽量提供准确出生时辰，越接近真实结果越稳定。
+                </p>
+              </label>
 
-          <div className="space-y-3">
-            <Button className="w-full" size="lg" type="submit" disabled={isPending}>
-              {isPending ? "正在计算..." : "开始计算八字"}
-            </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              提交后将进入命盘与 AI 解读页面。
-            </p>
-            {error ? <p className="text-center text-sm text-fire">{error}</p> : null}
+              {form.calendarType === "lunar" ? (
+                <label className="flex items-center gap-3 rounded-2xl border border-border bg-white px-4 py-4 text-sm text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={form.isLeapMonth}
+                    onChange={(event) => updateField("isLeapMonth", event.target.checked)}
+                  />
+                  当前日期为农历闰月
+                </label>
+              ) : null}
+
+            </div>
           </div>
-        </form>
-      </Card>
+        </section>
+
+        <div className="space-y-3 pt-2">
+          <Button className="h-14 w-full rounded-2xl text-lg" type="submit" disabled={isPending}>
+            {isPending ? "正在计算..." : "开始计算八字"}
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            提交后将进入命盘与 AI 解读页面。
+          </p>
+          {error ? <p className="text-center text-sm text-fire">{error}</p> : null}
+        </div>
+      </form>
 
       {form.divinationType === "bazi" ? <BaziConceptSection /> : null}
     </div>

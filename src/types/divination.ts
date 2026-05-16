@@ -22,6 +22,7 @@ export interface BaziChart {
     zodiac: string;
     gender: string;
     question: string;
+    birthPlace?: string;
   };
   pillars: BaziPillar[];
   derived: {
@@ -52,6 +53,7 @@ export interface ZiweiChart {
     time: string;
     sign: string;
     zodiac: string;
+    birthPlace?: string;
   };
   palaces: ZiweiPalace[];
 }
