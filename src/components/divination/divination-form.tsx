@@ -1,5 +1,6 @@
 "use client";
 
+import { Droplets, Flame, Globe, Swords, TreePine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,140 @@ const initialState = {
   question: "",
   isLeapMonth: false,
 };
+
+const pillarConcepts = [
+  {
+    key: "year",
+    shortLabel: "年",
+    title: "年柱",
+    description: "代表祖上、早年运势和社会关系，影响他人对你的第一印象。",
+  },
+  {
+    key: "month",
+    shortLabel: "月",
+    title: "月柱",
+    description: "代表父母、事业潜力和性格基础，是命盘里很重要的结构位置。",
+  },
+  {
+    key: "day",
+    shortLabel: "日",
+    title: "日柱（日主）",
+    description: "代表自我、性格核心和亲密关系，是整张命盘的观察中心。",
+  },
+  {
+    key: "time",
+    shortLabel: "时",
+    title: "时柱",
+    description: "代表子女、创造力、后期运势和人生逐渐展开的成果。",
+  },
+] as const;
+
+const wuxingConcepts = [
+  {
+    element: "木",
+    icon: TreePine,
+    description: "木代表生长、创造力和仁爱。",
+    className: "text-wood",
+  },
+  {
+    element: "火",
+    icon: Flame,
+    description: "火代表热情、活力和变化。",
+    className: "text-fire",
+  },
+  {
+    element: "土",
+    icon: Globe,
+    description: "土代表稳定、包容和承载力。",
+    className: "text-earth",
+  },
+  {
+    element: "金",
+    icon: Swords,
+    description: "金代表果断、秩序和原则。",
+    className: "text-metal",
+  },
+  {
+    element: "水",
+    icon: Droplets,
+    description: "水代表智慧、流动和沟通。",
+    className: "text-water",
+  },
+] as const;
+
+function BaziConceptSection() {
+  return (
+    <section className="space-y-10">
+      <div className="space-y-4 text-center">
+        <Badge>概念导读</Badge>
+        <div className="space-y-3">
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是八字？</CardTitle>
+          <CardDescription className="mx-auto max-w-3xl text-base leading-8">
+            八字也叫四柱命理，会把出生年、月、日、时组合成命盘，用来观察个性结构、
+            阶段起伏与五行之间的动态关系。
+          </CardDescription>
+        </div>
+      </div>
+
+      <Card className="space-y-8 rounded-[2rem] bg-muted/45 px-6 py-8 shadow-none md:px-8">
+        <div className="space-y-3 text-center">
+          <CardTitle className="text-3xl tracking-[0.06em]">四柱详解</CardTitle>
+          <CardDescription className="mx-auto max-w-2xl text-base leading-8">
+            八字由四柱组成，每一柱都对应人生里不同的观察层次。
+          </CardDescription>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {pillarConcepts.map((pillar) => (
+            <article
+              key={pillar.key}
+              className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.2)]"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-lg font-medium text-muted-foreground">
+                {pillar.shortLabel}
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-display text-3xl tracking-[0.04em]">{pillar.title}</h3>
+                <p className="text-sm leading-7 text-muted-foreground">{pillar.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </Card>
+
+      <div className="space-y-6">
+        <div className="space-y-3 text-center">
+          <CardTitle className="text-3xl tracking-[0.06em] md:text-4xl">五行学说</CardTitle>
+          <CardDescription className="mx-auto max-w-3xl text-base leading-8">
+            八字分析也会看木、火、土、金、水之间的相生相克，不同元素的偏强偏弱，
+            往往会影响一个人的表达方式和处事重心。
+          </CardDescription>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {wuxingConcepts.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <article
+                key={item.element}
+                className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 text-center shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
+              >
+                <div className="flex justify-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted/70">
+                    <Icon className={`h-7 w-7 ${item.className}`} strokeWidth={1.8} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display text-3xl tracking-[0.04em]">{item.element}</h3>
+                  <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function DivinationForm() {
   const router = useRouter();
@@ -246,6 +381,8 @@ export function DivinationForm() {
           </CardDescription>
         </Card>
       </div>
+
+      {form.divinationType === "bazi" ? <BaziConceptSection /> : null}
     </div>
   );
 }
