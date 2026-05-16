@@ -22,7 +22,7 @@ const sans = Noto_Sans_SC({
 export const metadata: Metadata = {
   title: {
     default: "知微",
-    template: "%s | 知微",
+    template: "知微-%s",
   },
   description: "将传统命理排盘与现代大模型解读结合的极简 AI SaaS 平台。",
 };

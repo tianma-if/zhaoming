@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,10 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile, listRecentDivinations } from "@/lib/data";
+
+export const metadata: Metadata = {
+  title: "总览",
+};
 
 export default async function DashboardPage() {
   const user = await requireUser();

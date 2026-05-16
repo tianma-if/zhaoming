@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AiReadingPanel } from "@/components/divination/ai-reading-panel";
@@ -10,6 +11,26 @@ import { Separator } from "@/components/ui/separator";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
 import type { BaziChart, ZiweiChart } from "@/types/divination";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const user = await requireUser();
+  const data = await getDivinationById(user.id, id);
+
+  if (!data) {
+    return {
+      title: "测算记录",
+    };
+  }
+
+  return {
+    title: data.divination_type === "bazi" ? "八字算命" : "紫微斗数",
+  };
+}
 
 export default async function DivinationDetailPage({
   params,

@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
 import { formatDateTime } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "测算记录",
+};
 
 export default async function DivinationsPage() {
   const user = await requireUser();

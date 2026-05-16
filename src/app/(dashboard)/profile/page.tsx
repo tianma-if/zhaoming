@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile } from "@/lib/data";
+
+export const metadata: Metadata = {
+  title: "个人资料",
+};
 
 export default async function ProfilePage() {
   const user = await requireUser();

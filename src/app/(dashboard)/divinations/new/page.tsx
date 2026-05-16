@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import { DivinationForm } from "@/components/divination/divination-form";
+
+export const metadata: Metadata = {
+  title: "八字算命",
+};
 
 export default function NewDivinationPage() {
   return (
