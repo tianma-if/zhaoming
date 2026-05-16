@@ -1,15 +1,16 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import { getEnv } from "@/lib/env";
+import { getAppBaseUrl, getEnv } from "@/lib/env";
 
 export function getAiModel() {
   const env = getEnv();
 
   if (env.AI_PROVIDER === "openai-compatible") {
     const isOpenRouter = env.AI_BASE_URL?.includes("openrouter.ai");
+    const appBaseUrl = getAppBaseUrl();
     const openRouterHeaders =
-      isOpenRouter && env.BETTER_AUTH_URL
+      isOpenRouter && appBaseUrl
         ? {
-            "HTTP-Referer": env.BETTER_AUTH_URL,
+            "HTTP-Referer": appBaseUrl,
             "X-OpenRouter-Title": "知微",
           }
         : undefined;

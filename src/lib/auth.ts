@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
-import { getEnv, hasGoogleOAuthEnv } from "@/lib/env";
+import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
 const env = getEnv();
 
@@ -23,7 +23,7 @@ const database = new Pool({
 
 export const auth = betterAuth({
   appName: "知微",
-  baseURL: env.BETTER_AUTH_URL ?? "http://localhost:5555",
+  baseURL: getAppBaseUrl() ?? "http://localhost:5555",
   secret:
     env.BETTER_AUTH_SECRET ??
     "development-placeholder-secret-change-me-123456",
