@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { auth } from "@/lib/auth";
-import { ensureUserProfile } from "@/lib/data";
 import { hasAuthEnv, hasDatabaseEnv } from "@/lib/env";
 
 const getSessionWithProfile = cache(async () => {
@@ -17,8 +16,6 @@ const getSessionWithProfile = cache(async () => {
   if (!session?.user) {
     return null;
   }
-
-  await ensureUserProfile(session.user);
 
   return session;
 });

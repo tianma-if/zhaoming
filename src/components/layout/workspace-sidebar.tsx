@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   Bot,
   CalendarDays,
@@ -64,6 +65,8 @@ export function WorkspaceSidebar({
   image?: string | null;
 }) {
   const pathname = usePathname();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const activePath = pendingHref ?? pathname;
 
   return (
     <aside className="flex h-full flex-col">
@@ -87,8 +90,8 @@ export function WorkspaceSidebar({
               <nav className="space-y-1">
                 {group.items.map((item) => {
                   const isActive = item.href
-                    ? pathname === item.href ||
-                      (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`))
+                    ? activePath === item.href ||
+                      (item.href !== "/dashboard" && activePath.startsWith(`${item.href}/`))
                     : false;
                   const Icon = item.icon;
 
@@ -115,6 +118,22 @@ export function WorkspaceSidebar({
                     <Link
                       key={`${group.label}-${item.label}`}
                       href={item.href}
+                      onClick={(event) => {
+                        if (
+                          event.defaultPrevented ||
+                          event.button !== 0 ||
+                          event.metaKey ||
+                          event.ctrlKey ||
+                          event.shiftKey ||
+                          event.altKey
+                        ) {
+                          return;
+                        }
+
+                        if (item.href !== pathname) {
+                          setPendingHref(item.href);
+                        }
+                      }}
                       className={cn(
                         "flex items-start gap-3 rounded-lg px-3 py-2.5 text-base transition",
                         isActive
