@@ -35,6 +35,8 @@
 - `React 19`
 - `TypeScript`
 - `Tailwind CSS 4`
+- `shadcn/ui`
+- `Radix UI`
 - `Better Auth`
 - `Neon Postgres`
 - `Vercel AI SDK`
@@ -48,6 +50,15 @@
 - 锁文件使用 `pnpm-lock.yaml`
 - 安装、开发、构建、Lint 均使用 `pnpm`
 - 这样可以减少重复依赖占用，降低本地 `node_modules` 的磁盘空间压力
+
+## UI 组件约定
+
+当前项目的基础 UI 组件已按 `shadcn/ui` 方式落地到仓库源码中，而不是依赖一个运行时 UI 包。
+
+- 组件源码位于 `src/components/ui`
+- 组件配置文件为 `components.json`
+- 底层 primitive 以 `Radix UI` 为主
+- 页面层视觉允许保留项目自己的卡片圆角、边框与 hover 动画，不强制套用默认展示风格
 
 ## 环境变量
 
@@ -135,6 +146,11 @@ pnpm dev
 pnpm lint
 pnpm build
 ```
+
+补充说明：
+
+- 本地默认地址为 `http://localhost:5555`
+- 鉴权相关环境变量如果误拉成生产域名，开发环境会优先回退到本地地址，避免 Google OAuth 出现 `Invalid origin`
 
 ## 鉴权说明
 
