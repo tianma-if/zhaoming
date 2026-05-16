@@ -1,6 +1,4 @@
 "use client";
-
-import { Droplets, Flame, Globe, Swords, TreePine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +42,7 @@ const pillarConcepts = [
   {
     key: "day",
     shortLabel: "日",
-    title: "日柱（日主）",
+    title: "日柱",
     description: "代表自我、性格核心和亲密关系，是整张命盘的观察中心。",
   },
   {
@@ -58,33 +56,43 @@ const pillarConcepts = [
 const wuxingConcepts = [
   {
     element: "木",
-    icon: TreePine,
+    symbol: "🌳",
     description: "木代表生长、创造力和仁爱。",
-    className: "text-wood",
+    className: "",
+    shellClassName:
+      "border border-wood/10 bg-linear-to-br from-white via-[#f4fbf2] to-[#d8efcf] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_-16px_rgba(89,130,73,0.45)]",
   },
   {
     element: "火",
-    icon: Flame,
+    symbol: "🔥",
     description: "火代表热情、活力和变化。",
-    className: "text-fire",
+    className: "",
+    shellClassName:
+      "border border-fire/10 bg-linear-to-br from-white via-[#fff5ef] to-[#ffd8c8] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_-16px_rgba(186,96,58,0.45)]",
   },
   {
     element: "土",
-    icon: Globe,
+    symbol: "🌍",
     description: "土代表稳定、包容和承载力。",
-    className: "text-earth",
+    className: "",
+    shellClassName:
+      "border border-earth/10 bg-linear-to-br from-white via-[#f8f7ef] to-[#e7dfbf] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_-16px_rgba(140,126,82,0.4)]",
   },
   {
     element: "金",
-    icon: Swords,
+    symbol: "⚔️",
     description: "金代表果断、秩序和原则。",
-    className: "text-metal",
+    className: "",
+    shellClassName:
+      "border border-metal/10 bg-linear-to-br from-white via-[#f4f4f8] to-[#dddfea] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_-16px_rgba(103,111,129,0.42)]",
   },
   {
     element: "水",
-    icon: Droplets,
+    symbol: "💧",
     description: "水代表智慧、流动和沟通。",
-    className: "text-water",
+    className: "",
+    shellClassName:
+      "border border-water/10 bg-linear-to-br from-white via-[#eef8ff] to-[#d5e9fa] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_20px_-16px_rgba(72,118,154,0.42)]",
   },
 ] as const;
 
@@ -137,16 +145,18 @@ function BaziConceptSection() {
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {wuxingConcepts.map((item) => {
-            const Icon = item.icon;
-
             return (
               <article
                 key={item.element}
                 className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 text-center shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
               >
                 <div className="flex justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted/70">
-                    <Icon className={`h-7 w-7 ${item.className}`} strokeWidth={1.8} />
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center rounded-[1.15rem] ${item.shellClassName}`}
+                  >
+                    <span className={`text-[2rem] leading-none drop-shadow-[0_3px_6px_rgba(22,20,17,0.12)] ${item.className}`}>
+                      {item.symbol}
+                    </span>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -357,30 +367,6 @@ export function DivinationForm() {
           </div>
         </form>
       </Card>
-
-      <div className="grid gap-5 md:grid-cols-3">
-        <Card className="space-y-3 rounded-[1.4rem] border border-border bg-white p-5 shadow-[0_14px_28px_-28px_rgba(22,20,17,0.1)]">
-          <Badge>输入项</Badge>
-          <CardTitle className="text-2xl">为什么要出生时间</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            出生时间会直接影响时柱变化，因此会影响对性格结构与阶段起伏的判断。
-          </CardDescription>
-        </Card>
-        <Card className="space-y-3 rounded-[1.4rem] border border-border bg-white p-5 shadow-[0_14px_28px_-28px_rgba(22,20,17,0.1)]">
-          <Badge>流程</Badge>
-          <CardTitle className="text-2xl">先排盘，再解读</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            我们不会直接生成一段空泛文案，而是先得到结构化命盘，再进入解释过程。
-          </CardDescription>
-        </Card>
-        <Card className="space-y-3 rounded-[1.4rem] border border-border bg-white p-5 shadow-[0_14px_28px_-28px_rgba(22,20,17,0.1)]">
-          <Badge>当前支持</Badge>
-          <CardTitle className="text-2xl">八字与紫微</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            当前工作台已支持八字与紫微斗数，后续会继续扩展更多命理系统。
-          </CardDescription>
-        </Card>
-      </div>
 
       {form.divinationType === "bazi" ? <BaziConceptSection /> : null}
     </div>
