@@ -61,7 +61,6 @@ export function EmailAuthForm() {
             email,
             password,
             callbackURL: "/dashboard",
-            rememberMe: true,
           });
 
           if (result.error) {
@@ -74,7 +73,6 @@ export function EmailAuthForm() {
             password,
             name: getNameFromEmail(email),
             callbackURL: "/dashboard",
-            rememberMe: true,
           });
 
           if (result.error) {
