@@ -14,6 +14,13 @@
   --accent: #f2f2ef;
   --accent-foreground: #161411;
   --ring: rgba(22, 20, 17, 0.18);
+  --destructive: #9f3f37;
+  --sidebar: #fcfcfb;
+  --sidebar-foreground: #24211d;
+  --sidebar-border: rgba(22, 20, 17, 0.1);
+  --sidebar-accent: #f1f0ed;
+  --sidebar-accent-foreground: #161411;
+  --sidebar-ring: rgba(22, 20, 17, 0.18);
   --wood: #85715c;
   --fire: #9f5f47;
   --earth: #8b7f58;
@@ -35,6 +42,13 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-wood: var(--wood);
   --color-fire: var(--fire);
   --color-earth: var(--earth);
