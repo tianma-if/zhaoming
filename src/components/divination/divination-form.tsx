@@ -1,12 +1,18 @@
 "use client";
 import type { BirthPlaceSuggestion } from "@/components/divination/birth-place-input";
 import { BirthPlaceInput } from "@/components/divination/birth-place-input";
+import { format } from "date-fns";
+import { zhCN } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -178,6 +184,7 @@ export function DivinationForm() {
   const router = useRouter();
   const [form, setForm] = useState(initialState);
   const [error, setError] = useState<string | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function updateField<K extends keyof typeof initialState>(
@@ -213,6 +220,11 @@ export function DivinationForm() {
       router.refresh();
     });
   }
+
+  const selectedDate = form.birthDate ? new Date(`${form.birthDate}T00:00:00`) : undefined;
+  const minBirthMonth = new Date(1900, 0, 1);
+  const maxBirthMonth = new Date(new Date().getFullYear() + 1, 11, 1);
+  const defaultCalendarMonth = selectedDate ?? new Date(1995, 0, 1);
 
   return (
     <div className="mx-auto max-w-5xl space-y-16">
@@ -275,38 +287,54 @@ export function DivinationForm() {
             <div className="space-y-6">
               <div className="space-y-3 text-sm">
                 <span className="text-lg font-medium">出生日期 *</span>
-                <div className="inline-flex rounded-2xl bg-muted p-1">
-                  <button
-                    type="button"
-                    className={`min-w-28 rounded-[0.9rem] px-6 py-3 text-base transition ${
-                      form.calendarType === "solar"
-                        ? "bg-white text-foreground shadow-[0_10px_24px_-20px_rgba(22,20,17,0.45)]"
-                        : "text-muted-foreground"
-                    }`}
-                    onClick={() => updateField("calendarType", "solar")}
-                  >
-                    阳历
-                  </button>
-                  <button
-                    type="button"
-                    className={`min-w-28 rounded-[0.9rem] px-6 py-3 text-base transition ${
-                      form.calendarType === "lunar"
-                        ? "bg-white text-foreground shadow-[0_10px_24px_-20px_rgba(22,20,17,0.45)]"
-                        : "text-muted-foreground"
-                    }`}
-                    onClick={() => updateField("calendarType", "lunar")}
-                  >
-                    农历
-                  </button>
-                </div>
+                <Select
+                  value={form.calendarType}
+                  onValueChange={(value) => updateField("calendarType", value as "solar" | "lunar")}
+                >
+                  <SelectTrigger className="h-13 rounded-2xl px-5 text-base">
+                    <SelectValue placeholder="请选择历法" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="solar">阳历</SelectItem>
+                    <SelectItem value="lunar">农历</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                <Input
-                  type="date"
-                  value={form.birthDate}
-                  onChange={(event) => updateField("birthDate", event.target.value)}
-                  required
-                  className="h-13 rounded-2xl px-5 text-base"
-                />
+                <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-13 w-full justify-between rounded-2xl px-5 text-base font-normal"
+                    >
+                      <span className={cn(!selectedDate && "text-muted-foreground")}>
+                        {selectedDate
+                          ? format(selectedDate, "yyyy年MM月dd日", { locale: zhCN })
+                          : "请选择出生日期"}
+                      </span>
+                      <CalendarIcon className="size-4 opacity-60" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto rounded-2xl p-3" align="start">
+                    <Calendar
+                      mode="single"
+                      locale={zhCN}
+                      captionLayout="dropdown"
+                      navLayout="around"
+                      startMonth={minBirthMonth}
+                      endMonth={maxBirthMonth}
+                      defaultMonth={defaultCalendarMonth}
+                      selected={selectedDate}
+                      className="rounded-xl border bg-background"
+                      onSelect={(date) => {
+                        if (!date) {
+                          return;
+                        }
+                        updateField("birthDate", format(date, "yyyy-MM-dd"));
+                        setIsDatePickerOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="space-y-3 text-sm">

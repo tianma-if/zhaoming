@@ -1,9 +1,18 @@
 "use client";
 
-import { LoaderCircle, MapPin, Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Check, ChevronsUpDown, LoaderCircle, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export interface BirthPlaceSuggestion {
   id: string;
@@ -31,12 +40,11 @@ export function BirthPlaceInput({
   const [suggestions, setSuggestions] = useState<BirthPlaceSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const closeTimer = useRef<number | null>(null);
 
   useEffect(() => {
-    const keyword = value.trim();
+    const trimmed = value.trim();
 
-    if (keyword.length < 2) {
+    if (trimmed.length < 2) {
       return;
     }
 
@@ -44,7 +52,7 @@ export function BirthPlaceInput({
 
     const timer = window.setTimeout(async () => {
       try {
-        const response = await fetch(`/api/locations/search?q=${encodeURIComponent(keyword)}`, {
+        const response = await fetch(`/api/locations/search?q=${encodeURIComponent(trimmed)}`, {
           signal: controller.signal,
         });
         const payload = (await response.json().catch(() => null)) as
@@ -80,62 +88,65 @@ export function BirthPlaceInput({
   return (
     <div className="space-y-2 text-sm">
       {showLabel ? <span className="text-muted-foreground">出生地点</span> : null}
-      <div
-        className="relative"
-        onFocus={() => {
-          if (closeTimer.current) {
-            window.clearTimeout(closeTimer.current);
-          }
-          if (suggestions.length > 0) {
-            setIsOpen(true);
-          }
-        }}
-        onBlur={() => {
-          closeTimer.current = window.setTimeout(() => {
-            setIsOpen(false);
-          }, 120);
-        }}
-      >
-        <Input
-          value={value}
-          onChange={(event) => {
-            const nextValue = event.target.value;
-            onChange(nextValue);
-            onSelectSuggestion(null);
-            if (nextValue.trim().length < 2) {
-              setSuggestions([]);
-              setIsOpen(false);
-              setIsLoading(false);
-            } else {
-              setIsLoading(true);
-            }
-          }}
-          placeholder="输入城市、区县或国家地区"
-          autoComplete="off"
-          className="pr-10"
-        />
-        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
-          {isLoading ? <LoaderCircle className="size-4 animate-spin" /> : <Search className="size-4" />}
-        </div>
-
-        {isOpen && suggestions.length > 0 ? (
-          <div className="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-[1.2rem] border border-border bg-white p-2 shadow-[0_18px_36px_-28px_rgba(22,20,17,0.24)]">
-            {suggestions.map((suggestion) => (
-              <button
-                key={suggestion.id}
-                type="button"
-                className={cn(
-                  "flex w-full items-start gap-3 rounded-[1rem] px-3 py-3 text-left transition hover:bg-muted/70",
-                )}
-                onClick={() => handleSelect(suggestion)}
-              >
-                <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                <span className="text-sm leading-6">{suggestion.label}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
-      </div>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={isOpen}
+            className="h-13 w-full justify-between rounded-2xl px-5 text-base font-normal"
+          >
+            <span className={cn("truncate", !value && "text-muted-foreground")}>
+              {value || "搜索并选择出生地"}
+            </span>
+            {isLoading ? (
+              <LoaderCircle className="size-4 shrink-0 animate-spin opacity-60" />
+            ) : (
+              <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+          <Command shouldFilter={false}>
+            <CommandInput
+              value={value}
+              onValueChange={(nextValue) => {
+                onChange(nextValue);
+                onSelectSuggestion(null);
+                if (nextValue.trim().length < 2) {
+                  setSuggestions([]);
+                  setIsLoading(false);
+                } else {
+                  setIsLoading(true);
+                }
+              }}
+              placeholder="输入城市、区县或国家地区"
+            />
+            <CommandList>
+              <CommandEmpty>输入至少 2 个字开始搜索</CommandEmpty>
+              <CommandGroup>
+                {suggestions.map((suggestion) => (
+                  <CommandItem
+                    key={suggestion.id}
+                    value={suggestion.label}
+                    onSelect={() => handleSelect(suggestion)}
+                    className="items-start"
+                  >
+                    <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 leading-6">{suggestion.label}</span>
+                    <Check
+                      className={cn(
+                        "mt-0.5 size-4 shrink-0",
+                        value === suggestion.label ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
       {helperText ? <p className="text-xs leading-6 text-muted-foreground">{helperText}</p> : null}
     </div>
   );
