@@ -12,9 +12,9 @@ export const siteConfig = {
 export const protectedPrefixes = ["/dashboard", "/divinations", "/profile"];
 
 export const wuxingColorMap: Record<string, string> = {
-  木: "bg-wood/12 text-wood border-wood/20",
-  火: "bg-fire/12 text-fire border-fire/20",
-  土: "bg-earth/12 text-earth border-earth/20",
-  金: "bg-metal/12 text-metal border-metal/20",
-  水: "bg-water/12 text-water border-water/20",
+  木: "border-[#cfdacb] bg-[#f1f6ef] text-[#526b4f] before:bg-[#7f9a78]",
+  火: "border-[#ead4cc] bg-[#f8eeee] text-[#8c5a52] before:bg-[#b97966]",
+  土: "border-[#e3dac5] bg-[#f6f1e8] text-[#756650] before:bg-[#a49062]",
+  金: "border-[#d7dadd] bg-[#f1f2f2] text-[#626870] before:bg-[#8c9298]",
+  水: "border-[#cfdee5] bg-[#eef4f7] text-[#4f6874] before:bg-[#7896a4]",
 };

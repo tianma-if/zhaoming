@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { WuxingBadge } from "./wuxing-badge";
+import { WuxingRadarChart } from "./wuxing-radar-chart";
 
 const stemToElement: Record<string, string> = {
   甲: "木",
@@ -119,18 +120,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           <Badge>五行分布</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">命盘里的结构比例</CardTitle>
         </div>
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr))]">
-          {elementCounts.map((item) => (
-            <div
-              key={item.element}
-              className="space-y-3 rounded-[1rem] border border-border bg-muted/50 p-4"
-            >
-              <WuxingBadge element={item.element} />
-              <p className="font-display text-4xl">{item.count}</p>
-              <p className="text-sm text-muted-foreground">结构信号</p>
-            </div>
-          ))}
-        </div>
+        <WuxingRadarChart data={elementCounts} />
       </Card>
 
       <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
