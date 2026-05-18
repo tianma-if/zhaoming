@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { RadarConfig } from "@ant-design/plots";
+import { wuxingPalette } from "@/lib/constants";
 
 const Radar = dynamic(
   () => import("@ant-design/plots").then((module) => module.Radar),
@@ -15,21 +16,16 @@ const Radar = dynamic(
   },
 );
 
-const elementToneMap: Record<string, string> = {
-  木: "#7f9a78",
-  火: "#b97966",
-  土: "#a49062",
-  金: "#8c9298",
-  水: "#7896a4",
+const defaultPalette = {
+  bg: "#f6f6f4",
+  border: "#d8d2c5",
+  text: "#6e6a64",
+  accent: "#d89a1d",
 };
 
-const elementSoftToneMap: Record<string, string> = {
-  木: "#f1f6ef",
-  火: "#f8eeee",
-  土: "#f6f1e8",
-  金: "#f1f2f2",
-  水: "#eef4f7",
-};
+function getWuxingPalette(element: string) {
+  return wuxingPalette[element] ?? defaultPalette;
+}
 
 export interface WuxingRadarDatum {
   element: string;
@@ -42,6 +38,7 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
     ...item,
     reading: "当前命盘",
   }));
+  const dominantPalette = getWuxingPalette(chartData[0]?.element ?? "");
 
   const config: RadarConfig = {
     data: chartData,
@@ -63,7 +60,7 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
         grid: true,
         line: true,
         labelFormatter: (element: string) => element,
-        labelFill: (element: string) => elementToneMap[element] ?? "rgba(22, 20, 17, 0.55)",
+        labelFill: (element: string) => getWuxingPalette(element).accent,
         labelFontSize: 13,
         labelFontWeight: 600,
       },
@@ -88,12 +85,13 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
     },
     area: {
       style: {
-        fill: "rgba(164, 144, 98, 0.16)",
+        fill: dominantPalette.accent,
+        fillOpacity: 0.18,
       },
     },
     line: {
       style: {
-        stroke: "#8f7957",
+        stroke: dominantPalette.accent,
         lineWidth: 2,
       },
     },
@@ -101,11 +99,11 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
       colorField: "element",
       scale: {
         color: {
-          range: chartData.map((item) => elementToneMap[item.element] ?? "#8f7957"),
+          range: chartData.map((item) => getWuxingPalette(item.element).accent),
         },
       },
       style: {
-        fill: (datum: WuxingRadarDatum) => elementToneMap[datum.element] ?? "#8f7957",
+        fill: (datum: WuxingRadarDatum) => getWuxingPalette(datum.element).accent,
         stroke: "#ffffff",
         lineWidth: 2,
         r: 4,
@@ -124,14 +122,14 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
             key={item.element}
             className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium"
             style={{
-              backgroundColor: elementSoftToneMap[item.element] ?? "#f6f6f4",
-              borderColor: elementToneMap[item.element] ?? "#d8d2c5",
-              color: elementToneMap[item.element] ?? "#6e6a64",
+              backgroundColor: getWuxingPalette(item.element).bg,
+              borderColor: getWuxingPalette(item.element).border,
+              color: getWuxingPalette(item.element).text,
             }}
           >
             <span
               className="size-1.5 rounded-full"
-              style={{ backgroundColor: elementToneMap[item.element] ?? "#8f7957" }}
+              style={{ backgroundColor: getWuxingPalette(item.element).accent }}
             />
             <span>{item.element}</span>
             <span className="text-foreground/65">{item.count}</span>

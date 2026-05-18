@@ -11,10 +11,43 @@ export const siteConfig = {
 
 export const protectedPrefixes = ["/dashboard", "/divinations", "/profile"];
 
-export const wuxingColorMap: Record<string, string> = {
-  木: "border-[#cfdacb] bg-[#f1f6ef] text-[#526b4f] before:bg-[#7f9a78]",
-  火: "border-[#ead4cc] bg-[#f8eeee] text-[#8c5a52] before:bg-[#b97966]",
-  土: "border-[#e3dac5] bg-[#f6f1e8] text-[#756650] before:bg-[#a49062]",
-  金: "border-[#d7dadd] bg-[#f1f2f2] text-[#626870] before:bg-[#8c9298]",
-  水: "border-[#cfdee5] bg-[#eef4f7] text-[#4f6874] before:bg-[#7896a4]",
+export const wuxingPalette: Record<
+  string,
+  {
+    bg: string;
+    border: string;
+    text: string;
+    accent: string;
+  }
+> = {
+  木: {
+    bg: "#eaf8e9",
+    border: "#9fd39f",
+    text: "#23843a",
+    accent: "#36a853",
+  },
+  火: {
+    bg: "#fff0ee",
+    border: "#f0aca2",
+    text: "#c24130",
+    accent: "#ef5b43",
+  },
+  土: {
+    bg: "#fff7df",
+    border: "#dfc36f",
+    text: "#9a6b13",
+    accent: "#d89a1d",
+  },
+  金: {
+    bg: "#f1f5f8",
+    border: "#b6c0ca",
+    text: "#4f6475",
+    accent: "#7890a4",
+  },
+  水: {
+    bg: "#eaf7fd",
+    border: "#8dc8e8",
+    text: "#1976a3",
+    accent: "#2f9fd1",
+  },
 };
