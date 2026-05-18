@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+  DashboardMetricCard,
+  DashboardPage,
+  DashboardPageHeader,
+  DashboardSection,
+} from "@/components/layout/dashboard-shell";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile, listRecentDivinations } from "@/lib/data";
 
@@ -11,7 +17,7 @@ export const metadata: Metadata = {
   title: "总览",
 };
 
-export default async function DashboardPage() {
+export default async function DashboardOverviewPage() {
   const user = await requireUser();
   const [profile, divinations] = await Promise.all([
     getUserProfile(user.id),
@@ -19,66 +25,80 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-3">
-        <Badge>Workspace</Badge>
-        <h2 className="font-display text-5xl tracking-[0.06em]">工作台</h2>
-        <p className="max-w-2xl text-sm leading-8 text-muted-foreground md:text-base">
-          从这里开始一张新的命盘，或回到你最近的阅读记录。
-        </p>
-      </div>
+    <DashboardPage>
+      <DashboardPageHeader
+        eyebrow={<Badge>Workspace</Badge>}
+        title="工作台"
+        description="从这里开始一张新的命盘，或回到你最近的阅读记录。通用后台框架会收束在这里，后续页面可以直接沿用。"
+        action={
+          <Button asChild className="rounded-xl px-4">
+            <Link href="/divinations/new">进入测算</Link>
+          </Button>
+        }
+      />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <Card className="space-y-5 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
+        <DashboardSection
+          className="border-white/45 bg-white/56 shadow-none"
+          title="开始新测算"
+          description="输入出生信息与问题，进入一张新的命盘阅读页。"
+          action={
+            <Button asChild>
+              <Link href="/divinations/new">进入测算</Link>
+            </Button>
+          }
+        >
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-3xl">开始新测算</CardTitle>
+              <CardTitle className="text-3xl">命盘入口</CardTitle>
               <CardDescription className="text-sm leading-7">
-                输入出生信息与问题，进入一张新的命盘阅读页。
+                保持业务页面不变，把壳层和信息组织方式先稳定下来。
               </CardDescription>
             </div>
-            <Link href="/divinations/new">
-              <Button>进入测算</Button>
-            </Link>
           </div>
           <Separator />
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">CREDITS</p>
-              <p className="font-display text-4xl">{profile?.credits ?? 0}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">STATUS</p>
-              <p className="font-display text-4xl">{profile?.subscription_status ?? "free"}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">RECENT</p>
-              <p className="font-display text-4xl">{divinations?.length ?? 0}</p>
-            </div>
+            <DashboardMetricCard
+              label="Credits"
+              value={profile?.credits ?? 0}
+              detail="账户剩余可用额度"
+            />
+            <DashboardMetricCard
+              label="Status"
+              value={profile?.subscription_status ?? "free"}
+              detail="订阅能力已经预留"
+            />
+            <DashboardMetricCard
+              label="Recent"
+              value={divinations?.length ?? 0}
+              detail="最近 5 条测算记录"
+            />
           </div>
-        </Card>
+        </DashboardSection>
 
-        <Card className="space-y-4 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
-          <CardTitle className="text-2xl">账户摘要</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            当前账户可继续发起测算，订阅与积分能力已预留。
-          </CardDescription>
+        <DashboardSection
+          className="border-white/45 bg-white/56 shadow-none"
+          title="账户摘要"
+          description="当前账户可继续发起测算，订阅与积分能力已预留。"
+        >
           <Separator />
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>邮箱：{profile?.email ?? user.email}</p>
             <p>订阅状态：{profile?.subscription_status ?? "free"}</p>
             <p>Stripe Customer：{profile?.stripe_customer_id ?? "未绑定"}</p>
           </div>
-        </Card>
+        </DashboardSection>
       </div>
 
-      <Card className="space-y-5 rounded-[2rem] border-white/45 bg-white/56 p-6 shadow-none">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-3xl">最近记录</CardTitle>
-          <Link href="/divinations/new">
-            <Button variant="outline">新建测算</Button>
-          </Link>
-        </div>
+      <DashboardSection
+        className="border-white/45 bg-white/56 shadow-none"
+        title="最近记录"
+        action={
+          <Button asChild variant="outline">
+            <Link href="/divinations/new">新建测算</Link>
+          </Button>
+        }
+      >
         <Separator />
         <div className="space-y-3">
           {divinations?.length ? (
@@ -103,7 +123,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-muted-foreground">还没有测算记录。</p>
           )}
         </div>
-      </Card>
-    </div>
+      </DashboardSection>
+    </DashboardPage>
   );
 }

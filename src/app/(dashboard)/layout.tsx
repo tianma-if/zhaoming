@@ -15,10 +15,10 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AppSidebar email={user.email} name={user.name} image={user.image} />
-      <SidebarInset>
+      <SidebarInset className="bg-linear-to-br from-background via-background to-muted/35">
         <DashboardHeader />
-        <div className="flex-1 px-4 py-5 md:px-8 md:py-8">
-          <div className="mx-auto w-full max-w-6xl pb-20">{children}</div>
+        <div className="flex-1 px-4 py-5 md:px-6 md:py-6">
+          <div className="pb-20">{children}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

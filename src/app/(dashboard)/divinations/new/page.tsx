@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DivinationForm } from "@/components/divination/divination-form";
+import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 
 export const metadata: Metadata = {
   title: "八字算命",
@@ -7,16 +8,13 @@ export const metadata: Metadata = {
 
 export default function NewDivinationPage() {
   return (
-    <div className="space-y-14 pt-8">
-      <div className="space-y-6 py-6 text-center">
-        <h2 className="text-5xl font-semibold tracking-[0.02em] text-foreground md:text-6xl">
-          八字计算
-        </h2>
-        <p className="mx-auto max-w-3xl text-xl font-medium leading-9 text-muted-foreground md:text-2xl">
-          精准解析生辰八字，揭示命盘奥秘
-        </p>
-      </div>
+    <DashboardPage width="narrow" className="space-y-10 pt-2">
+      <DashboardPageHeader
+        eyebrow="Divination"
+        title="八字计算"
+        description="精准解析生辰八字，揭示命盘奥秘。业务内容继续保留，但页面容器改成与后台其他模块一致的骨架。"
+      />
       <DivinationForm />
-    </div>
+    </DashboardPage>
   );
 }

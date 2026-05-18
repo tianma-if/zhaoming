@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Card, CardTitle } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
+import { DashboardEmptyState, DashboardPage, DashboardPageHeader, DashboardSection } from "@/components/layout/dashboard-shell";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
 import { formatDateTime } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const metadata: Metadata = {
   title: "测算记录",
@@ -14,35 +18,70 @@ export default async function DivinationsPage() {
   const data = await listDivinations(user.id);
 
   return (
-    <Card className="space-y-5">
-      <div className="flex items-center justify-between">
-        <CardTitle>测算记录</CardTitle>
-        <Link href="/divinations/new" className="text-sm text-muted-foreground">
-          发起新测算
-        </Link>
-      </div>
-      <div className="space-y-3">
-        {data?.map((item) => (
-          <Link
-            key={item.id}
-            href={`/divinations/${item.id}`}
-            className="block rounded-[1.4rem] bg-white/55 p-4 hover:bg-white/78"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs tracking-[0.28em] text-muted-foreground">
-                  {item.divination_type}
-                </p>
-                <p className="mt-2 text-sm leading-7">{item.question}</p>
-              </div>
-              <div className="text-right text-xs text-muted-foreground">
-                <p>{item.status}</p>
-                <p>{formatDateTime(item.created_at)}</p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </Card>
+    <DashboardPage width="wide">
+      <DashboardPageHeader
+        eyebrow="History"
+        title="测算记录"
+        description="这里改成更稳定的数据视图，而不是继续堆叠随意卡片。后续接筛选、分页和表格组件时可以直接往下扩。"
+        action={
+          <Button asChild className="rounded-xl px-4">
+            <Link href="/divinations/new">发起新测算</Link>
+          </Button>
+        }
+      />
+      <DashboardSection className="overflow-hidden p-0" title="全部记录">
+        {data?.length ? (
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead>类型</TableHead>
+                <TableHead>问题</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>创建时间</TableHead>
+                <TableHead className="text-right">查看</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="font-medium capitalize">{item.divination_type}</TableCell>
+                  <TableCell className="max-w-xl">
+                    <div className="line-clamp-2 leading-7">{item.question}</div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="rounded-full bg-muted/40">
+                      {item.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {formatDateTime(item.created_at)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button asChild variant="ghost" size="sm" className="rounded-full">
+                      <Link href={`/divinations/${item.id}`}>
+                        打开
+                        <ArrowUpRight className="size-4" />
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="p-6">
+            <DashboardEmptyState
+              title="还没有测算记录"
+              description="你后面不需要再为记录页重新设计视觉结构了，先从这里进入第一条命盘。"
+              action={
+                <Button asChild>
+                  <Link href="/divinations/new">立即新建</Link>
+                </Button>
+              }
+            />
+          </div>
+        )}
+      </DashboardSection>
+    </DashboardPage>
   );
 }
