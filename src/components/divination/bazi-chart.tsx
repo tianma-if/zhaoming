@@ -12,8 +12,8 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
       title="四柱八字"
       description="以无边框排版突出文字关系，不使用传统图表化装饰。"
     >
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 min-[1400px]:grid-cols-[minmax(0,1fr)_24rem]">
+        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,11.5rem),1fr))]">
           {view.pillars.map((pillar) => (
             <article
               key={pillar.key}
@@ -22,12 +22,10 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
               <div className="text-xs tracking-[0.28em] text-muted-foreground">
                 {pillar.label}
               </div>
-              <div className="space-y-1">
-                <p className="font-display text-4xl">{pillar.heavenlyStem}</p>
-                <p className="font-display text-3xl text-muted-foreground/90">
-                  {pillar.earthlyBranch}
-                </p>
-              </div>
+              <p className="whitespace-nowrap font-display text-4xl">
+                {pillar.heavenlyStem}
+                {pillar.earthlyBranch}
+              </p>
               <div className="text-sm text-muted-foreground">{pillar.ganZhi}</div>
               <div className="flex flex-wrap gap-2">
                 {pillar.elements.map((element) => (
@@ -36,13 +34,15 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
               </div>
               <Separator />
               <dl className="space-y-2 text-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-muted-foreground">纳音</dt>
-                  <dd>{pillar.naYin}</dd>
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <dt className="shrink-0 text-muted-foreground">纳音</dt>
+                  <dd className="min-w-0 text-right break-words">{pillar.naYin}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-muted-foreground">藏干</dt>
-                  <dd>{pillar.hiddenStems.join(" / ")}</dd>
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <dt className="shrink-0 text-muted-foreground">藏干</dt>
+                  <dd className="min-w-0 text-right break-words">
+                    {pillar.hiddenStems.join(" / ")}
+                  </dd>
                 </div>
               </dl>
             </article>
@@ -55,7 +55,7 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
             {view.summary.map((item) => (
               <div key={item.label} className="space-y-1">
                 <dt className="text-muted-foreground">{item.label}</dt>
-                <dd>{item.value}</dd>
+                <dd className="break-words">{item.value}</dd>
               </div>
             ))}
           </dl>

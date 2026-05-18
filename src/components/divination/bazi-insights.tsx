@@ -80,7 +80,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           </CardDescription>
         </div>
         <Separator />
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
           <div className="space-y-2">
             <p className="text-xs tracking-[0.28em] text-muted-foreground">日主</p>
             <p className="font-display text-4xl">
@@ -119,7 +119,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           <Badge>五行分布</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">命盘里的结构比例</CardTitle>
         </div>
-        <div className="grid gap-3 md:grid-cols-5">
+        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr))]">
           {elementCounts.map((item) => (
             <div
               key={item.element}
@@ -138,7 +138,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           <Badge>四柱详解</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">每一柱分别在说什么</CardTitle>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
           {chart.pillars.map((pillar) => (
             <article
               key={pillar.key}
@@ -146,7 +146,7 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
             >
               <div className="space-y-1">
                 <p className="text-xs tracking-[0.28em] text-muted-foreground">{pillar.label}</p>
-                <p className="font-display text-4xl">
+                <p className="whitespace-nowrap font-display text-4xl">
                   {pillar.heavenlyStem}
                   {pillar.earthlyBranch}
                 </p>
@@ -162,17 +162,21 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
               </div>
               <Separator />
               <dl className="space-y-2 text-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <dt className="text-muted-foreground">纳音</dt>
-                  <dd>{pillar.naYin}</dd>
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <dt className="shrink-0 text-muted-foreground">纳音</dt>
+                  <dd className="min-w-0 text-right break-words">{pillar.naYin}</dd>
                 </div>
-                <div className="flex items-start justify-between gap-3">
-                  <dt className="text-muted-foreground">藏干</dt>
-                  <dd>{pillar.hiddenStems.join(" / ")}</dd>
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <dt className="shrink-0 text-muted-foreground">藏干</dt>
+                  <dd className="min-w-0 text-right break-words">
+                    {pillar.hiddenStems.join(" / ")}
+                  </dd>
                 </div>
-                <div className="flex items-start justify-between gap-3">
-                  <dt className="text-muted-foreground">十神</dt>
-                  <dd>{pillar.shiShenGan || "未提供"}</dd>
+                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                  <dt className="shrink-0 text-muted-foreground">十神</dt>
+                  <dd className="min-w-0 text-right break-words">
+                    {pillar.shiShenGan || "未提供"}
+                  </dd>
                 </div>
               </dl>
             </article>
