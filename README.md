@@ -1,32 +1,26 @@
 # 知微
 
-`知微` 是一个基于 `Next.js App Router` 构建的 AI 传统命理 SaaS 原型。
+`知微` 是一个基于 `Next.js App Router` 构建的 AI 传统命理 SaaS 原型，当前聚焦于“现代化命理工作台”这一产品方向。
 
-当前版本已经完成第一阶段基础设施：
+它的目标不是复刻传统算命站，而是用更克制的视觉语言、更清晰的交互结构和 AI 辅助解读能力，把八字、紫微斗数等传统命理能力整理成可持续扩展的数字产品。
 
-- `Neon Postgres` 作为主数据库
-- `Better Auth` 作为应用鉴权层
-- `Neon Auth` 已在远端项目中 provision，可作为后续托管鉴权能力入口
-- `Vercel AI SDK` 作为 AI 解读层
-- `lunar-typescript` 负责八字排盘
-- `iztro` 负责紫微斗数排盘
-
-界面风格走极简、低饱和、排印优先路线，避免传统算命站视觉语言。
-
-## 在线访问
+## 在线地址
 
 - 生产域名：[https://zhiwei.tianma-if.uk](https://zhiwei.tianma-if.uk)
 - 部署平台：`Vercel`
 
 ## 当前能力
 
-- Google OAuth 登录入口已接入 Better Auth
+当前版本已完成第一阶段基础设施与核心链路：
+
+- Google OAuth 登录入口已接入 `Better Auth`
+- 主数据库使用 `Neon Postgres`
 - 用户业务档案表 `public.users` 已预留 `stripe_customer_id`、`subscription_status`、`credits`
 - 测算记录表 `public.divinations` 已支持保存输入参数、排盘 JSON、AI 输出
 - 博客表 `public.posts` 与 `/api/automation/publish-blog` 已预留自动化 SEO 入口
-- `/api/webhooks/stripe` 已预留 Stripe Webhook 路由
-- 八字极简排盘 UI 已完成
-- 紫微斗数 `4 x 4` 中空环形网格 UI 已完成
+- `/api/webhooks/stripe` 已预留 `Stripe Webhook` 路由
+- 八字排盘与基础工作台 UI 已接入
+- 紫微斗数 `4 x 4` 中空环形网格 UI 已接入
 - AI 解盘支持流式输出
 
 ## 技术栈
@@ -43,30 +37,32 @@
 - `lunar-typescript`
 - `iztro`
 
-## 包管理器
+## 后台脚手架
 
-项目已统一切换到 `pnpm`，默认不再使用 `npm`。
+当前后台工作台以 [Kiranism/next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter) 作为后台脚手架母体来开发。
 
-- 锁文件使用 `pnpm-lock.yaml`
-- 安装、开发、构建、Lint 均使用 `pnpm`
-- 这样可以减少重复依赖占用，降低本地 `node_modules` 的磁盘空间压力
-
-## UI 组件约定
-
-当前项目的基础 UI 组件已按 `shadcn/ui` 方式落地到仓库源码中，而不是依赖一个运行时 UI 包。
-
-- 组件源码位于 `src/components/ui`
-- 组件配置文件为 `components.json`
-- 底层 primitive 以 `Radix UI` 为主
-- 页面层视觉允许保留项目自己的卡片圆角、边框与 hover 动画，不强制套用默认展示风格
-
-当前后台工作台的壳层与部分布局约定，参考了 [Kiranism/next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter) 作为脚手架思路。
-
-- 仅部分引用其 `dashboard shell / sidebar / page container` 一类的后台骨架思路
-- 未整体照搬其业务模块、鉴权体系、SaaS 信息架构或完整组件实现
+- 优先复用其成熟的 `dashboard shell / sidebar / page container / data page` 一类后台骨架
+- 仅保留当前项目真正需要的组件与布局约定
+- 未整体照搬其业务模块、鉴权体系、SaaS 信息架构或演示页面
 - 命理业务页面、排盘流程、数据模型与产品视觉方向仍以本项目自身需求为主
 
-## 环境变量
+## 本地开发
+
+### 包管理器
+
+项目统一使用 `pnpm`：
+
+- 锁文件为 `pnpm-lock.yaml`
+- 安装、开发、构建、Lint 均使用 `pnpm`
+- 默认不再使用 `npm`
+
+如果本机还没启用 `pnpm`，建议先执行：
+
+```bash
+corepack enable
+```
+
+### 环境变量
 
 复制 `.env.example` 为 `.env.local`：
 
@@ -93,7 +89,7 @@ AUTOMATION_API_KEY=
 
 说明：
 
-- `DATABASE_URL`：Neon Postgres 连接串
+- `DATABASE_URL`：`Neon Postgres` 连接串
 - `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串
 - `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:5555`
 - `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
@@ -103,32 +99,7 @@ AUTOMATION_API_KEY=
 - `AI_BASE_URL`：如果使用 `openai-compatible`，OpenRouter 可填写 `https://openrouter.ai/api/v1`
 - `AUTOMATION_API_KEY`：保护 `/api/automation/publish-blog`
 
-## 数据库结构
-
-认证相关表由 Better Auth / Neon Auth 使用：
-
-- `neon_auth.user`
-- `neon_auth.session`
-- `neon_auth.account`
-- `neon_auth.verification`
-
-业务表位于 `public`：
-
-- `public.users`
-- `public.divinations`
-- `public.posts`
-
-初始化 SQL 基线在：
-
-- [db/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/db/migrations/0001_init.sql)
-
-## 本地开发
-
-如果本机还没启用 `pnpm`，建议先执行：
-
-```bash
-corepack enable
-```
+### 安装与启动
 
 安装依赖：
 
@@ -158,7 +129,57 @@ pnpm build
 - 本地默认地址为 `http://localhost:5555`
 - 鉴权相关环境变量如果误拉成生产域名，开发环境会优先回退到本地地址，避免 Google OAuth 出现 `Invalid origin`
 
-## 鉴权说明
+## UI 与组件约定
+
+当前项目的基础 UI 组件已按 `shadcn/ui` 方式落地到仓库源码中，而不是依赖一个运行时 UI 包。
+
+- 组件源码位于 `src/components/ui`
+- 组件配置文件为 `components.json`
+- 底层 primitive 以 `Radix UI` 为主
+- 页面层视觉允许保留项目自己的卡片圆角、边框与 hover 动画，不强制套用默认展示风格
+- 实现新 UI 时优先复用已有组件，而不是重新造轮子
+
+## 目录结构
+
+```text
+src/
+  app/
+    (marketing)/
+    (auth)/
+    (dashboard)/
+    api/
+  components/
+  lib/
+    ai/
+    auth/
+    divination/
+    blog/
+    db.ts
+    auth.ts
+    auth-client.ts
+  types/
+db/
+  migrations/
+```
+
+## 数据库与鉴权
+
+认证相关表由 `Better Auth / Neon Auth` 使用：
+
+- `neon_auth.user`
+- `neon_auth.session`
+- `neon_auth.account`
+- `neon_auth.verification`
+
+业务表位于 `public`：
+
+- `public.users`
+- `public.divinations`
+- `public.posts`
+
+初始化 SQL 基线在：
+
+- [db/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/db/migrations/0001_init.sql)
 
 当前代码使用的是：
 
@@ -184,14 +205,14 @@ Google OAuth 回调路径为：
 http://localhost:5555/api/auth/callback/google
 ```
 
-## AI Provider 说明
+## AI Provider
 
 项目支持两种模式：
 
 1. `AI_PROVIDER=gateway`
 2. `AI_PROVIDER=openai-compatible`
 
-目前推荐的接法是 `OpenRouter + OpenAI-compatible`：
+目前推荐接法是 `OpenRouter + OpenAI-compatible`：
 
 ```env
 AI_PROVIDER=openai-compatible
@@ -206,32 +227,16 @@ AI_API_KEY=your_openrouter_key
 
 如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回占位文本，而不是直接报错。
 
-## 关键目录
+## 部署与远端资源
 
-```text
-src/
-  app/
-    (marketing)/
-    (auth)/
-    (dashboard)/
-    api/
-  components/
-  lib/
-    ai/
-    auth/
-    divination/
-    blog/
-    db.ts
-    auth.ts
-    auth-client.ts
-  types/
-db/
-  migrations/
-```
+### Vercel
 
-## 远端 Neon 项目
+- 生产域名：[https://zhiwei.tianma-if.uk](https://zhiwei.tianma-if.uk)
+- 部署平台：`Vercel`
 
-当前已对接的 Neon 项目是：
+### Neon
+
+当前已对接的 Neon 项目：
 
 - Project: `zhiwei`
 - Project ID: `late-water-70564475`
@@ -240,9 +245,9 @@ db/
 
 已确认该项目上 `Neon Auth` 处于 provision 状态。
 
-## 下一步建议
+## 下一步计划
 
-- 补上 Better Auth 的正式 schema/migrate 流程，避免只依赖手写 SQL
+- 补上 `Better Auth` 的正式 schema/migrate 流程，避免只依赖手写 SQL
 - 接通真实 Google OAuth 后做一次完整登录验收
 - 把积分扣减与 Stripe 订阅状态真正落库
 - 继续扩展奇门遁甲、梅花易数等适配器

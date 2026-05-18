@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Crown, ChevronRight } from "lucide-react";
+import { Sparkles, ChevronRight } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,7 @@ function NavItem({
   const Icon = item.icon;
   const isActive = item.href ? activeHref === item.href : false;
   const baseItemClassName =
-    "h-auto min-h-11 rounded-xl px-3 py-2 text-[15px] text-sidebar-foreground hover:bg-black/4 hover:text-sidebar-foreground data-[active=true]:bg-black/6 data-[active=true]:font-medium data-[active=true]:text-sidebar-foreground [&>svg]:size-[1.15rem]";
+    "h-8 rounded-md p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground [&>svg]:size-4";
 
   if (item.items?.length) {
     return (
@@ -95,7 +95,7 @@ function NavItem({
         <SidebarMenuButton
           tooltip={item.title}
           aria-disabled="true"
-          className="h-auto min-h-11 cursor-default items-start rounded-xl px-3 py-2 opacity-75 hover:bg-transparent hover:text-sidebar-foreground [&>svg]:mt-0.5 [&>svg]:size-[1.15rem]"
+          className="h-auto min-h-8 cursor-default items-start rounded-md p-2 opacity-70 hover:bg-transparent hover:text-sidebar-foreground [&>svg]:mt-0.5 [&>svg]:size-4"
         >
           <Icon />
           <span className="min-w-0">
@@ -129,25 +129,23 @@ export function AppSidebar({
       collapsible="icon"
       variant="sidebar"
       className="border-r border-sidebar-border/80"
-      style={{ "--sidebar-width": "24rem" } as React.CSSProperties}
+      style={{ "--sidebar-width": "16rem" } as React.CSSProperties}
     >
-      <SidebarHeader className="border-b border-sidebar-border/90 px-6 py-6">
-        <Link href="/" className="flex min-w-0 items-center gap-4 rounded-md">
-          <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-foreground text-lg font-semibold text-background">
+      <SidebarHeader className="border-b border-sidebar-border/90 p-4">
+        <Link href="/" className="flex min-w-0 items-center gap-3 rounded-md">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-foreground text-base font-semibold text-background">
             知
           </span>
-          <span className="grid min-w-0 gap-1 group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-[2rem] font-semibold leading-none tracking-[-0.02em]">
-              知微
-            </span>
+          <span className="grid min-w-0 gap-0.5 group-data-[collapsible=icon]:hidden">
+            <span className="truncate text-xl font-semibold leading-none">知微</span>
             <span className="truncate text-sm text-sidebar-foreground/60">AI 命理工作台</span>
           </span>
         </Link>
       </SidebarHeader>
-      <SidebarContent className="px-5 py-6">
+      <SidebarContent className="overflow-x-hidden px-2 py-3">
         {dashboardNavGroups.map((group) => (
-          <SidebarGroup key={group.label} className="px-0 py-0">
-            <SidebarGroupLabel className="mb-3 px-1 text-base font-medium text-sidebar-foreground/58">
+          <SidebarGroup key={group.label} className="py-0">
+            <SidebarGroupLabel className="px-2 text-xs font-medium text-sidebar-foreground/70">
               {group.label}
             </SidebarGroupLabel>
             <SidebarMenu>
@@ -158,9 +156,9 @@ export function AppSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className={cn("border-t border-sidebar-border/90 px-5 py-5")}>
-        <Button className="h-14 rounded-2xl bg-foreground text-base font-semibold text-background hover:opacity-92">
-          <Crown className="size-5" />
+      <SidebarFooter className={cn("border-t border-sidebar-border/90 p-2")}>
+        <Button variant="outline" className="h-10 justify-start rounded-md bg-background shadow-none">
+          <Sparkles className="size-4" />
           解锁全部功能
         </Button>
         <DashboardUserMenu email={email} name={name} image={image} />

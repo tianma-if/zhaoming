@@ -3,13 +3,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
-const pageWidthVariants = cva("w-full", {
+const pageWidthVariants = cva("flex flex-1 flex-col", {
   variants: {
     width: {
-      default: "max-w-6xl",
-      wide: "max-w-7xl",
-      narrow: "max-w-5xl",
-      full: "max-w-none",
+      default: "",
+      wide: "",
+      narrow: "",
+      full: "",
     },
   },
   defaultVariants: {
@@ -46,23 +46,23 @@ export function DashboardPageHeader({
   return (
     <header
       className={cn(
-        "flex flex-col gap-5 rounded-[2rem] border border-border/70 bg-linear-to-br from-white via-white to-muted/45 px-6 py-7 shadow-[0_18px_38px_-30px_rgba(22,20,17,0.24)] md:flex-row md:items-end md:justify-between md:px-8",
+        "mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between",
         className,
       )}
       {...props}
     >
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         {eyebrow ? (
-          <div className="text-xs font-medium tracking-[0.28em] text-muted-foreground uppercase">
+          <div className="text-xs font-medium tracking-[0.24em] text-muted-foreground uppercase">
             {eyebrow}
           </div>
         ) : null}
-        <div className="space-y-2">
-          <h1 className="font-display text-4xl tracking-[0.06em] text-foreground md:text-5xl">
+        <div className="space-y-1.5">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             {title}
           </h1>
           {description ? (
-            <p className="max-w-3xl text-sm leading-8 text-muted-foreground md:text-base">
+            <p className="max-w-4xl text-sm text-muted-foreground md:text-base">
               {description}
             </p>
           ) : null}

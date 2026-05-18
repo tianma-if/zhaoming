@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   const user = await requireUser();
 
   return (
-    <SidebarProvider style={{ "--sidebar-width": "24rem" } as React.CSSProperties}>
+    <SidebarProvider style={{ "--sidebar-width": "16rem" } as React.CSSProperties}>
       <AppSidebar email={user.email} name={user.name} image={user.image} />
       <SidebarInset className="bg-linear-to-br from-background via-background to-muted/35">
         <DashboardHeader />
