@@ -25,15 +25,17 @@
 
 ## 技术栈
 
-- `Next.js 16`
-- `React 19`
-- `TypeScript`
+- `Next.js 16.2.6` + `App Router`
+- `React 19.2.4`
+- `TypeScript 5`
 - `Tailwind CSS 4`
-- `shadcn/ui`
+- `shadcn/ui`（`new-york` 风格）
 - `Radix UI`
+- `React Hook Form` + `Zod`
 - `Better Auth`
 - `Neon Postgres`
-- `Vercel AI SDK`
+- `Vercel AI SDK 6`
+- `OpenAI-compatible Provider`（当前默认用于接 `OpenRouter`）
 - `lunar-typescript`
 - `iztro`
 
