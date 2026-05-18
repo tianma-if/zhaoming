@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BookOpenText,
   Bot,
   CalendarDays,
   Calculator,
@@ -32,32 +33,22 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
     items: [
       { href: "/dashboard", title: "总览", icon: LayoutDashboard },
       { href: "/divinations", title: "测算记录", icon: CalendarDays },
+      { href: "/divinations/new", title: "发起测算", note: "八字排盘", icon: Calculator },
       { href: "/profile", title: "个人资料", icon: UserRound },
     ],
   },
   {
-    label: "命理类",
+    label: "即将开放",
     items: [
-      { href: "/divinations/new", title: "八字算命", note: "四柱推命", icon: Calculator },
       { title: "紫微斗数", note: "排盘 UI 已接入", icon: Sparkles },
-      { title: "袁天罡称骨", icon: CalendarDays },
-    ],
-  },
-  {
-    label: "占卜类",
-    items: [
+      { title: "袁天罡称骨", note: "轻量快速测算", icon: BookOpenText },
       { title: "六爻占卜", note: "纳甲筮法", icon: Ticket },
       { title: "梅花易数", icon: Orbit },
       { title: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
-    ],
-  },
-  {
-    label: "相术与工具",
-    items: [
       { title: "面相学", icon: UserRound },
       { title: "手相学", icon: Hand },
       { title: "AI 老黄历", icon: Bot },
-      { href: "/profile", title: "账户设置", icon: Settings },
+      { href: "/profile", title: "账户设置", note: "订阅与积分", icon: Settings },
     ],
   },
 ];
@@ -88,9 +79,11 @@ export function getDashboardBreadcrumbs(pathname: string) {
 
   return segments.map((segment, index) => {
     const href = `/${segments.slice(0, index + 1).join("/")}`;
+    const previousSegment = segments[index - 1];
+    const isDivinationDetail = previousSegment === "divinations" && !labels[segment];
 
     return {
-      label: labels[segment] ?? "详情",
+      label: labels[segment] ?? (isDivinationDetail ? "解盘详情" : "详情"),
       href: index === segments.length - 1 ? undefined : href,
     };
   });
