@@ -60,6 +60,12 @@
 - 底层 primitive 以 `Radix UI` 为主
 - 页面层视觉允许保留项目自己的卡片圆角、边框与 hover 动画，不强制套用默认展示风格
 
+当前后台工作台的壳层与部分布局约定，参考了 [Kiranism/next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter) 作为脚手架思路。
+
+- 仅部分引用其 `dashboard shell / sidebar / page container` 一类的后台骨架思路
+- 未整体照搬其业务模块、鉴权体系、SaaS 信息架构或完整组件实现
+- 命理业务页面、排盘流程、数据模型与产品视觉方向仍以本项目自身需求为主
+
 ## 环境变量
 
 复制 `.env.example` 为 `.env.local`：

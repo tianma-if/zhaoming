@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
-const pageWidthVariants = cva("mx-auto w-full", {
+const pageWidthVariants = cva("w-full", {
   variants: {
     width: {
       default: "max-w-6xl",
