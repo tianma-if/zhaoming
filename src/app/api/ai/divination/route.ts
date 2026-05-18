@@ -19,7 +19,11 @@ export async function POST(request: Request) {
 
   await ensureUserProfile(user);
 
-  const payload = (await request.json()) as { divinationId?: string };
+  const payload = (await request.json()) as {
+    divinationId?: string;
+    mode?: "full" | "verdict";
+  };
+  const mode = payload.mode ?? "full";
 
   if (!payload.divinationId) {
     return NextResponse.json({ error: "Missing divinationId" }, { status: 400 });
@@ -32,6 +36,12 @@ export async function POST(request: Request) {
   }
 
   if (!hasAiProviderEnv()) {
+    if (mode === "verdict") {
+      return textResponse(
+        "模型配置尚未完成。当前可以先阅读页面中的结构摘要；补齐 AI Provider 环境变量后，这里会生成更贴近命盘气质的命格判词。",
+      );
+    }
+
     return textResponse(
       [
         "模型配置尚未完成，因此这里先返回引导文本。",
@@ -42,19 +52,21 @@ export async function POST(request: Request) {
     );
   }
 
-  const prompt = buildDivinationPrompt(record);
+  const prompt = buildDivinationPrompt(record, mode);
 
   const result = streamText({
     model: getAiModel(),
     system: prompt.system,
     prompt: prompt.prompt,
     onFinish: async ({ text }) => {
-      await updateDivinationResult({
-        id: record.id,
-        userId: user.id,
-        markdown: text,
-        aiModel: process.env.AI_MODEL ?? "unknown",
-      });
+      if (mode === "full") {
+        await updateDivinationResult({
+          id: record.id,
+          userId: user.id,
+          markdown: text,
+          aiModel: process.env.AI_MODEL ?? "unknown",
+        });
+      }
     },
   });
 

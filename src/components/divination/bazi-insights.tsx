@@ -2,21 +2,9 @@ import type { BaziChart } from "@/types/divination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdict";
 import { WuxingBadge } from "./wuxing-badge";
 import { WuxingRadarChart } from "./wuxing-radar-chart";
-
-const stemToElement: Record<string, string> = {
-  甲: "木",
-  乙: "木",
-  丙: "火",
-  丁: "火",
-  戊: "土",
-  己: "土",
-  庚: "金",
-  辛: "金",
-  壬: "水",
-  癸: "水",
-};
 
 const pillarMeaning: Record<string, string> = {
   year: "代表祖上、早期环境与外部印象。",
@@ -25,50 +13,11 @@ const pillarMeaning: Record<string, string> = {
   time: "代表后期倾向、子女缘与创造表达。",
 };
 
-function countElements(chart: BaziChart) {
-  const counts: Record<string, number> = {
-    木: 0,
-    火: 0,
-    土: 0,
-    金: 0,
-    水: 0,
-  };
-
-  for (const pillar of chart.pillars) {
-    for (const element of pillar.wuXing.split("")) {
-      if (counts[element] !== undefined) {
-        counts[element] += 1;
-      }
-    }
-
-    for (const stem of pillar.hiddenStems) {
-      const element = stemToElement[stem];
-      if (element) {
-        counts[element] += 1;
-      }
-    }
-  }
-
-  return Object.entries(counts)
-    .map(([element, count]) => ({ element, count }))
-    .sort((a, b) => b.count - a.count);
-}
-
-function getDayMaster(chart: BaziChart) {
-  const dayStem = chart.pillars.find((pillar) => pillar.key === "day")?.heavenlyStem ?? "";
-  const element = stemToElement[dayStem] ?? "未知";
-
-  return {
-    stem: dayStem,
-    element,
-  };
-}
-
 export function BaziInsights({ chart }: { chart: BaziChart }) {
-  const elementCounts = countElements(chart);
+  const elementCounts = countBaziElements(chart);
   const strongest = elementCounts[0];
   const weakest = elementCounts[elementCounts.length - 1];
-  const dayMaster = getDayMaster(chart);
+  const dayMaster = getBaziDayMaster(chart);
 
   return (
     <div className="space-y-6">

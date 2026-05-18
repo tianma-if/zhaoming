@@ -3,7 +3,29 @@ import { stringifyChart } from "@/lib/divination/normalize";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
-export function buildDivinationPrompt(record: DivinationRecord) {
+export function buildDivinationPrompt(
+  record: DivinationRecord,
+  mode: "full" | "verdict" = "full",
+) {
+  if (mode === "verdict") {
+    return {
+      system: [
+        "你是一位克制、审慎、语言高级且不煽情的命理解读助手。",
+        "你会基于结构化排盘数据，生成一段适合放在页面顶部的命格判词。",
+        "不要使用标题、列表、Markdown、恐吓式表达或宿命论。",
+        "输出 120 到 180 个中文字符，既要有情绪价值，也要落在八字结构上。",
+      ].join("\n"),
+      prompt: [
+        `测算类型：${record.divination_type}`,
+        `用户问题：${record.question}`,
+        `性别：${record.gender ?? "unknown"}`,
+        `出生公历：${record.birth_gregorian ?? "unknown"}`,
+        "排盘 JSON：",
+        stringifyChart(record.chart_json),
+      ].join("\n\n"),
+    };
+  }
+
   return {
     system: [
       "你是一位克制、审慎、语言高级且不煽情的命理解读助手。",
