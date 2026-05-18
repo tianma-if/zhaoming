@@ -6,13 +6,6 @@ import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdi
 import { WuxingBadge } from "./wuxing-badge";
 import { WuxingRadarChart } from "./wuxing-radar-chart";
 
-const pillarMeaning: Record<string, string> = {
-  year: "代表祖上、早期环境与外部印象。",
-  month: "代表成长路径、事业基础与现实运作方式。",
-  day: "代表自我核心、亲密关系与内在判断。",
-  time: "代表后期倾向、子女缘与创造表达。",
-};
-
 export function BaziInsights({ chart }: { chart: BaziChart }) {
   const elementCounts = countBaziElements(chart);
   const strongest = elementCounts[0];
@@ -72,56 +65,6 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
         <WuxingRadarChart data={elementCounts} />
       </Card>
 
-      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
-        <div className="space-y-2">
-          <Badge>四柱详解</Badge>
-          <CardTitle className="text-3xl tracking-[0.04em]">每一柱分别在说什么</CardTitle>
-        </div>
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
-          {chart.pillars.map((pillar) => (
-            <article
-              key={pillar.key}
-              className="space-y-4 rounded-[1rem] border border-border bg-white p-4"
-            >
-              <div className="space-y-1">
-                <p className="text-xs tracking-[0.28em] text-muted-foreground">{pillar.label}</p>
-                <p className="whitespace-nowrap font-display text-4xl">
-                  {pillar.heavenlyStem}
-                  {pillar.earthlyBranch}
-                </p>
-                <p className="text-sm text-muted-foreground">{pillar.ganZhi}</p>
-              </div>
-              <p className="text-sm leading-7 text-muted-foreground">
-                {pillarMeaning[pillar.key]}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {pillar.wuXing.split("").map((element, index) => (
-                  <WuxingBadge key={`${pillar.key}-${element}-${index}`} element={element} />
-                ))}
-              </div>
-              <Separator />
-              <dl className="space-y-2 text-sm">
-                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <dt className="shrink-0 text-muted-foreground">纳音</dt>
-                  <dd className="min-w-0 text-right break-words">{pillar.naYin}</dd>
-                </div>
-                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <dt className="shrink-0 text-muted-foreground">藏干</dt>
-                  <dd className="min-w-0 text-right break-words">
-                    {pillar.hiddenStems.join(" / ")}
-                  </dd>
-                </div>
-                <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <dt className="shrink-0 text-muted-foreground">十神</dt>
-                  <dd className="min-w-0 text-right break-words">
-                    {pillar.shiShenGan || "未提供"}
-                  </dd>
-                </div>
-              </dl>
-            </article>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }
