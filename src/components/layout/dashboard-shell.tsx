@@ -7,7 +7,7 @@ const pageWidthVariants = cva("flex flex-1 flex-col w-full", {
   variants: {
     width: {
       default: "max-w-6xl",
-      wide: "max-w-7xl",
+      wide: "max-w-[88rem]",
       narrow: "max-w-5xl",
       full: "max-w-none",
     },
