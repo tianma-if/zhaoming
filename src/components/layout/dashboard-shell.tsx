@@ -3,13 +3,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
-const pageWidthVariants = cva("flex flex-1 flex-col", {
+const pageWidthVariants = cva("flex flex-1 flex-col w-full", {
   variants: {
     width: {
-      default: "",
-      wide: "",
-      narrow: "",
-      full: "",
+      default: "max-w-6xl",
+      wide: "max-w-7xl",
+      narrow: "max-w-5xl",
+      full: "max-w-none",
     },
   },
   defaultVariants: {
@@ -24,7 +24,7 @@ export function DashboardPage({
 }: React.ComponentProps<"section"> & VariantProps<typeof pageWidthVariants>) {
   return (
     <section
-      className={cn("space-y-8", pageWidthVariants({ width }), className)}
+      className={cn("mx-auto space-y-8", pageWidthVariants({ width }), className)}
       {...props}
     />
   );
