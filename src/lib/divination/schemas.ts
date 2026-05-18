@@ -22,4 +22,5 @@ export const divinationInputSchema = z.object({
   question: z.string().trim().min(6).max(600),
 });
 
-export type DivinationInput = z.infer<typeof divinationInputSchema>;
+export type DivinationInputForm = z.input<typeof divinationInputSchema>;
+export type DivinationInput = z.output<typeof divinationInputSchema>;

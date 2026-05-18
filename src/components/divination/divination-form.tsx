@@ -9,7 +9,10 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { divinationInputSchema, type DivinationInput } from "@/lib/divination/schemas";
+import {
+  divinationInputSchema,
+  type DivinationInputForm,
+} from "@/lib/divination/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -33,7 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const initialValues: DivinationInput = {
+const initialValues: DivinationInputForm = {
   divinationType: "bazi",
   calendarType: "solar",
   birthDate: "",
@@ -197,12 +200,12 @@ export function DivinationForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const form = useForm<DivinationInput>({
+  const form = useForm<DivinationInputForm>({
     resolver: zodResolver(divinationInputSchema),
     defaultValues: initialValues,
   });
 
-  function handleSubmit(values: DivinationInput) {
+  function handleSubmit(values: DivinationInputForm) {
     setSubmitError(null);
 
     startTransition(async () => {
@@ -372,7 +375,7 @@ export function DivinationForm() {
                       <FormItem className="space-y-3 text-sm">
                         <FormLabel>出生地点 *</FormLabel>
                         <BirthPlaceInput
-                          value={field.value}
+                          value={field.value ?? ""}
                           onChange={field.onChange}
                           onSelectSuggestion={(suggestion) =>
                             form.setValue("birthPlaceMeta", suggestion as BirthPlaceSuggestion | null, {
@@ -421,7 +424,7 @@ export function DivinationForm() {
                           <label className="flex items-center gap-3 rounded-md border border-border bg-white px-4 py-3 text-sm text-muted-foreground">
                             <input
                               type="checkbox"
-                              checked={field.value}
+                              checked={Boolean(field.value)}
                               onChange={(event) => field.onChange(event.target.checked)}
                             />
                             当前日期为农历闰月

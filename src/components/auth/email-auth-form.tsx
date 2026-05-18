@@ -25,9 +25,7 @@ type AuthMode = "sign-in" | "sign-up";
 const emailAuthSchema = z.object({
   email: z.email("请输入有效的邮箱地址。"),
   password: z.string().min(8, "密码至少 8 个字符。"),
-  acceptedTerms: z.literal(true, {
-    errorMap: () => ({ message: "请先阅读并同意相关条款。" }),
-  }),
+  acceptedTerms: z.boolean().refine((value) => value, "请先阅读并同意相关条款。"),
 });
 
 type EmailAuthValues = z.infer<typeof emailAuthSchema>;
