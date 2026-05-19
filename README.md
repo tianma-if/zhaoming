@@ -157,7 +157,10 @@ src/
   components/
     divination/
       bazi-chart.tsx              # 八字排盘基础信息与四柱详解
+      bazi-dayun-analysis.tsx     # 八字大运详情与十年运势卡片
       bazi-insights.tsx           # 八字分析区组合：五行、十神、神煞、大运
+      bazi-shensha-analysis.tsx   # 八字神煞分析四柱分栏
+      bazi-ten-god-analysis.tsx   # 八字十神分析四柱分栏
       bazi-verdict-card.tsx       # 八字 AI 判词卡片与流式生成入口
       birth-place-input.tsx       # 出生地搜索输入
       chart-shell.tsx             # 简单命盘图表外壳
