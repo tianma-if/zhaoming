@@ -155,6 +155,20 @@ src/
     (dashboard)/
     api/
   components/
+    divination/
+      bazi-chart.tsx              # 八字排盘基础信息与四柱详解
+      bazi-insights.tsx           # 八字分析区组合：五行、十神、神煞、大运
+      bazi-verdict-card.tsx       # 八字 AI 判词卡片与流式生成入口
+      birth-place-input.tsx       # 出生地搜索输入
+      chart-shell.tsx             # 简单命盘图表外壳
+      divination-form.tsx         # 新建测算表单
+      wuxing-analysis-card.tsx    # 可复用五行分析卡片
+      wuxing-badge.tsx            # 五行彩色徽章
+      wuxing-radar-chart.tsx      # SVG 五行雷达图
+      ziwei-chart.tsx             # 紫微斗数 4 x 4 宫位网格
+    layout/
+    prose/
+    ui/
   lib/
     ai/
     auth/
