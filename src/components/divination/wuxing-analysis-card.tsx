@@ -4,22 +4,14 @@ import { Separator } from "@/components/ui/separator";
 import { WuxingBadge } from "./wuxing-badge";
 import { WuxingRadarChart, type WuxingRadarDatum } from "./wuxing-radar-chart";
 
-export interface WuxingRelationDatum {
-  element: string;
-  count: number;
-  relation: string;
-}
-
 export function WuxingAnalysisCard({
   dayMaster,
-  relationData,
   radarData,
 }: {
   dayMaster: {
     stem: string;
     element: string;
   };
-  relationData: WuxingRelationDatum[];
   radarData: WuxingRadarDatum[];
 }) {
   return (
@@ -37,18 +29,6 @@ export function WuxingAnalysisCard({
             <WuxingBadge element={dayMaster.element} />
           </div>
           <Badge>五行分布与关系</Badge>
-        </div>
-
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr))]">
-          {relationData.map((item) => (
-            <div key={item.element} className="space-y-2 rounded-[1.1rem] bg-muted/35 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="font-display text-3xl">{item.element}</p>
-                <Badge className="bg-white">{item.relation}</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">{item.count} 个</p>
-            </div>
-          ))}
         </div>
 
         <div className="space-y-3 rounded-[1.1rem] bg-muted/20 p-4">
