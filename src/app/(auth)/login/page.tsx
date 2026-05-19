@@ -47,10 +47,10 @@ export default async function LoginPage() {
 
             <GoogleSignInButton />
 
-            <div className="flex items-center gap-4 text-sm text-[#9b9185]">
-              <Separator className="bg-[#e7e0d6]" />
+            <div className="flex w-full items-center gap-4 text-sm text-[#9b9185]">
+              <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
               <span className="shrink-0">或使用邮箱登录</span>
-              <Separator className="bg-[#e7e0d6]" />
+              <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
             </div>
 
             <EmailAuthForm />

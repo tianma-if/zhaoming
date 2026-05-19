@@ -20,7 +20,6 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -258,9 +257,8 @@ export function DivinationForm() {
                     <FormItem className="space-y-3">
                       <FormLabel>姓名</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="请输入姓名（可选）" className="h-11 rounded-md" />
+                        <Input {...field} placeholder="请输入姓名" className="h-11 rounded-md" />
                       </FormControl>
-                      <FormDescription>姓名仅用于记录，不影响排盘结果</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -399,17 +397,9 @@ export function DivinationForm() {
                     render={({ field }) => (
                       <FormItem className="space-y-3 text-sm">
                         <FormLabel>出生时辰 *</FormLabel>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <FormControl>
-                            <Input {...field} type="time" className="h-11 rounded-md" />
-                          </FormControl>
-                          <div className="flex items-center rounded-md border border-border bg-muted/30 px-4 text-sm text-muted-foreground">
-                            当前测算系统：八字
-                          </div>
-                        </div>
-                        <FormDescription>
-                          八字测算建议尽量提供准确出生时辰，越接近真实结果越稳定。
-                        </FormDescription>
+                        <FormControl>
+                          <Input {...field} type="time" className="h-11 rounded-md" />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
