@@ -4,19 +4,6 @@ import { Separator } from "@/components/ui/separator";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
-const daYunFeatures: Record<string, string> = {
-  比肩: "合作共事期，团队发展佳",
-  劫财: "竞争激烈期，需沉着应对",
-  食神: "才智显露期，人际关系好",
-  伤官: "变革创新期，注意度量把握",
-  正财: "财运亨通期，适合稳健发展",
-  偏财: "偏财运旺期，投资机会多",
-  正官: "仕途发展期，需谨慎行事",
-  七杀: "创业进取期，注意把握机会",
-  正印: "学习成长期，利于深造",
-  偏印: "艺术发展期，创造力强",
-};
-
 export function BaziDaYunAnalysis({ daYun }: { daYun: NonNullable<BaziViewModel["daYun"]> }) {
   return (
     <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
@@ -76,19 +63,23 @@ export function BaziDaYunAnalysis({ daYun }: { daYun: NonNullable<BaziViewModel[
                 </div>
                 <Separator />
                 <div className="grid grid-cols-[5rem_1fr] gap-x-4 gap-y-1 text-sm">
-                  <p className="text-muted-foreground">五行</p>
-                  <p className="text-muted-foreground">特征</p>
+                  <p className="text-muted-foreground">项目</p>
+                  <p className="text-muted-foreground">结果</p>
+                  <p className="text-muted-foreground">十神</p>
+                  <p>{period.tenGod || "-"}</p>
                   <p className="text-muted-foreground">天干</p>
                   <p>
-                    <span className="mr-4 font-semibold">{period.stemElement || "-"}</span>
-                    {isChildStage
-                      ? "依靠父母庇护"
-                      : daYunFeatures[period.tenGod] ?? "阶段特征需结合全盘判断"}
+                    <span className="mr-4 font-semibold">
+                      {period.ganZhi ? period.ganZhi.slice(0, 1) : "-"}
+                    </span>
+                    {period.stemElement || "-"}
                   </p>
                   <p className="text-muted-foreground">地支</p>
                   <p>
-                    <span className="mr-4 font-semibold">{period.branchElement || "-"}</span>
-                    {isChildStage ? "学习成长为主" : ""}
+                    <span className="mr-4 font-semibold">
+                      {period.ganZhi ? period.ganZhi.slice(1, 2) : "-"}
+                    </span>
+                    {period.branchElement || "-"}
                   </p>
                 </div>
               </article>
@@ -96,22 +87,14 @@ export function BaziDaYunAnalysis({ daYun }: { daYun: NonNullable<BaziViewModel[
           })}
         </div>
 
-        <div className="space-y-3 rounded-xl bg-muted/20 p-5 text-sm leading-7">
-          <p className="text-lg font-semibold">大运运势提示：</p>
-          <p className="text-muted-foreground">
-            大运是十年为期的重要运势周期，对人生发展有重大影响。
-          </p>
-          <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-            <li>大运具有持续性影响，决定长期人生走向</li>
-            <li>不同大运的五行特性需要不同应对策略</li>
-            {daYun.current ? (
-              <li>
-                当前大运（年龄范围：{daYun.current.ageRange}）是
-                {daYun.current.tenGod}阶段，适合结合现实目标调整节奏
-              </li>
-            ) : null}
-          </ul>
-        </div>
+        {daYun.current ? (
+          <div className="space-y-2 rounded-xl bg-muted/20 p-5 text-sm leading-7">
+            <p className="text-lg font-semibold">当前大运摘要：</p>
+            <p className="text-muted-foreground">
+              {daYun.current.ageRange} · {daYun.current.ganZhi} · {daYun.current.tenGod}
+            </p>
+          </div>
+        ) : null}
       </div>
     </Card>
   );

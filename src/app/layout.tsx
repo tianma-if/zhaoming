@@ -35,6 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${display.variable} ${geistMono.variable} ${sans.variable} h-full`}
     >
       <body className="min-h-full bg-background text-foreground antialiased">
