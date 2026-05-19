@@ -5,121 +5,309 @@ import { Separator } from "@/components/ui/separator";
 import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdict";
 import { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import { WuxingBadge } from "./wuxing-badge";
+import { WuxingRadarChart } from "./wuxing-radar-chart";
+
+const wuxingOrder = ["木", "火", "土", "金", "水"];
+const hiddenStemWeights = ["藏干 100%", "藏干 70%", "藏干 50%"];
+const generates: Record<string, string> = {
+  木: "火",
+  火: "土",
+  土: "金",
+  金: "水",
+  水: "木",
+};
+const controls: Record<string, string> = {
+  木: "土",
+  土: "水",
+  水: "火",
+  火: "金",
+  金: "木",
+};
+const pillarStages: Record<string, string> = {
+  year: "童年到青年",
+  month: "成年基础运",
+  day: "自身性格",
+  time: "中年到晚年",
+};
+const tenGodNotes: Record<string, { meaning: string; feature: string }> = {
+  比肩: {
+    meaning: "代表同气、帮助，也暗示自我意识和合作关系。",
+    feature: "合作能力强，重情义，也需要保持独立判断。",
+  },
+  劫财: {
+    meaning: "代表竞争、冲突与主动争取资源的能力。",
+    feature: "竞争意识强，有主见，资源边界需要清楚。",
+  },
+  食神: {
+    meaning: "代表表达、才艺、享受和稳定输出。",
+    feature: "表达自然，适合长期积累与温和创造。",
+  },
+  伤官: {
+    meaning: "代表创新、变革、锋芒和不守旧。",
+    feature: "创新能力强，反应快，但要避免过度对抗规则。",
+  },
+  正财: {
+    meaning: "代表正财、正当事业、经营与现实成果。",
+    feature: "理财能力强，重实际，适合稳定经营。",
+  },
+  偏财: {
+    meaning: "代表流动资源、机会嗅觉与外部连接。",
+    feature: "行动灵活，善抓机会，但要控制风险。",
+  },
+  正官: {
+    meaning: "代表正统权威、秩序、地位与名誉。",
+    feature: "重规矩，有责任感，适合承担明确职责。",
+  },
+  七杀: {
+    meaning: "代表压力、挑战、决断和攻坚能力。",
+    feature: "行动果断，抗压强，但要避免急躁冒进。",
+  },
+  正印: {
+    meaning: "代表学习、文化修养、长辈与贵人扶持。",
+    feature: "重学习，富同理心，容易获得稳定支持。",
+  },
+  偏印: {
+    meaning: "代表非典型学习、洞察力和独立思考。",
+    feature: "敏感、有悟性，适合研究复杂或冷门问题。",
+  },
+};
+const shenShaNotes: Record<string, string> = {
+  天德: "德性护持，遇事多有缓冲。",
+  月德: "处世温厚，利人缘与贵人。",
+  官日: "重秩序与职责，利规范事务。",
+  六合: "关系协调，利合作与整合。",
+  不将: "婚嫁与人际取象较平顺。",
+  续世: "延续、承接与稳定性增强。",
+  鸣吠对: "消息往来、人事响应较明显。",
+  天吏: "事务压力与规训感增强。",
+  致死: "凶煞取象，宜谨慎处理风险。",
+  血支: "注意血光、磕碰或外伤取象。",
+  土符: "土气阻滞，注意拖延与沉重感。",
+  归忌: "归纳、收束之事需谨慎。",
+  血忌: "不宜轻忽外伤、手术类象。",
+  天刑: "刑罚、规则、压力类象明显。",
+};
+
+function getElementRelation(dayElement: string, element: string) {
+  if (element === dayElement) {
+    return "同我";
+  }
+
+  if (generates[element] === dayElement) {
+    return "生我";
+  }
+
+  if (generates[dayElement] === element) {
+    return "我生";
+  }
+
+  if (controls[element] === dayElement) {
+    return "克我";
+  }
+
+  if (controls[dayElement] === element) {
+    return "我克";
+  }
+
+  return "参考";
+}
+
+function getShenShaType(label: string) {
+  if (label.includes("吉神")) {
+    return "吉";
+  }
+
+  if (label.includes("凶") || label.includes("煞")) {
+    return "煞";
+  }
+
+  if (label.includes("冲")) {
+    return "冲";
+  }
+
+  return "神";
+}
 
 export function BaziInsights({ chart }: { chart: BaziChart }) {
   const elementCounts = countBaziElements(chart);
-  const strongest = elementCounts[0];
-  const weakest = elementCounts[elementCounts.length - 1];
   const dayMaster = getBaziDayMaster(chart);
   const view = getBaziViewModel(chart);
+  const visibleElementCounts = wuxingOrder.map((element) => ({
+    element,
+    count: view.pillars.reduce(
+      (total, pillar) =>
+        total + pillar.elements.filter((pillarElement) => pillarElement === element).length,
+      0,
+    ),
+    relation: getElementRelation(dayMaster.element, element),
+  }));
+  const tenGodCounts = view.pillars
+    .flatMap((pillar) => [
+      pillar.shiShenGan,
+      ...pillar.hiddenStemDetails.map((item) => item.shiShen),
+    ])
+    .filter((tenGod): tenGod is string => Boolean(tenGod))
+    .reduce<Record<string, number>>((counts, tenGod) => {
+      counts[tenGod] = (counts[tenGod] ?? 0) + 1;
+      return counts;
+    }, {});
+  const tenGodSummary = Object.entries(tenGodCounts)
+    .map(([tenGod, count]) => `${tenGod}(${count}次)`)
+    .join(" ");
 
   return (
     <div className="space-y-6">
-      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
+      <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
         <div className="space-y-2">
-          <Badge>日主（日元）</Badge>
-          <CardTitle className="text-3xl tracking-[0.04em]">先看命盘的参照点</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            日柱天干是观察八字时的核心坐标，后续十神、五行强弱都围绕它展开。
-          </CardDescription>
+          <CardTitle className="text-3xl tracking-[0.04em]">五行分析</CardTitle>
+          <CardDescription className="text-sm leading-7">五行分布与关系</CardDescription>
         </div>
         <Separator />
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
-          <div className="space-y-2">
-            <p className="text-xs tracking-[0.28em] text-muted-foreground">日主</p>
-            <p className="font-display text-4xl">
-              {dayMaster.stem}
-              <span className="ml-2 text-2xl text-muted-foreground">{dayMaster.element}</span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              这张盘以后续所有关系判断的起点来看待。
-            </p>
-          </div>
-          <div className="space-y-2">
-            <p className="text-xs tracking-[0.28em] text-muted-foreground">较强五行</p>
-            <div className="flex items-center gap-2">
-              <WuxingBadge element={strongest.element} />
-              <span className="text-sm">{strongest.count} 个信号位</span>
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[1.1rem] border border-border bg-muted/35 p-4">
+            <div className="flex items-end gap-3">
+              <span className="font-display text-4xl">{dayMaster.stem}</span>
+              <span className="pb-1 text-sm text-muted-foreground">日主</span>
+              <WuxingBadge element={dayMaster.element} />
             </div>
-            <p className="text-sm text-muted-foreground">
-              相关性格、行为模式和处事方式更容易被放大。
-            </p>
+            <Badge>五行分布与关系</Badge>
           </div>
-          <div className="space-y-2">
-            <p className="text-xs tracking-[0.28em] text-muted-foreground">较弱五行</p>
-            <div className="flex items-center gap-2">
-              <WuxingBadge element={weakest.element} />
-              <span className="text-sm">{weakest.count} 个信号位</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              这类议题更依赖环境触发，也更适合后天有意识补足。
-            </p>
-          </div>
-        </div>
-      </Card>
 
-      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
-        <div className="space-y-2">
-          <Badge>藏干与十神</Badge>
-          <CardTitle className="text-3xl tracking-[0.04em]">看地支里藏着什么</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            藏干用于观察每一柱的内在成分，十神则说明这些成分与日主的关系。
-          </CardDescription>
-        </div>
-        <Separator />
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))]">
-          {view.pillars.map((pillar) => (
-            <article
-              key={pillar.key}
-              className="space-y-4 rounded-[1.1rem] border border-border bg-muted/35 p-4"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs tracking-[0.28em] text-muted-foreground">
-                    {pillar.label}
-                  </p>
-                  <p className="mt-1 font-display text-3xl">{pillar.ganZhi}</p>
+          <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr))]">
+            {visibleElementCounts.map((item) => (
+              <div key={item.element} className="space-y-2 rounded-[1.1rem] bg-muted/35 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-display text-3xl">{item.element}</p>
+                  <Badge className="bg-white">{item.relation}</Badge>
                 </div>
-                <Badge className="shrink-0">{pillar.shiShenGan || "日主"}</Badge>
+                <p className="text-sm text-muted-foreground">{item.count} 个</p>
               </div>
-              <dl className="space-y-2 text-sm">
-                {pillar.hiddenStemDetails.map((item) => (
-                  <div
-                    key={`${pillar.key}-${item.stem}-${item.shiShen}`}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2"
-                  >
-                    <dt className="font-display text-xl">{item.stem}</dt>
-                    <dd className="text-muted-foreground">{item.shiShen || "本气"}</dd>
-                  </div>
-                ))}
-              </dl>
-            </article>
-          ))}
+            ))}
+          </div>
+
+          <div className="space-y-3 rounded-[1.1rem] bg-muted/20 p-4">
+            <p className="font-medium">五行五芒星分布：</p>
+            <p className="text-sm text-muted-foreground">
+              数量分布仅供参考，需结合日主关系来理解。
+            </p>
+            <WuxingRadarChart data={elementCounts} />
+          </div>
         </div>
       </Card>
 
-      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
+      <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
         <div className="space-y-2">
-          <Badge>神煞</Badge>
-          <CardTitle className="text-3xl tracking-[0.04em]">辅助观察的星煞标记</CardTitle>
+          <CardTitle className="text-3xl tracking-[0.04em]">十神分析</CardTitle>
           <CardDescription className="text-sm leading-7">
-            神煞不单独定论，用来补充节奏、取象和事件倾向。
+            八字中的主要十神关系
           </CardDescription>
         </div>
         <Separator />
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
-          {view.shenSha.map((group) => (
-            <section key={group.label} className="space-y-3">
-              <p className="text-xs tracking-[0.28em] text-muted-foreground">{group.label}</p>
-              <div className="flex flex-wrap gap-2">
-                {group.values.map((item) => (
-                  <Badge key={`${group.label}-${item}`} className="bg-muted">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
-            </section>
-          ))}
+        <div className="space-y-8">
+          {view.pillars.map((pillar) => {
+            const entries = [
+              {
+                key: `${pillar.key}-gan`,
+                name: pillar.shiShenGan,
+                source: "天干",
+                weight: "",
+              },
+              ...pillar.hiddenStemDetails.map((item, index) => ({
+                key: `${pillar.key}-${item.stem}-${item.shiShen}`,
+                name: item.shiShen,
+                source: "藏干",
+                weight: hiddenStemWeights[index] ?? "藏干",
+              })),
+            ].filter((item): item is typeof item & { name: string } => Boolean(item.name));
+
+            return (
+              <section key={pillar.key} className="space-y-4">
+                <div className="text-center">
+                  <h3 className="font-display text-2xl tracking-[0.04em]">{pillar.label}</h3>
+                  <p className="text-sm text-muted-foreground">（{pillarStages[pillar.key]}）</p>
+                </div>
+                <div className="space-y-3">
+                  {entries.map((entry) => {
+                    const note = tenGodNotes[entry.name];
+
+                    return (
+                      <article
+                        key={entry.key}
+                        className="space-y-2 rounded-[1.1rem] bg-muted/30 p-4"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-lg font-semibold">{entry.name}</p>
+                            <span className="text-xs text-muted-foreground">
+                              {entry.source === "藏干" ? "（藏干）" : ""}
+                            </span>
+                          </div>
+                          {entry.weight ? <Badge className="bg-white">{entry.weight}</Badge> : null}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {note?.meaning ?? "用于观察此处与日主之间的关系。"}
+                        </p>
+                        <p className="text-sm font-medium">
+                          表现特征：{note?.feature ?? "需要结合全局五行强弱判断。"}
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+        <div className="space-y-2 rounded-[1.1rem] bg-muted/25 p-4 text-sm">
+          <p className="font-medium">总体特征分析：</p>
+          <p className="text-muted-foreground">
+            日主所见十神分布：{tenGodSummary}。此分析显示八字中十神的分布情况。
+          </p>
+          <p className="text-muted-foreground">
+            这些十神特质会在不同人生阶段显现：年柱主管童年到青年，月柱主管成年基础运，日柱代表自身性格，时柱主管中年到晚年。
+          </p>
+        </div>
+      </Card>
+
+      <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
+        <div className="space-y-2">
+          <CardTitle className="text-3xl tracking-[0.04em]">神煞分析</CardTitle>
+          <CardDescription className="text-sm leading-7">
+            神煞仅作辅助参考，不宜单独论吉凶。
+          </CardDescription>
+        </div>
+        <Separator />
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-medium">神煞分布与影响</p>
+            <Badge>{view.shenSha.reduce((total, group) => total + group.values.length, 0)} 项</Badge>
+          </div>
+          <div className="space-y-5">
+            {view.shenSha.map((group) => {
+              const type = getShenShaType(group.label);
+
+              return (
+                <section key={group.label} className="space-y-3">
+                  <p className="text-sm text-muted-foreground">{group.label}</p>
+                  <div className="space-y-2">
+                    {group.values.map((item) => (
+                      <div
+                        key={`${group.label}-${item}`}
+                        className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-muted/30 px-4 py-3 text-sm"
+                      >
+                        <span className="font-medium">{item}</span>
+                        <span className="text-muted-foreground">→</span>
+                        <Badge className="bg-white">{type}</Badge>
+                        <span className="text-muted-foreground">
+                          {shenShaNotes[item.replace(/（.*$/, "")] ?? "用于补充取象与事件倾向。"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
       </Card>
     </div>
