@@ -6,9 +6,9 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 const pageWidthVariants = cva("flex flex-1 flex-col w-full", {
   variants: {
     width: {
-      default: "max-w-6xl",
-      wide: "max-w-[88rem]",
-      narrow: "max-w-5xl",
+      default: "max-w-5xl",
+      wide: "max-w-7xl",
+      narrow: "max-w-4xl",
       full: "max-w-none",
     },
   },

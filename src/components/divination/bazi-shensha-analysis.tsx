@@ -37,8 +37,7 @@ export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
             i
           </span>
         </div>
-        <div className="overflow-x-auto pb-2">
-          <div className="grid min-w-[64rem] grid-cols-4 gap-5">
+        <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
             {view.shenSha.map((group) => (
               <section key={group.label} className="space-y-4">
                 <div className="text-center">
@@ -67,7 +66,6 @@ export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
                 </div>
               </section>
             ))}
-          </div>
         </div>
       </div>
     </Card>
