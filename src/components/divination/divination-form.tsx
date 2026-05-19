@@ -255,7 +255,7 @@ export function DivinationForm() {
                   name="subjectName"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>姓名</FormLabel>
+                      <FormLabel>姓名 *</FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="请输入姓名" className="h-11 rounded-md" />
                       </FormControl>
