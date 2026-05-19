@@ -82,10 +82,15 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
                   <dt className="text-muted-foreground">地支五行：</dt>
                   <dd className="font-medium">{pillar.elements[1]}</dd>
                 </div>
+                <div className="flex justify-center gap-1.5">
+                  <dt className="text-muted-foreground">十神：</dt>
+                  <dd className="font-medium">{pillar.shiShenGan || "-"}</dd>
+                </div>
+                <div className="flex justify-center gap-1.5">
+                  <dt className="text-muted-foreground">纳音：</dt>
+                  <dd className="font-medium">{pillar.naYin || "-"}</dd>
+                </div>
               </dl>
-              <div className="text-xs text-muted-foreground">
-                {pillar.shiShenGan} · {pillar.naYin}
-              </div>
             </article>
           ))}
         </div>

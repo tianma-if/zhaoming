@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { WuxingBadge } from "./wuxing-badge";
@@ -21,14 +20,11 @@ export function WuxingAnalysisCard({
         <CardDescription className="text-sm leading-7">五行分布与关系</CardDescription>
       </div>
       <Separator />
-      <div className="space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[1.1rem] border border-border bg-muted/35 p-4">
-          <div className="flex items-end gap-3">
-            <span className="font-display text-4xl">{dayMaster.stem}</span>
-            <span className="pb-1 text-sm text-muted-foreground">日主</span>
-            <WuxingBadge element={dayMaster.element} />
-          </div>
-          <Badge>五行分布与关系</Badge>
+      <div className="space-y-4">
+        <div className="inline-flex w-fit max-w-full flex-wrap items-center gap-3 rounded-full border border-border bg-muted/25 px-4 py-2">
+          <span className="font-display text-3xl leading-none">{dayMaster.stem}</span>
+          <span className="text-sm text-muted-foreground">日主</span>
+          <WuxingBadge element={dayMaster.element} />
         </div>
 
         <div className="space-y-3 rounded-[1.1rem] bg-muted/20 p-4">
