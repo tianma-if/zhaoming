@@ -28,21 +28,19 @@ export function BaziChartView({ chart }: { chart: BaziChart }) {
               </p>
               <div className="text-sm text-muted-foreground">{pillar.ganZhi}</div>
               <div className="flex flex-wrap gap-2">
-                {pillar.elements.map((element) => (
-                  <WuxingBadge key={`${pillar.key}-${element}`} element={element} />
+                {pillar.elements.map((element, index) => (
+                  <WuxingBadge key={`${pillar.key}-${element}-${index}`} element={element} />
                 ))}
               </div>
               <Separator />
               <dl className="space-y-2 text-sm">
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <dt className="shrink-0 text-muted-foreground">纳音</dt>
-                  <dd className="min-w-0 text-right break-words">{pillar.naYin}</dd>
+                  <dt className="shrink-0 text-muted-foreground">天干十神</dt>
+                  <dd className="min-w-0 text-right break-words">{pillar.shiShenGan}</dd>
                 </div>
                 <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                  <dt className="shrink-0 text-muted-foreground">藏干</dt>
-                  <dd className="min-w-0 text-right break-words">
-                    {pillar.hiddenStems.join(" / ")}
-                  </dd>
+                  <dt className="shrink-0 text-muted-foreground">纳音</dt>
+                  <dd className="min-w-0 text-right break-words">{pillar.naYin}</dd>
                 </div>
               </dl>
             </article>
