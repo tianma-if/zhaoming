@@ -22,7 +22,7 @@ function getShenShaType(label: string) {
 
 export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
   return (
-    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
+    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white">
       <div className="space-y-2">
         <CardTitle className="text-3xl tracking-[0.04em]">神煞分析</CardTitle>
         <CardDescription className="text-sm leading-7">

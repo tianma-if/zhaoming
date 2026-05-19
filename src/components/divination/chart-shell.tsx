@@ -11,7 +11,7 @@ export function ChartShell({
   children: ReactNode;
 }) {
   return (
-    <Card className="overflow-hidden rounded-[1.6rem] border border-border bg-white shadow-none">
+    <Card className="overflow-hidden rounded-[1.6rem] border border-border bg-white">
       <div className="relative space-y-5">
         <div className="space-y-2">
           <CardTitle className="text-3xl tracking-[0.04em]">{title}</CardTitle>

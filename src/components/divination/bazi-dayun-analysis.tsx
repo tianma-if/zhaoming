@@ -6,7 +6,7 @@ type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
 export function BaziDaYunAnalysis({ daYun }: { daYun: NonNullable<BaziViewModel["daYun"]> }) {
   return (
-    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
+    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white">
       <div className="space-y-2">
         <CardTitle className="text-3xl tracking-[0.04em]">大运详情（十年运势）</CardTitle>
         <CardDescription className="text-sm leading-7">

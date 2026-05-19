@@ -14,7 +14,7 @@ export function WuxingAnalysisCard({
   radarData: WuxingRadarDatum[];
 }) {
   return (
-    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white shadow-none">
+    <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white">
       <div className="space-y-2">
         <CardTitle className="text-3xl tracking-[0.04em]">五行分析</CardTitle>
         <CardDescription className="text-sm leading-7">五行分布与关系</CardDescription>

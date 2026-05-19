@@ -30,7 +30,7 @@ export function BaziPillarsInfoCard({
   const copyText = formatPillarsCopy(pillars);
 
   return (
-    <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white shadow-none">
+    <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <CardTitle className="text-2xl tracking-[0.04em]">八字详解</CardTitle>
