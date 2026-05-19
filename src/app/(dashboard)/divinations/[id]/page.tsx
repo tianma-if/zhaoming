@@ -47,7 +47,7 @@ export default async function DivinationDetailPage({
   }
 
   return (
-    <DashboardPage width="wide">
+    <DashboardPage width={data.divination_type === "bazi" ? "default" : "wide"}>
       <DashboardPageHeader
         eyebrow={<Badge>Reading View</Badge>}
         title={data.divination_type === "bazi" ? "八字解盘" : "紫微斗数解盘"}

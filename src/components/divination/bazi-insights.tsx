@@ -29,6 +29,12 @@ const pillarStages: Record<string, string> = {
   day: "自身性格",
   time: "中年到晚年",
 };
+const shenShaStages: Record<string, string> = {
+  year: "祖辈童年",
+  month: "父母青年",
+  day: "自身配偶",
+  time: "子女晚年",
+};
 const tenGodNotes: Record<string, { meaning: string; feature: string }> = {
   比肩: {
     meaning: "代表同气、帮助，也暗示自我意识和合作关系。",
@@ -154,6 +160,19 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
   const tenGodSummary = Object.entries(tenGodCounts)
     .map(([tenGod, count]) => `${tenGod}(${count}次)`)
     .join(" ");
+  const shenShaItems = view.shenSha.flatMap((group) =>
+    group.values.map((item) => ({
+      name: item,
+      type: getShenShaType(group.label),
+      note: shenShaNotes[item.replace(/（.*$/, "")] ?? "用于补充取象与事件倾向。",
+    })),
+  );
+  const shenShaColumns = view.pillars.map((pillar, pillarIndex) => ({
+    key: pillar.key,
+    label: pillar.label,
+    stage: shenShaStages[pillar.key],
+    items: shenShaItems.filter((_, itemIndex) => itemIndex % view.pillars.length === pillarIndex),
+  }));
 
   return (
     <div className="space-y-6">
@@ -203,60 +222,78 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           </CardDescription>
         </div>
         <Separator />
-        <div className="space-y-8">
-          {view.pillars.map((pillar) => {
-            const entries = [
-              {
-                key: `${pillar.key}-gan`,
-                name: pillar.shiShenGan,
-                source: "天干",
-                weight: "",
-              },
-              ...pillar.hiddenStemDetails.map((item, index) => ({
-                key: `${pillar.key}-${item.stem}-${item.shiShen}`,
-                name: item.shiShen,
-                source: "藏干",
-                weight: hiddenStemWeights[index] ?? "藏干",
-              })),
-            ].filter((item): item is typeof item & { name: string } => Boolean(item.name));
+        <div className="overflow-x-auto pb-2">
+          <div className="grid min-w-[64rem] grid-cols-4 gap-6">
+            {view.pillars.map((pillar) => {
+              const entries = [
+                {
+                  key: `${pillar.key}-gan`,
+                  name: pillar.shiShenGan,
+                  source: "天干",
+                  weight: "",
+                },
+                ...pillar.hiddenStemDetails.map((item, index) => ({
+                  key: `${pillar.key}-${item.stem}-${item.shiShen}`,
+                  name: item.shiShen,
+                  source: "藏干",
+                  weight: hiddenStemWeights[index] ?? "藏干",
+                })),
+              ].filter((item): item is typeof item & { name: string } => Boolean(item.name));
 
-            return (
-              <section key={pillar.key} className="space-y-4">
-                <div className="text-center">
-                  <h3 className="font-display text-2xl tracking-[0.04em]">{pillar.label}</h3>
-                  <p className="text-sm text-muted-foreground">（{pillarStages[pillar.key]}）</p>
-                </div>
-                <div className="space-y-3">
-                  {entries.map((entry) => {
-                    const note = tenGodNotes[entry.name];
+              return (
+                <section key={pillar.key} className="space-y-4">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-semibold tracking-[0.04em]">{pillar.label}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      （{pillarStages[pillar.key]}）
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    {entries.map((entry) => {
+                      const note = tenGodNotes[entry.name];
+                      const isHiddenStem = entry.source === "藏干";
 
-                    return (
-                      <article
-                        key={entry.key}
-                        className="space-y-2 rounded-[1.1rem] bg-muted/30 p-4"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-lg font-semibold">{entry.name}</p>
-                            <span className="text-xs text-muted-foreground">
-                              {entry.source === "藏干" ? "（藏干）" : ""}
-                            </span>
+                      return (
+                        <article
+                          key={entry.key}
+                          className={[
+                            "flex min-h-[13.75rem] flex-col rounded-xl p-4",
+                            isHiddenStem
+                              ? "bg-muted/15"
+                              : "border border-border bg-muted/45 shadow-[0_1px_2px_rgba(22,20,17,0.06)]",
+                          ].join(" ")}
+                        >
+                          <div className="grid min-h-8 grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                            <div className="flex min-w-0 items-baseline gap-1.5">
+                              <p className="whitespace-nowrap text-xl font-semibold leading-8">
+                                {entry.name}
+                              </p>
+                              {isHiddenStem ? (
+                                <span className="whitespace-nowrap text-sm text-muted-foreground">
+                                  （藏干）
+                                </span>
+                              ) : null}
+                            </div>
+                            {entry.weight ? (
+                              <span className="whitespace-nowrap rounded-lg bg-white px-2.5 py-1 text-sm">
+                                {entry.weight}
+                              </span>
+                            ) : null}
                           </div>
-                          {entry.weight ? <Badge className="bg-white">{entry.weight}</Badge> : null}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {note?.meaning ?? "用于观察此处与日主之间的关系。"}
-                        </p>
-                        <p className="text-sm font-medium">
-                          表现特征：{note?.feature ?? "需要结合全局五行强弱判断。"}
-                        </p>
-                      </article>
-                    );
-                  })}
-                </div>
-              </section>
-            );
-          })}
+                          <p className="mt-4 text-base leading-7 text-muted-foreground">
+                            {note?.meaning ?? "用于观察此处与日主之间的关系。"}
+                          </p>
+                          <p className="mt-3 text-sm font-semibold leading-6">
+                            表现特征：{note?.feature ?? "需要结合全局五行强弱判断。"}
+                          </p>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
         <div className="space-y-2 rounded-[1.1rem] bg-muted/25 p-4 text-sm">
           <p className="font-medium">总体特征分析：</p>
@@ -277,36 +314,42 @@ export function BaziInsights({ chart }: { chart: BaziChart }) {
           </CardDescription>
         </div>
         <Separator />
-        <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-5">
+          <div className="flex items-center gap-2">
             <p className="font-medium">神煞分布与影响</p>
-            <Badge>{view.shenSha.reduce((total, group) => total + group.values.length, 0)} 项</Badge>
+            <span className="inline-flex size-5 items-center justify-center rounded-full border border-foreground text-xs font-semibold">
+              i
+            </span>
           </div>
-          <div className="space-y-5">
-            {view.shenSha.map((group) => {
-              const type = getShenShaType(group.label);
-
-              return (
-                <section key={group.label} className="space-y-3">
-                  <p className="text-sm text-muted-foreground">{group.label}</p>
-                  <div className="space-y-2">
-                    {group.values.map((item) => (
-                      <div
-                        key={`${group.label}-${item}`}
-                        className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-muted/30 px-4 py-3 text-sm"
+          <div className="overflow-x-auto pb-2">
+            <div className="grid min-w-[64rem] grid-cols-4 gap-5">
+              {shenShaColumns.map((column) => (
+                <section key={column.key} className="space-y-4">
+                  <div className="text-center">
+                    <h3 className="text-2xl font-semibold tracking-[0.04em]">{column.label}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{column.stage}</p>
+                  </div>
+                  <div className="space-y-2.5">
+                    {column.items.map((item) => (
+                      <article
+                        key={`${column.key}-${item.name}`}
+                        className="grid min-h-[4.75rem] grid-cols-[minmax(0,1fr)_2.25rem] gap-3 rounded-lg border border-border bg-white px-3 py-3"
                       >
-                        <span className="font-medium">{item}</span>
-                        <span className="text-muted-foreground">→</span>
-                        <Badge className="bg-white">{type}</Badge>
-                        <span className="text-muted-foreground">
-                          {shenShaNotes[item.replace(/（.*$/, "")] ?? "用于补充取象与事件倾向。"}
+                        <div className="min-w-0">
+                          <p className="truncate text-lg font-semibold leading-6">{item.name}</p>
+                          <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">
+                            {item.note}
+                          </p>
+                        </div>
+                        <span className="inline-flex size-8 items-center justify-center rounded-md bg-foreground text-sm font-semibold text-background">
+                          {item.type}
                         </span>
-                      </div>
+                      </article>
                     ))}
                   </div>
                 </section>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </Card>
