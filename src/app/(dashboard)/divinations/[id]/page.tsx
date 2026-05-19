@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { BaziChartView } from "@/components/divination/bazi-chart";
 import { BaziInsights } from "@/components/divination/bazi-insights";
-import { BaziVerdictCard } from "@/components/divination/bazi-verdict-card";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
@@ -66,11 +65,6 @@ export default async function DivinationDetailPage({
       <div className="space-y-6">
         {data.divination_type === "bazi" ? (
           <>
-            <BaziVerdictCard
-              chart={data.chart_json as unknown as BaziChart}
-              divinationId={data.id}
-              initialMarkdown={data.ai_result_markdown}
-            />
             <BaziChartView chart={data.chart_json as unknown as BaziChart} />
             <BaziInsights chart={data.chart_json as unknown as BaziChart} />
           </>
