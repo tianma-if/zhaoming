@@ -11,6 +11,8 @@ import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboar
 import { Badge } from "@/components/ui/badge";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
+import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
+import { divinationInputSchema } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
 import type { BaziChart, ZiweiChart } from "@/types/divination";
 
@@ -47,6 +49,19 @@ export default async function DivinationDetailPage({
     notFound();
   }
 
+  const ziweiChart =
+    data.divination_type === "ziwei"
+      ? (() => {
+          const parsed = divinationInputSchema.safeParse(data.input_params);
+
+          if (parsed.success && parsed.data.divinationType === "ziwei") {
+            return buildZiweiChart(parsed.data).chart;
+          }
+
+          return data.chart_json as unknown as ZiweiChart;
+        })()
+      : null;
+
   return (
     <DashboardPage width={data.divination_type === "bazi" ? "default" : "wide"}>
       <DashboardPageHeader
@@ -76,7 +91,7 @@ export default async function DivinationDetailPage({
             <BaziInsights chart={data.chart_json as unknown as BaziChart} />
           </>
         ) : (
-          <ZiweiChartView chart={data.chart_json as unknown as ZiweiChart} />
+          <ZiweiChartView chart={ziweiChart as ZiweiChart} subjectName={data.subject_name} />
         )}
       </div>
     </DashboardPage>
