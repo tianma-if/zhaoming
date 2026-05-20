@@ -1,6 +1,5 @@
 import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdict";
 import { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
-import { stringifyChart } from "@/lib/divination/normalize";
 import type { Database } from "@/types/database";
 import type { BaziChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
 
@@ -114,8 +113,5 @@ export function buildDivinationPromptInput(record: DivinationRecord) {
     "",
     "[程序提炼摘要]",
     formatDerivedSummary(record),
-    "",
-    "[完整排盘 JSON（附录）]",
-    stringifyChart(record.chart_json),
   ].join("\n");
 }

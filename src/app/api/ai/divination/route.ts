@@ -61,6 +61,10 @@ async function logDivinationPrompt(input: {
   system: string;
   prompt: string;
 }) {
+  if (process.env.NODE_ENV !== "development") {
+    return;
+  }
+
   const logBody = formatDivinationPromptLog(input);
   const logPath = getHourlyDivinationPromptLogPath();
 
