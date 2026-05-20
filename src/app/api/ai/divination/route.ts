@@ -9,11 +9,22 @@ import { textResponse } from "@/lib/ai/stream";
 import { ensureUserProfile, getDivinationById, updateDivinationResult } from "@/lib/data";
 import { hasAiProviderEnv } from "@/lib/env";
 
-const AI_DIVINATION_PROMPT_LOG_PATH = path.join(
-  process.cwd(),
-  "logs",
-  "ai-divination-prompts.log",
-);
+function getHourlyDivinationPromptLogPath(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    hour12: false,
+  });
+  const parts = Object.fromEntries(
+    formatter.formatToParts(date).map((part) => [part.type, part.value]),
+  );
+  const timestamp = `${parts.year}-${parts.month}-${parts.day}-${parts.hour}`;
+
+  return path.join(process.cwd(), "logs", `ai-divination-prompts-${timestamp}.log`);
+}
 
 function formatDivinationPromptLog(input: {
   divinationId: string;
@@ -51,10 +62,11 @@ async function logDivinationPrompt(input: {
   prompt: string;
 }) {
   const logBody = formatDivinationPromptLog(input);
+  const logPath = getHourlyDivinationPromptLogPath();
 
   try {
-    await mkdir(path.dirname(AI_DIVINATION_PROMPT_LOG_PATH), { recursive: true });
-    await appendFile(AI_DIVINATION_PROMPT_LOG_PATH, `${logBody}\n`, "utf8");
+    await mkdir(path.dirname(logPath), { recursive: true });
+    await appendFile(logPath, `${logBody}\n`, "utf8");
   } catch (error) {
     console.error("Failed to write AI divination prompt log:", error);
   }
