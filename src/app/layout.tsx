@@ -21,8 +21,8 @@ const sans = Noto_Sans_SC({
 
 export const metadata: Metadata = {
   title: {
-    default: "知微",
-    template: "知微-%s",
+    default: "知微 - AI命理分析系统",
+    template: "%s - AI命理分析系统",
   },
   description: "将传统命理排盘与现代大模型解读结合的极简 AI SaaS 平台。",
 };
