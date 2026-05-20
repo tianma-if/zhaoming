@@ -1,4 +1,4 @@
-export type DivinationType = "bazi" | "ziwei" | "qimen" | "meihua" | "custom";
+export type DivinationType = "bazi" | "ziwei" | "qimen" | "meihua" | "chenggu" | "custom";
 
 export interface BaziPillar {
   key: "year" | "month" | "day" | "time";

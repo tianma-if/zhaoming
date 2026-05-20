@@ -1,7 +1,7 @@
 "use client";
 
 import { useCompletion } from "@ai-sdk/react";
-import { Sparkles, WandSparkles } from "lucide-react";
+import { WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MarkdownRenderer } from "@/components/prose/markdown-renderer";
 import { Badge } from "@/components/ui/badge";
@@ -146,20 +146,6 @@ export function DivinationAiReportCard({
             基于当前测算记录、用户问题和结构化排盘结果生成的整页解读，适合快速把握重点与行动建议。
           </CardDescription>
         </div>
-
-        <Button
-          className="rounded-xl px-4"
-          disabled={isLoading}
-          onClick={() => {
-            setRequested(true);
-            void complete("");
-          }}
-          type="button"
-          variant="outline"
-        >
-          <Sparkles size={16} />
-          {isLoading ? "生成中" : hasContent ? "重新生成" : "立即生成"}
-        </Button>
       </div>
 
       <div className="bg-muted/25 px-6 py-6">

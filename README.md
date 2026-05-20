@@ -88,7 +88,7 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
 AI_PROVIDER=openai-compatible
-AI_MODEL=openai/gpt-5.4
+AI_MODEL=deepseek/deepseek-v4-pro
 AI_BASE_URL=https://openrouter.ai/api/v1
 AI_API_KEY=
 
@@ -244,7 +244,7 @@ http://localhost:5555/api/auth/callback/google
 
 ```env
 AI_PROVIDER=openai-compatible
-AI_MODEL=openai/gpt-5.4
+AI_MODEL=deepseek/deepseek-v4-pro
 AI_BASE_URL=https://openrouter.ai/api/v1
 AI_API_KEY=your_openrouter_key
 ```

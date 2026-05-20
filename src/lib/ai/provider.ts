@@ -23,5 +23,5 @@ export function getAiModel() {
     }).chatModel(env.AI_MODEL!);
   }
 
-  return env.AI_MODEL ?? "openai/gpt-5.4";
+  return env.AI_MODEL ?? "deepseek/deepseek-v4-pro";
 }
