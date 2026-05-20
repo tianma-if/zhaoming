@@ -26,6 +26,24 @@ function getHourlyDivinationPromptLogPath(date = new Date()) {
   return path.join(process.cwd(), "logs", `ai-divination-prompts-${timestamp}.log`);
 }
 
+function formatLocalLogTimestamp(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const parts = Object.fromEntries(
+    formatter.formatToParts(date).map((part) => [part.type, part.value]),
+  );
+
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second} Asia/Shanghai`;
+}
+
 function formatDivinationPromptLog(input: {
   divinationId: string;
   divinationType: string;
@@ -34,10 +52,12 @@ function formatDivinationPromptLog(input: {
   system: string;
   prompt: string;
 }) {
+  const now = new Date();
+
   return [
     "",
     "===== AI DIVINATION REQUEST =====",
-    `timestamp: ${new Date().toISOString()}`,
+    `timestamp: ${formatLocalLogTimestamp(now)}`,
     `divinationId: ${input.divinationId}`,
     `divinationType: ${input.divinationType}`,
     `mode: ${input.mode}`,

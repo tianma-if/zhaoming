@@ -4,9 +4,8 @@ import { useCompletion } from "@ai-sdk/react";
 import { WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MarkdownRenderer } from "@/components/prose/markdown-renderer";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 
 const REQUEST_EVENT = "divination-ai-report:generate";
 const STATE_EVENT = "divination-ai-report:state";
@@ -140,11 +139,7 @@ export function DivinationAiReportCard({
     >
       <div className="grid gap-5 border-b border-border px-6 py-5 min-[1100px]:grid-cols-[minmax(0,1fr)_auto] min-[1100px]:items-start">
         <div className="space-y-3">
-          <Badge>AI Report</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">AI 解读报告</CardTitle>
-          <CardDescription className="max-w-3xl text-sm leading-7">
-            基于当前测算记录、用户问题和结构化排盘结果生成的整页解读，适合快速把握重点与行动建议。
-          </CardDescription>
         </div>
       </div>
 
