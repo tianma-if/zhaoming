@@ -129,7 +129,7 @@ export default async function HomePage() {
           <div className="hidden h-12 w-px bg-[#e6e6e6] md:block" />
 
           <div className="space-y-3 text-left">
-            <Link href="/divinations/new">
+            <Link href="/divinations/ziwei">
               <Button
                 size="lg"
                 variant="outline"

@@ -1,14 +1,12 @@
 "use client";
-import type { BirthPlaceSuggestion } from "@/components/divination/birth-place-input";
-import { BirthPlaceInput } from "@/components/divination/birth-place-input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { cn } from "@/lib/utils";
+import { DivinationBaseInfoForm } from "@/components/divination/divination-base-info-form";
+import { DivinationRecordPrefillSheet } from "@/components/divination/divination-record-prefill-sheet";
+import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
 import {
   divinationInputSchema,
   type DivinationInputForm,
@@ -16,37 +14,22 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
 
-const initialValues: DivinationInputForm = {
-  divinationType: "bazi",
+function createInitialValues(divinationType: DivinationInputForm["divinationType"]): DivinationInputForm {
+  return {
+  divinationType,
   calendarType: "solar",
   birthDate: "",
   birthTime: "09:30",
   birthPlace: "",
-  birthPlaceMeta: null as BirthPlaceSuggestion | null,
+  birthPlaceMeta: null as DivinationInputForm["birthPlaceMeta"],
   gender: "male",
   subjectName: "",
   question: "请给我一份整体命盘解读。",
   isLeapMonth: false,
-};
+  };
+}
 
 const pillarConcepts = [
   {
@@ -194,14 +177,67 @@ function BaziConceptSection() {
   );
 }
 
-export function DivinationForm() {
+function ZiweiConceptSection() {
+  const features = [
+    {
+      title: "十二宫位",
+      description: "围绕命宫、财帛、事业、夫妻等宫位关系，观察人生不同主题的重心分布。",
+    },
+    {
+      title: "主星组合",
+      description: "关注紫微、天府、武曲、廉贞等主星组合，帮助理解个性结构与人生驱动力。",
+    },
+    {
+      title: "现代阅读",
+      description: "保留传统斗数结构，同时用更清晰的卡片与文字呈现，降低阅读门槛。",
+    },
+  ] as const;
+
+  return (
+    <section className="space-y-8">
+      <div className="space-y-4 text-center">
+        <Badge>概念导读</Badge>
+        <div className="space-y-3">
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是紫微斗数？</CardTitle>
+          <CardDescription className="mx-auto max-w-3xl text-base leading-8">
+            紫微斗数会把个人信息映射到十二宫位与星曜组合中，用来观察人生主题、关系结构与阶段变化。
+          </CardDescription>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {features.map((item) => (
+          <article
+            key={item.title}
+            className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
+          >
+            <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function DivinationForm({
+  divinationType = "bazi",
+  submitLabel = "排盘",
+  conceptSection,
+  prefillRecords = [],
+}: {
+  divinationType?: DivinationInputForm["divinationType"];
+  submitLabel?: string;
+  conceptSection?: ReactNode;
+  prefillRecords?: DivinationPrefillRecord[];
+}) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const form = useForm<DivinationInputForm>({
     resolver: zodResolver(divinationInputSchema),
-    defaultValues: initialValues,
+    defaultValues: createInitialValues(divinationType),
   });
 
   function handleSubmit(values: DivinationInputForm) {
@@ -231,216 +267,40 @@ export function DivinationForm() {
   }
 
   const calendarType = useWatch({ control: form.control, name: "calendarType" });
-  const divinationType = useWatch({ control: form.control, name: "divinationType" });
   const birthDate = useWatch({ control: form.control, name: "birthDate" });
-  const selectedDate = birthDate ? new Date(`${birthDate}T00:00:00`) : undefined;
-  const minBirthMonth = new Date(1900, 0, 1);
-  const maxBirthMonth = new Date(new Date().getFullYear() + 1, 11, 1);
-  const defaultCalendarMonth = selectedDate ?? new Date(1995, 0, 1);
 
   return (
     <div className="space-y-12">
+      {prefillRecords.length ? (
+        <div className="flex justify-end">
+          <DivinationRecordPrefillSheet form={form} records={prefillRecords} />
+        </div>
+      ) : null}
+
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
           <Card className="space-y-8 rounded-xl p-6 shadow-none">
-            <section className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-2xl font-semibold tracking-tight text-foreground">基本信息</h3>
-                <p className="text-sm text-muted-foreground">先填写最基础的身份信息。</p>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="subjectName"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>姓名 *</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="请输入姓名" className="h-11 rounded-md" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>性别 *</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <FormControl>
-                          <SelectTrigger className="h-11 rounded-md">
-                            <SelectValue placeholder="请选择性别" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">男</SelectItem>
-                          <SelectItem value="female">女</SelectItem>
-                          <SelectItem value="other">其他</SelectItem>
-                          <SelectItem value="unknown">未知</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </section>
-
-            <section className="space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-2xl font-semibold tracking-tight text-foreground">时间信息</h3>
-                <p className="text-sm text-muted-foreground">出生时间越准确，排盘结果越稳定。</p>
-              </div>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="calendarType"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3 text-sm">
-                        <FormLabel>出生日期 *</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <FormControl>
-                            <SelectTrigger className="h-11 rounded-md">
-                              <SelectValue placeholder="请选择历法" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="solar">阳历</SelectItem>
-                            <SelectItem value="lunar">农历</SelectItem>
-                          </SelectContent>
-                        </Select>
-
-                        <FormField
-                          control={form.control}
-                          name="birthDate"
-                          render={({ field: birthDateField }) => (
-                            <FormItem>
-                              <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant="outline"
-                                      className="h-11 w-full justify-between rounded-md font-normal"
-                                    >
-                                      <span className={cn(!selectedDate && "text-muted-foreground")}>
-                                        {selectedDate
-                                          ? format(selectedDate, "yyyy年MM月dd日", { locale: zhCN })
-                                          : "请选择出生日期"}
-                                      </span>
-                                      <CalendarIcon className="size-4 opacity-60" />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto rounded-xl p-3" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    locale={zhCN}
-                                    captionLayout="dropdown"
-                                    navLayout="around"
-                                    startMonth={minBirthMonth}
-                                    endMonth={maxBirthMonth}
-                                    defaultMonth={defaultCalendarMonth}
-                                    selected={selectedDate}
-                                    className="rounded-xl border bg-background"
-                                    onSelect={(date) => {
-                                      if (!date) {
-                                        return;
-                                      }
-                                      birthDateField.onChange(format(date, "yyyy-MM-dd"));
-                                      setIsDatePickerOpen(false);
-                                    }}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="birthPlace"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3 text-sm">
-                        <FormLabel>出生地点 *</FormLabel>
-                        <BirthPlaceInput
-                          value={field.value ?? ""}
-                          onChange={field.onChange}
-                          onSelectSuggestion={(suggestion) =>
-                            form.setValue("birthPlaceMeta", suggestion as BirthPlaceSuggestion | null, {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            })
-                          }
-                          showLabel={false}
-                          helperText={null}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="birthTime"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3 text-sm">
-                        <FormLabel>出生时辰 *</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="time" className="h-11 rounded-md" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {calendarType === "lunar" ? (
-                    <FormField
-                      control={form.control}
-                      name="isLeapMonth"
-                      render={({ field }) => (
-                        <FormItem>
-                          <label className="flex items-center gap-3 rounded-md border border-border bg-white px-4 py-3 text-sm text-muted-foreground">
-                            <input
-                              type="checkbox"
-                              checked={Boolean(field.value)}
-                              onChange={(event) => field.onChange(event.target.checked)}
-                            />
-                            当前日期为农历闰月
-                          </label>
-                        </FormItem>
-                      )}
-                    />
-                  ) : null}
-                </div>
-              </div>
-            </section>
+            <DivinationBaseInfoForm
+              form={form}
+              birthDate={birthDate}
+              calendarType={calendarType}
+              isDatePickerOpen={isDatePickerOpen}
+              onDatePickerOpenChange={setIsDatePickerOpen}
+            />
 
             <div className="space-y-3 border-t border-border pt-6">
               <Button className="h-11 w-full rounded-md" type="submit" disabled={isPending}>
-                {isPending ? "正在计算..." : "开始计算八字"}
+                {isPending ? "正在排盘..." : submitLabel}
               </Button>
-              <p className="text-center text-sm text-muted-foreground">
-                提交后将进入命盘与 AI 解读页面。
-              </p>
               {submitError ? <p className="text-center text-sm text-fire">{submitError}</p> : null}
             </div>
           </Card>
         </form>
       </Form>
 
-      {divinationType === "bazi" ? <BaziConceptSection /> : null}
+      {conceptSection ?? (divinationType === "bazi" ? <BaziConceptSection /> : null)}
     </div>
   );
 }
+
+export { BaziConceptSection, ZiweiConceptSection };

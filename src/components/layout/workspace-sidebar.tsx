@@ -25,7 +25,7 @@ const groups = [
     label: "命理类",
     items: [
       { href: "/divinations/new", label: "八字算命", note: "四柱推命", icon: Calculator },
-      { href: null, label: "紫微斗数", icon: Sparkles },
+      { href: "/divinations/ziwei", label: "紫微斗数", note: "命宫排盘", icon: Sparkles },
       { href: null, label: "袁天罡称骨算命", icon: CalendarDays },
     ],
   },

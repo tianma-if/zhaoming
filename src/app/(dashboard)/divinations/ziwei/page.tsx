@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { DivinationForm } from "@/components/divination/divination-form";
+import { DivinationForm, ZiweiConceptSection } from "@/components/divination/divination-form";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { requireUser } from "@/lib/auth/session";
 import { listRecentDivinations } from "@/lib/data";
 import { toDivinationPrefillRecord } from "@/lib/divination/prefill";
 
 export const metadata: Metadata = {
-  title: "八字算命",
+  title: "紫微斗数",
 };
 
-export default async function NewDivinationPage() {
+export default async function NewZiweiDivinationPage() {
   const user = await requireUser();
   const prefillRecords = (await listRecentDivinations(user.id, 8))
     .map(toDivinationPrefillRecord)
@@ -19,10 +19,15 @@ export default async function NewDivinationPage() {
     <DashboardPage width="narrow" className="space-y-10 pt-2">
       <DashboardPageHeader
         eyebrow="Divination"
-        title="八字计算"
-        description="精准解析生辰八字，揭示命盘奥秘。业务内容继续保留，但页面容器改成与后台其他模块一致的骨架。"
+        title="紫微排盘"
+        description="输入出生信息，生成紫微斗数命盘，并进入后续解读页面。"
       />
-      <DivinationForm prefillRecords={prefillRecords} />
+      <DivinationForm
+        divinationType="ziwei"
+        submitLabel="排盘"
+        conceptSection={<ZiweiConceptSection />}
+        prefillRecords={prefillRecords}
+      />
     </DashboardPage>
   );
 }

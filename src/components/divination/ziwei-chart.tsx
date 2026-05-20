@@ -1,15 +1,12 @@
 import type { ZiweiChart } from "@/types/divination";
 import { getZiweiGrid } from "@/lib/divination/renderers/ziwei-view-model";
-import { ChartShell } from "./chart-shell";
+import { Card } from "@/components/ui/card";
 
 export function ZiweiChartView({ chart }: { chart: ZiweiChart }) {
   const cells = getZiweiGrid(chart);
 
   return (
-    <ChartShell
-      title="紫微斗数"
-      description="4 × 4 中空环形网格，强调宫位与星曜的文字张力。"
-    >
+    <Card className="overflow-hidden rounded-[1.6rem] border border-border bg-white">
       <div className="grid grid-cols-4 gap-3">
         {cells.map((palace, index) =>
           palace ? (
@@ -41,6 +38,6 @@ export function ZiweiChartView({ chart }: { chart: ZiweiChart }) {
           ),
         )}
       </div>
-    </ChartShell>
+    </Card>
   );
 }

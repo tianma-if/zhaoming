@@ -38,7 +38,7 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
     label: "命理类",
     items: [
       { href: "/divinations/new", title: "八字算命", note: "四柱推命", icon: Calculator },
-      { title: "紫微斗数", note: "排盘 UI 已接入", icon: Sparkles },
+      { href: "/divinations/ziwei", title: "紫微斗数", note: "命宫排盘", icon: Sparkles },
       { title: "袁天罡称骨", icon: CalendarDays },
     ],
   },
@@ -81,6 +81,7 @@ export function getDashboardBreadcrumbs(pathname: string) {
     dashboard: "总览",
     divinations: "测算记录",
     new: "新建测算",
+    ziwei: "紫微排盘",
     profile: "个人资料",
   };
 
