@@ -1,3 +1,5 @@
+import { appendFile, mkdir } from "node:fs/promises";
+import path from "node:path";
 import { streamText } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
@@ -6,6 +8,57 @@ import { getAiModel } from "@/lib/ai/provider";
 import { textResponse } from "@/lib/ai/stream";
 import { ensureUserProfile, getDivinationById, updateDivinationResult } from "@/lib/data";
 import { hasAiProviderEnv } from "@/lib/env";
+
+const AI_DIVINATION_PROMPT_LOG_PATH = path.join(
+  process.cwd(),
+  "logs",
+  "ai-divination-prompts.log",
+);
+
+function formatDivinationPromptLog(input: {
+  divinationId: string;
+  divinationType: string;
+  mode: "full" | "verdict";
+  model: string;
+  system: string;
+  prompt: string;
+}) {
+  return [
+    "",
+    "===== AI DIVINATION REQUEST =====",
+    `timestamp: ${new Date().toISOString()}`,
+    `divinationId: ${input.divinationId}`,
+    `divinationType: ${input.divinationType}`,
+    `mode: ${input.mode}`,
+    `model: ${input.model}`,
+    "",
+    "[system]",
+    input.system,
+    "",
+    "[prompt]",
+    input.prompt,
+    "===== END AI DIVINATION REQUEST =====",
+    "",
+  ].join("\n");
+}
+
+async function logDivinationPrompt(input: {
+  divinationId: string;
+  divinationType: string;
+  mode: "full" | "verdict";
+  model: string;
+  system: string;
+  prompt: string;
+}) {
+  const logBody = formatDivinationPromptLog(input);
+
+  try {
+    await mkdir(path.dirname(AI_DIVINATION_PROMPT_LOG_PATH), { recursive: true });
+    await appendFile(AI_DIVINATION_PROMPT_LOG_PATH, `${logBody}\n`, "utf8");
+  } catch (error) {
+    console.error("Failed to write AI divination prompt log:", error);
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -54,6 +107,16 @@ export async function POST(request: Request) {
     }
 
     const prompt = buildDivinationPrompt(record, mode);
+    const modelName = process.env.AI_MODEL ?? "unknown";
+
+    await logDivinationPrompt({
+      divinationId: record.id,
+      divinationType: record.divination_type,
+      mode,
+      model: modelName,
+      system: prompt.system,
+      prompt: prompt.prompt,
+    });
 
     const result = streamText({
       model: getAiModel(),
@@ -65,7 +128,7 @@ export async function POST(request: Request) {
             id: record.id,
             userId: user.id,
             markdown: text,
-            aiModel: process.env.AI_MODEL ?? "unknown",
+            aiModel: modelName,
           });
         }
       },
