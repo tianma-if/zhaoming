@@ -5,9 +5,22 @@ import type { BaziChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
+const divinationTypeLabels: Record<string, string> = {
+  bazi: "八字",
+  ziwei: "紫微斗数",
+  qimen: "奇门遁甲",
+  meihua: "梅花易数",
+  chenggu: "称骨算命",
+  custom: "自定义测算",
+};
+
+function getDivinationTypeLabel(type: string) {
+  return divinationTypeLabels[type] ?? type;
+}
+
 function formatBasicInfo(record: DivinationRecord) {
   return [
-    `测算类型：${record.divination_type}`,
+    `测算类型：${getDivinationTypeLabel(record.divination_type)}`,
     `用户问题：${record.question}`,
     `性别：${record.gender ?? "unknown"}`,
     `出生公历：${record.birth_gregorian ?? "unknown"}`,
@@ -89,7 +102,7 @@ function formatZiweiSummary(chart: ZiweiChart) {
 function formatGenericSummary(record: DivinationRecord) {
   return [
     `当前记录状态：${record.status}`,
-    `测算类型：${record.divination_type}`,
+    `测算类型：${getDivinationTypeLabel(record.divination_type)}`,
     `问题：${record.question}`,
   ].join("\n");
 }
@@ -111,7 +124,7 @@ export function buildDivinationPromptInput(record: DivinationRecord) {
     "[基础信息]",
     formatBasicInfo(record),
     "",
-    "[程序提炼摘要]",
+    "[命盘关键信息]",
     formatDerivedSummary(record),
   ].join("\n");
 }

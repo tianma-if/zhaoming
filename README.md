@@ -252,15 +252,12 @@ AI_API_KEY=your_openrouter_key
 对应实现入口：
 
 - [src/lib/ai/provider.ts](/D:/myLocalGithub/zhiwei/src/lib/ai/provider.ts)
+- 预设 Prompt 模板位于 [src/lib/ai/divination-prompts](D:/myLocalGithub/zhiwei/src/lib/ai/divination-prompts)
+- Prompt 输入组装位于 [src/lib/ai/divination-prompt-input.ts](D:/myLocalGithub/zhiwei/src/lib/ai/divination-prompt-input.ts)
 
 如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回占位文本，而不是直接报错。
 
 ## 部署与远端资源
-
-### Vercel
-
-- 生产域名：[https://zhiwei.tianma-if.uk](https://zhiwei.tianma-if.uk)
-- 部署平台：`Vercel`
 
 ### Neon
 
