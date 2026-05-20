@@ -2,7 +2,7 @@ import { DIVINATION_COMMON_CONSTRAINTS } from "./common";
 import type { DivinationPromptTemplateGroup } from "./types";
 
 export const CHENGGU_PROMPT_TEMPLATES: DivinationPromptTemplateGroup = {
-  verdict: {
+  short: {
     system: [
       "你是一位克制、审慎、语言高级且不煽情的称骨算命解读助手。",
       "你会基于骨重、歌诀与结构化结果，生成一段适合放在页面顶部的简短判词。",

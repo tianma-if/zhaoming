@@ -47,7 +47,7 @@ function formatLocalLogTimestamp(date = new Date()) {
 function formatDivinationPromptLog(input: {
   divinationId: string;
   divinationType: string;
-  mode: "full" | "verdict";
+  mode: "full" | "short";
   model: string;
   system: string;
   prompt: string;
@@ -76,7 +76,7 @@ function formatDivinationPromptLog(input: {
 async function logDivinationPrompt(input: {
   divinationId: string;
   divinationType: string;
-  mode: "full" | "verdict";
+  mode: "full" | "short";
   model: string;
   system: string;
   prompt: string;
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
 
     const payload = (await request.json()) as {
       divinationId?: string;
-      mode?: "full" | "verdict";
+      mode?: "full" | "short";
     };
     const mode = payload.mode ?? "full";
 
@@ -126,7 +126,7 @@ export async function POST(request: Request) {
     }
 
     if (!hasAiProviderEnv()) {
-      if (mode === "verdict") {
+      if (mode === "short") {
         return textResponse(
           "模型配置尚未完成。当前可以先阅读页面中的结构摘要；补齐 AI Provider 环境变量后，这里会生成更贴近命盘气质的命格判词。",
         );

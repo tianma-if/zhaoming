@@ -2,7 +2,7 @@ import { DIVINATION_COMMON_CONSTRAINTS } from "./common";
 import type { DivinationPromptTemplateGroup } from "./types";
 
 export const QIMEN_PROMPT_TEMPLATES: DivinationPromptTemplateGroup = {
-  verdict: {
+  short: {
     system: [
       "你是一位克制、审慎、语言高级且不煽情的奇门遁甲解读助手。",
       "你会基于局盘中的门、星、神、宫位落点和值符值使关系，生成一段适合放在页面顶部的简短判断。",

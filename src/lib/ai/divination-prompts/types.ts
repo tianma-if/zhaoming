@@ -1,4 +1,4 @@
-export type DivinationPromptMode = "full" | "verdict";
+export type DivinationPromptMode = "full" | "short";
 
 export interface DivinationPromptTemplate {
   system: string;

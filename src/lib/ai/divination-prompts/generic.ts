@@ -2,7 +2,7 @@ import { DIVINATION_COMMON_CONSTRAINTS } from "./common";
 import type { DivinationPromptTemplateGroup } from "./types";
 
 export const GENERIC_DIVINATION_PROMPT_TEMPLATES: DivinationPromptTemplateGroup = {
-  verdict: {
+  short: {
     system: [
       "你是一位克制、审慎、语言高级且不煽情的传统术数解读助手。",
       "你会基于结构化排盘数据，生成一段适合放在页面顶部的简短判词。",

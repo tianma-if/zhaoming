@@ -27,6 +27,20 @@ function formatBasicInfo(record: DivinationRecord) {
   ].join("\n");
 }
 
+function formatBaziPromptBasicInfo(record: DivinationRecord, chart: BaziChart) {
+  const birthText = chart.meta.lunar
+    ? `农历${chart.meta.lunar}${chart.meta.inputSolar ? `，${chart.meta.inputSolar}` : ""}`
+    : record.birth_gregorian ?? "unknown";
+
+  return [
+    "【基础信息】",
+    `• 姓名：${record.subject_name ?? "未提供"}`,
+    `• 生辰：${birthText}`,
+    `• 性别：${record.gender === "male" ? "男" : record.gender === "female" ? "女" : record.gender ?? "未提供"}`,
+    `• 出生地：${(chart.meta.birthPlace ?? "未提供").replaceAll(", ", "")}`,
+  ].join("\n");
+}
+
 function formatBaziSummary(chart: BaziChart) {
   const dayMaster = getBaziDayMaster(chart);
   const elements = countBaziElements(chart)
@@ -120,6 +134,17 @@ function formatDerivedSummary(record: DivinationRecord) {
 }
 
 export function buildDivinationPromptInput(record: DivinationRecord) {
+  if (record.divination_type === "bazi") {
+    const chart = record.chart_json as unknown as BaziChart;
+
+    return [
+      formatBaziPromptBasicInfo(record, chart),
+      "",
+      "【命盘关键信息】",
+      formatBaziSummary(chart),
+    ].join("\n");
+  }
+
   return [
     "[基础信息]",
     formatBasicInfo(record),

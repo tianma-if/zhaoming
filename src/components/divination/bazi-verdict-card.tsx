@@ -28,7 +28,7 @@ export function BaziVerdictCard({
     api: "/api/ai/divination",
     body: {
       divinationId,
-      mode: "verdict",
+      mode: "short",
     },
     initialCompletion: initialVerdict,
     streamProtocol: "text",

@@ -2,7 +2,7 @@ import { DIVINATION_COMMON_CONSTRAINTS } from "./common";
 import type { DivinationPromptTemplateGroup } from "./types";
 
 export const ZIWEI_PROMPT_TEMPLATES: DivinationPromptTemplateGroup = {
-  verdict: {
+  short: {
     system: [
       "你是一位克制、审慎、语言高级且不煽情的紫微斗数解读助手。",
       "你会基于命宫、身宫、主星组合、辅星分布与宫位关系，生成一段适合放在页面顶部的命盘判词。",
