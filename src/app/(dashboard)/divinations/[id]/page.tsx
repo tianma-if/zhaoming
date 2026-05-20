@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import {
+  DivinationAiReportButton,
+  DivinationAiReportCard,
+} from "@/components/divination/divination-ai-report";
 import { BaziChartView } from "@/components/divination/bazi-chart";
 import { BaziInsights } from "@/components/divination/bazi-insights";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
 import { formatDateTime } from "@/lib/utils";
@@ -56,13 +58,18 @@ export default async function DivinationDetailPage({
           </span>
         }
         action={
-          <Button asChild className="rounded-xl px-4">
-            <Link href="/divinations/new">再起一张新命盘</Link>
-          </Button>
+          <DivinationAiReportButton
+            divinationId={data.id}
+            initialHasContent={Boolean(data.ai_result_markdown)}
+          />
         }
       />
 
       <div className="space-y-6">
+        <DivinationAiReportCard
+          divinationId={data.id}
+          initialMarkdown={data.ai_result_markdown}
+        />
         {data.divination_type === "bazi" ? (
           <>
             <BaziChartView chart={data.chart_json as unknown as BaziChart} />
