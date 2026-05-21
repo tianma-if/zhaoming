@@ -4,9 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Coins, Dices, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState, useTransition } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { createCoinGeneratedLines } from "@/lib/divination/adapters/liuyao";
+import { getHexagramByLines } from "@/lib/divination/liuyao-hexagrams";
 import { liuyaoInputSchema, type LiuyaoInputForm } from "@/lib/divination/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,10 +31,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const lineOptions = [
-  { value: "6", label: "6 老阴", note: "阴爻，动" },
-  { value: "7", label: "7 少阳", note: "阳爻，静" },
-  { value: "8", label: "8 少阴", note: "阴爻，静" },
-  { value: "9", label: "9 老阳", note: "阳爻，动" },
+  { value: "6", label: "老阴", note: "阴爻，动" },
+  { value: "7", label: "少阳", note: "阳爻，静" },
+  { value: "8", label: "少阴", note: "阴爻，静" },
+  { value: "9", label: "老阳", note: "阳爻，动" },
 ] as const;
 
 const lineLabels = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"] as const;
@@ -52,6 +53,125 @@ function createInitialValues(): LiuyaoInputForm {
     lineValues: [7, 8, 7, 8, 7, 8],
     notes: "",
   };
+}
+
+function getLineMeta(value: number) {
+  if (value === 6) return { yinYang: "yin", isMoving: true, label: "老阴" };
+  if (value === 7) return { yinYang: "yang", isMoving: false, label: "少阳" };
+  if (value === 8) return { yinYang: "yin", isMoving: false, label: "少阴" };
+  return { yinYang: "yang", isMoving: true, label: "老阳" };
+}
+
+function buildHexagramPreview(lineValues: number[]) {
+  const baseLines = lineValues.map((value) => (value === 7 || value === 9 ? 1 : 0));
+  const changedLines = lineValues.map((value) =>
+    value === 6 ? 1 : value === 9 ? 0 : value === 7 ? 1 : 0,
+  );
+
+  return {
+    original: getHexagramByLines(baseLines),
+    changed: getHexagramByLines(changedLines),
+    movingLines: lineValues
+      .map((value, index) => ({ value, index }))
+      .filter((item) => item.value === 6 || item.value === 9)
+      .map((item) => lineLabels[item.index]!),
+  };
+}
+
+function YaoStroke({
+  value,
+  changed = false,
+}: {
+  value: number;
+  changed?: boolean;
+}) {
+  const meta = getLineMeta(value);
+  const isYang = changed
+    ? value === 6 || value === 7
+    : meta.yinYang === "yang";
+
+  if (isYang) {
+    return (
+      <div className="h-[3px] w-full rounded-full bg-black" />
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-[1fr_0.48fr_1fr] items-center gap-2">
+      <div className="h-[3px] rounded-full bg-black" />
+      <div className="h-px rounded-full bg-black/35" />
+      <div className="h-[3px] rounded-full bg-black" />
+    </div>
+  );
+}
+
+function HexagramPreviewCard({
+  title,
+  name,
+  subtitle,
+  lineValues,
+  changed = false,
+}: {
+  title: string;
+  name: string;
+  subtitle: string;
+  lineValues: number[];
+  changed?: boolean;
+}) {
+  const topDownLines = lineValues
+    .map((value, index) => ({ value, label: lineLabels[index]! }))
+    .slice()
+    .reverse();
+
+  return (
+    <div className="overflow-hidden rounded-[1.25rem] border border-black/12 bg-white">
+      <div className="border-b border-black/10 px-5 py-4">
+        <p className="text-[11px] tracking-[0.24em] text-black/45 uppercase">{title}</p>
+        <div className="mt-2 flex items-end justify-between gap-4">
+          <div>
+            <p className="font-display text-[2.2rem] leading-none tracking-[0.04em] text-foreground">
+              {name}
+            </p>
+            <p className="mt-2 text-sm text-black/55">{subtitle}</p>
+          </div>
+          <div className="rounded-full border border-black/10 px-3 py-1 text-xs text-black/50">
+            {changed ? "变卦" : "本卦"}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3 px-5 py-5">
+        {topDownLines.map((line) => {
+          const meta = getLineMeta(line.value);
+
+          return (
+            <div
+              key={`${title}-${line.label}`}
+              className={`grid grid-cols-[3.2rem_minmax(0,1fr)_4.5rem] items-center gap-3 rounded-xl px-2 py-1.5 ${
+                meta.isMoving && !changed ? "bg-black text-white" : "bg-transparent"
+              }`}
+            >
+              <span
+                className={`text-[11px] tracking-[0.16em] ${
+                  meta.isMoving && !changed ? "text-white/75" : "text-black/45"
+                }`}
+              >
+                {line.label}
+              </span>
+              <YaoStroke value={line.value} changed={changed} />
+              <span
+                className={`text-right text-xs ${
+                  meta.isMoving && !changed ? "text-white/80" : "text-black/50"
+                }`}
+              >
+                {changed ? (meta.isMoving ? "已变" : "不变") : `${line.value} ${meta.label}`}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function LiuyaoConceptSection() {
@@ -105,6 +225,15 @@ export function LiuyaoForm() {
     resolver: zodResolver(liuyaoInputSchema),
     defaultValues: createInitialValues(),
   });
+  const lineValues = useWatch({
+    control: form.control,
+    name: "lineValues",
+  }) ?? createInitialValues().lineValues;
+
+  const preview = useMemo(
+    () => buildHexagramPreview(lineValues.map((value) => Number(value) || 8)),
+    [lineValues],
+  );
 
   function randomizeLines() {
     form.setValue("method", "coins", { shouldDirty: true, shouldValidate: true });
@@ -240,7 +369,7 @@ export function LiuyaoForm() {
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-1">
                   <h3 className="text-2xl font-semibold tracking-tight text-foreground">起卦方式</h3>
-                  <p className="text-sm text-muted-foreground">可以手动录入六爻，也可以用铜钱法随机生成。</p>
+                  <p className="text-sm text-muted-foreground">左侧录入六爻，右侧实时查看本卦、变卦和动爻变化。</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <Button
@@ -264,37 +393,97 @@ export function LiuyaoForm() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {lineLabels.map((label, index) => (
-                  <FormField
-                    key={label}
-                    control={form.control}
-                    name={`lineValues.${index}`}
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel>{label}</FormLabel>
-                        <Select
-                          value={String(field.value)}
-                          onValueChange={(value) => field.onChange(Number(value))}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="h-11 rounded-md">
-                              <SelectValue placeholder="请选择爻值" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {lineOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label} · {option.note}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
+              <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+                  {lineLabels.map((label, index) => (
+                    <FormField
+                      key={label}
+                      control={form.control}
+                      name={`lineValues.${index}`}
+                      render={({ field }) => {
+                        const value = Number(field.value);
+                        const option = lineOptions.find((item) => Number(item.value) === value) ?? lineOptions[2];
+                        const meta = getLineMeta(value);
+
+                        return (
+                          <FormItem className="space-y-3">
+                            <FormLabel>{label}</FormLabel>
+                            <div className="rounded-[1.1rem] border border-black/12 bg-white p-4">
+                              <div className="mb-3 flex items-center gap-4">
+                                <div className="min-w-24 text-sm font-medium text-foreground">
+                                  {value} {option.label}
+                                </div>
+                                <div className="flex-1">
+                                  <YaoStroke value={value} />
+                                </div>
+                                <div className="text-xs text-black/45">
+                                  {meta.isMoving ? "动爻" : "静爻"}
+                                </div>
+                              </div>
+                              <Select
+                                value={String(field.value)}
+                                onValueChange={(nextValue) => field.onChange(Number(nextValue))}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="h-11 rounded-md border-black/12 bg-white">
+                                    <SelectValue placeholder="请选择爻值" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {lineOptions.map((item) => (
+                                    <SelectItem key={item.value} value={item.value}>
+                                      {item.value} {item.label} · {item.note}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div className="space-y-4 rounded-[1.25rem] border border-black/12 bg-white p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <p className="text-[11px] tracking-[0.24em] text-black/45 uppercase">卦象预览</p>
+                      <h4 className="text-2xl font-semibold tracking-tight text-foreground">实时成卦</h4>
+                    </div>
+                    <Badge variant="outline" className="rounded-full border-black/10 bg-white px-3 py-1 text-black/60">
+                      {preview.movingLines.length ? `动爻 ${preview.movingLines.join("、")}` : "静卦"}
+                    </Badge>
+                  </div>
+
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    <HexagramPreviewCard
+                      title="当前局势"
+                      name={preview.original.name}
+                      subtitle={`${preview.original.upperTrigram}上${preview.original.lowerTrigram}下`}
+                      lineValues={lineValues.map((value) => Number(value) || 8)}
+                    />
+                    <HexagramPreviewCard
+                      title="变化之后"
+                      name={preview.changed.name}
+                      subtitle={`${preview.changed.upperTrigram}上${preview.changed.lowerTrigram}下`}
+                      lineValues={lineValues.map((value) => Number(value) || 8)}
+                      changed
+                    />
+                  </div>
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="rounded-[1rem] border border-black/10 bg-white p-4">
+                      <p className="text-[11px] tracking-[0.22em] text-black/45 uppercase">本卦含义</p>
+                      <p className="mt-2 text-sm leading-7 text-black/68">{preview.original.description}</p>
+                    </div>
+                    <div className="rounded-[1rem] border border-black/10 bg-white p-4">
+                      <p className="text-[11px] tracking-[0.22em] text-black/45 uppercase">变卦导向</p>
+                      <p className="mt-2 text-sm leading-7 text-black/68">{preview.changed.description}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <FormField
