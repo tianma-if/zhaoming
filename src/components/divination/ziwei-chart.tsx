@@ -61,68 +61,49 @@ function formatCompactList(items: string[], limit: number) {
 
 function formatZiweiCopyText({
   chart,
-  subjectName,
   cells,
-  mode,
 }: {
   chart: ZiweiChart;
-  subjectName?: string | null;
   cells: ZiweiDisplayPalace[];
-  mode: ZiweiChartMode;
 }) {
-  const center = formatZiweiCenterSummary(chart, subjectName);
-  const headerLines = [
-    center.title ? `紫微命盘：${center.title}` : "紫微命盘",
-    center.soul,
-    center.body,
-    center.palaceLine,
-    center.timeLine,
-    center.solarLine,
-    center.lunarLine,
-    mode === "fortune" ? center.fortuneLine : "",
-  ].filter(Boolean);
+  function summarizePalace(palace: ZiweiPalace | undefined, label: string) {
+    if (!palace) {
+      return `${label}：未找到对应宫位`;
+    }
 
-  const palaceLines = cells.map((cell) => {
-    const palace = cell.palace;
-    const mainStars =
-      palace.majorStarStates?.length
-        ? palace.majorStarStates
-            .map((item) => (item.brightness ? `${item.name}${item.brightness}` : item.name))
-            .join("、")
-        : palace.majorStars.length
-          ? palace.majorStars.join("、")
-          : "无主星";
-    const supportStars = formatCompactList(
-      palace.minorStarStates?.length
-        ? palace.minorStarStates.map((item) => item.name)
-        : palace.minorStars,
-      4,
-    );
-    const baseLine = [
-      `${palace.name}宫`,
-      mainStars,
-      formatAgeRange(palace),
-      palace.changsheng12,
+    const majorStars = palace.majorStars.length ? palace.majorStars.join("、") : "无主星";
+    const minorStars = palace.minorStars.slice(0, 4).join("、");
+
+    return [
+      `${label}：${palace.name}（${palace.heavenlyStem}${palace.earthlyBranch}）`,
+      `主星：${majorStars}`,
+      minorStars ? `辅星：${minorStars}` : "",
+      palace.changsheng12 ? `长生十二神：${palace.changsheng12}` : "",
     ]
       .filter(Boolean)
-      .join("｜");
-    const fortuneLine =
-      mode === "fortune"
-        ? [
-            cell.fortune?.decadalPalaceName ? `大限落${cell.fortune.decadalPalaceName}` : "",
-            cell.fortune?.yearlyPalaceName ? `流年落${cell.fortune.yearlyPalaceName}` : "",
-            cell.fortune?.agePalaceName ? `小限落${cell.fortune.agePalaceName}` : "",
-          ]
-            .filter(Boolean)
-            .join("｜")
-        : "";
+      .join("；");
+  }
 
-    return [baseLine, supportStars ? `辅星：${supportStars}` : "", fortuneLine]
-      .filter(Boolean)
-      .join("\n");
-  });
+  const mingPalace = chart.palaces.find((palace) => palace.name === "命宫");
+  const shenPalace =
+    chart.palaces.find((palace) => palace.isBodyPalace) ??
+    (mingPalace ? chart.palaces[(chart.palaces.indexOf(mingPalace) + 6) % chart.palaces.length] : undefined);
+  const topPalaces = cells
+    .slice(0, 4)
+    .filter((cell) => cell.palace.majorStars.length > 0)
+    .map((cell) => `${cell.palace.name}：${cell.palace.majorStars.join("、")}`)
+    .join("\n");
 
-  return [...headerLines, "", ...palaceLines].join("\n");
+  return [
+    `农历：${chart.meta.lunar}`,
+    `中文日期：${chart.meta.chineseDate}`,
+    `生肖：${chart.meta.zodiac}`,
+    summarizePalace(mingPalace, "命宫重点"),
+    summarizePalace(shenPalace, "身宫重点"),
+    topPalaces ? `主星分布摘录：\n${topPalaces}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function MutagenBadge({ value }: { value: string }) {
@@ -522,10 +503,7 @@ export function ZiweiChartView({
   const cells = useMemo(() => getZiweiDisplayPalaces(chart), [chart]);
   const [selectedPalaceIndex, setSelectedPalaceIndex] = useState<number | null>(null);
   const center = useMemo(() => formatZiweiCenterSummary(chart, subjectName), [chart, subjectName]);
-  const copyText = useMemo(
-    () => formatZiweiCopyText({ chart, subjectName, cells, mode }),
-    [cells, chart, mode, subjectName],
-  );
+  const copyText = useMemo(() => formatZiweiCopyText({ chart, cells }), [cells, chart]);
   const selectedCell =
     cells.find((cell) => cell.index === selectedPalaceIndex) ?? cells[0] ?? null;
 
