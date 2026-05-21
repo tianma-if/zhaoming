@@ -8,7 +8,8 @@ import { DivinationBaseInfoForm } from "@/components/divination/divination-base-
 import { DivinationRecordPrefillSheet } from "@/components/divination/divination-record-prefill-sheet";
 import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
 import {
-  divinationInputSchema,
+  birthDivinationInputSchema,
+  type BirthDivinationInputForm,
   type DivinationInputForm,
 } from "@/lib/divination/schemas";
 import { Badge } from "@/components/ui/badge";
@@ -16,18 +17,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 
-function createInitialValues(divinationType: DivinationInputForm["divinationType"]): DivinationInputForm {
+function createInitialValues(
+  divinationType: BirthDivinationInputForm["divinationType"],
+): BirthDivinationInputForm {
   return {
-  divinationType,
-  calendarType: "solar",
-  birthDate: "",
-  birthTime: "09:30",
-  birthPlace: "",
-  birthPlaceMeta: null as DivinationInputForm["birthPlaceMeta"],
-  gender: "male",
-  subjectName: "",
-  question: "请给我一份整体命盘解读。",
-  isLeapMonth: false,
+    divinationType,
+    calendarType: "solar",
+    birthDate: "",
+    birthTime: "09:30",
+    birthPlace: "",
+    birthPlaceMeta: null as BirthDivinationInputForm["birthPlaceMeta"],
+    gender: "male",
+    subjectName: "",
+    question: "请给我一份整体命盘解读。",
+    isLeapMonth: false,
   };
 }
 
@@ -269,7 +272,7 @@ export function DivinationForm({
   conceptSection,
   prefillRecords = [],
 }: {
-  divinationType?: DivinationInputForm["divinationType"];
+  divinationType?: BirthDivinationInputForm["divinationType"];
   submitLabel?: string;
   conceptSection?: ReactNode;
   prefillRecords?: DivinationPrefillRecord[];
@@ -278,8 +281,8 @@ export function DivinationForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const form = useForm<DivinationInputForm>({
-    resolver: zodResolver(divinationInputSchema),
+  const form = useForm<BirthDivinationInputForm>({
+    resolver: zodResolver(birthDivinationInputSchema),
     defaultValues: createInitialValues(divinationType),
   });
 

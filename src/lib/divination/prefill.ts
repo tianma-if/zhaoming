@@ -1,6 +1,6 @@
 import type { Database, Json } from "@/types/database";
 import { resolveDivinationTypeFromRecord } from "./record-type";
-import type { DivinationInputForm } from "./schemas";
+import type { BirthDivinationInputForm } from "./schemas";
 
 type DivinationRow = Database["public"]["Tables"]["divinations"]["Row"];
 
@@ -8,12 +8,12 @@ export type DivinationPrefillRecord = {
   id: string;
   divinationType: string;
   subjectName: string;
-  gender: DivinationInputForm["gender"];
-  calendarType: DivinationInputForm["calendarType"];
+  gender: BirthDivinationInputForm["gender"];
+  calendarType: BirthDivinationInputForm["calendarType"];
   birthDate: string;
   birthTime: string;
   birthPlace: string;
-  birthPlaceMeta: DivinationInputForm["birthPlaceMeta"];
+  birthPlaceMeta: BirthDivinationInputForm["birthPlaceMeta"];
   isLeapMonth: boolean;
   createdAt: string;
 };
@@ -26,17 +26,17 @@ function readString(value: Json | undefined) {
   return typeof value === "string" ? value : "";
 }
 
-function readGender(value: Json | undefined): DivinationInputForm["gender"] | null {
+function readGender(value: Json | undefined): BirthDivinationInputForm["gender"] | null {
   return value === "male" || value === "female" || value === "other" || value === "unknown"
     ? value
     : null;
 }
 
-function readCalendarType(value: Json | undefined): DivinationInputForm["calendarType"] | null {
+function readCalendarType(value: Json | undefined): BirthDivinationInputForm["calendarType"] | null {
   return value === "solar" || value === "lunar" ? value : null;
 }
 
-function readBirthPlaceMeta(value: Json | undefined): DivinationInputForm["birthPlaceMeta"] {
+function readBirthPlaceMeta(value: Json | undefined): BirthDivinationInputForm["birthPlaceMeta"] {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     return null;
   }
@@ -61,7 +61,9 @@ export function toDivinationPrefillRecord(
   }
 
   const subjectName = readString(row.input_params.subjectName) || row.subject_name || "";
-  const gender = readGender(row.input_params.gender) ?? (row.gender as DivinationInputForm["gender"] | null);
+  const gender =
+    readGender(row.input_params.gender) ??
+    (row.gender as BirthDivinationInputForm["gender"] | null);
   const calendarType = readCalendarType(row.input_params.calendarType);
   const birthDate = readString(row.input_params.birthDate);
   const birthTime = readString(row.input_params.birthTime);

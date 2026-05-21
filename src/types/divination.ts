@@ -1,4 +1,4 @@
-export type DivinationType = "bazi" | "ziwei" | "qimen" | "meihua" | "chenggu" | "custom";
+export type DivinationType = "bazi" | "ziwei" | "qimen" | "meihua" | "liuyao" | "chenggu" | "custom";
 
 export interface BaziPillar {
   key: "year" | "month" | "day" | "time";
@@ -168,4 +168,43 @@ export interface ChengguChart {
   totalText: string;
   verdict: string;
   summary: string;
+}
+
+export type LiuyaoLineValue = 6 | 7 | 8 | 9;
+
+export interface LiuyaoLine {
+  index: number;
+  label: string;
+  value: LiuyaoLineValue;
+  yinYang: "yin" | "yang";
+  isMoving: boolean;
+  symbol: string;
+  changedSymbol: string;
+}
+
+export interface LiuyaoHexagram {
+  key: string;
+  name: string;
+  upperTrigram: string;
+  lowerTrigram: string;
+  lines: string[];
+  description: string;
+}
+
+export interface LiuyaoChart {
+  kind: "liuyao";
+  meta: {
+    method: "manual" | "coins";
+    divinationDateTime: string;
+    lunar: string;
+    ganZhi: string;
+    question: string;
+    subjectName: string;
+    gender: string;
+    notes?: string;
+  };
+  lines: LiuyaoLine[];
+  movingLineIndexes: number[];
+  originalHexagram: LiuyaoHexagram;
+  changedHexagram: LiuyaoHexagram;
 }

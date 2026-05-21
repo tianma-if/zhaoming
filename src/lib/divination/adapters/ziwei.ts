@@ -1,6 +1,6 @@
 import { astro } from "iztro";
 import type { ZiweiChart } from "@/types/divination";
-import type { DivinationInput } from "../schemas";
+import type { BirthDivinationInput } from "../schemas";
 import { hourToZiWeiIndex } from "../normalize";
 import { resolveBirthContext } from "../time-correction";
 
@@ -21,13 +21,13 @@ function formatShanghaiDate(input: Date) {
   return `${year}-${month}-${day}`;
 }
 
-export function buildZiweiChart(input: DivinationInput): {
+export function buildZiweiChart(input: BirthDivinationInput): {
   chart: ZiweiChart;
   birthGregorian: string;
   birthLunar: Record<string, unknown>;
 }
 export function buildZiweiChart(
-  input: DivinationInput,
+  input: BirthDivinationInput,
   options?: {
     fortuneDate?: Date | string;
   },

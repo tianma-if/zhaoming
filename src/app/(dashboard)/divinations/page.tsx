@@ -18,6 +18,7 @@ const divinationTypeLabelMap: Record<string, string> = {
   bazi: "八字",
   ziwei: "紫微斗数",
   chenggu: "称骨",
+  liuyao: "六爻",
 };
 
 export default async function DivinationsPage() {

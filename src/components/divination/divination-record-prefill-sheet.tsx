@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { DivinationInputForm } from "@/lib/divination/schemas";
+import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
 import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
 import { formatDateTime } from "@/lib/utils";
 
@@ -20,6 +20,8 @@ function getDivinationTypeLabel(type: string) {
   if (type === "bazi") return "八字";
   if (type === "ziwei") return "紫微斗数";
   if (type === "chenggu") return "称骨";
+  if (type === "liuyao") return "六爻";
+  if (type === "custom") return "自定义";
   return type;
 }
 
@@ -27,7 +29,7 @@ export function DivinationRecordPrefillSheet({
   form,
   records,
 }: {
-  form: UseFormReturn<DivinationInputForm>;
+  form: UseFormReturn<BirthDivinationInputForm>;
   records: DivinationPrefillRecord[];
 }) {
   const [open, setOpen] = useState(false);

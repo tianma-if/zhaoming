@@ -1,5 +1,5 @@
 import type { BaziChart, BaziPillar } from "@/types/divination";
-import type { DivinationInput } from "../schemas";
+import type { BirthDivinationInput } from "../schemas";
 import { resolveBirthContext } from "../time-correction";
 
 function buildPillar(
@@ -23,7 +23,7 @@ function buildPillar(
   };
 }
 
-export function buildBaziChart(input: DivinationInput): {
+export function buildBaziChart(input: BirthDivinationInput): {
   chart: BaziChart;
   birthGregorian: string;
   birthLunar: Record<string, unknown>;

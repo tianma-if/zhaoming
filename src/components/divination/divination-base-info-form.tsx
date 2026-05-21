@@ -6,8 +6,8 @@ import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
+import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
 import { cn } from "@/lib/utils";
-import type { DivinationInputForm } from "@/lib/divination/schemas";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -34,9 +34,9 @@ export function DivinationBaseInfoForm({
   isDatePickerOpen,
   onDatePickerOpenChange,
 }: {
-  form: UseFormReturn<DivinationInputForm>;
+  form: UseFormReturn<BirthDivinationInputForm>;
   birthDate: string;
-  calendarType: DivinationInputForm["calendarType"];
+  calendarType: BirthDivinationInputForm["calendarType"];
   isDatePickerOpen: boolean;
   onDatePickerOpenChange: (open: boolean) => void;
 }) {

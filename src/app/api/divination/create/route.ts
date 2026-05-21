@@ -3,6 +3,7 @@ import { canConsumeCredits, reserveDivinationCredits } from "@/lib/billing/credi
 import { auth } from "@/lib/auth";
 import { buildBaziChart } from "@/lib/divination/adapters/bazi";
 import { buildChengguChart } from "@/lib/divination/adapters/chenggu";
+import { buildLiuyaoChart } from "@/lib/divination/adapters/liuyao";
 import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
 import { divinationInputSchema } from "@/lib/divination/schemas";
 import { ensureUserProfile, getUserProfile, insertDivination } from "@/lib/data";
@@ -37,7 +38,9 @@ export async function POST(request: Request) {
     }
 
     const { chart, birthGregorian, birthLunar } =
-      parsed.data.divinationType === "bazi"
+      parsed.data.divinationType === "liuyao"
+        ? buildLiuyaoChart(parsed.data)
+        : parsed.data.divinationType === "bazi"
         ? buildBaziChart(parsed.data)
         : parsed.data.divinationType === "ziwei"
           ? buildZiweiChart(parsed.data)
@@ -48,7 +51,9 @@ export async function POST(request: Request) {
     const data = await insertDivination({
       userId: user.id,
       divinationType:
-        parsed.data.divinationType === "chenggu" ? "custom" : parsed.data.divinationType,
+        parsed.data.divinationType === "chenggu"
+          ? "custom"
+          : parsed.data.divinationType,
       subjectName: parsed.data.subjectName || null,
       birthGregorian,
       birthLunar,

@@ -1,5 +1,5 @@
 import type { ChengguChart, ChengguComponentWeight } from "@/types/divination";
-import type { DivinationInput } from "../schemas";
+import type { BirthDivinationInput } from "../schemas";
 import { resolveBirthContext } from "../time-correction";
 
 const YEAR_WEIGHT_MAP: Record<string, number> = {
@@ -225,7 +225,7 @@ function summarizeWeight(totalQian: number) {
   return "骨重偏高，传统称骨里多被视作福禄较盛，但也更强调格局、责任与自我节制。";
 }
 
-export function buildChengguChart(input: DivinationInput): {
+export function buildChengguChart(input: BirthDivinationInput): {
   chart: ChengguChart;
   birthGregorian: string;
   birthLunar: Record<string, unknown>;

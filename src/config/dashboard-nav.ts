@@ -45,7 +45,7 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
   {
     label: "占卜类",
     items: [
-      { title: "六爻占卜", note: "纳甲筮法", icon: Ticket },
+      { href: "/divinations/liuyao", title: "六爻占卜", note: "起卦解读", icon: Ticket },
       { title: "梅花易数", icon: Orbit },
       { title: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
     ],
@@ -83,6 +83,7 @@ export function getDashboardBreadcrumbs(pathname: string) {
     new: "新建测算",
     ziwei: "紫微排盘",
     chenggu: "袁天罡称骨",
+    liuyao: "六爻占卜",
     profile: "个人资料",
   };
 

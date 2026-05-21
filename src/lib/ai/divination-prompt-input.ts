@@ -2,7 +2,7 @@ import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdi
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import type { Database } from "@/types/database";
-import type { BaziChart, ChengguChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
+import type { BaziChart, ChengguChart, LiuyaoChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
@@ -11,6 +11,7 @@ const divinationTypeLabels: Record<string, string> = {
   ziwei: "紫微斗数",
   qimen: "奇门遁甲",
   meihua: "梅花易数",
+  liuyao: "六爻占卜",
   chenggu: "称骨算命",
   custom: "自定义测算",
 };
@@ -140,6 +141,33 @@ function formatChengguSummary(chart: ChengguChart) {
   ].join("\n");
 }
 
+function formatLiuyaoSummary(chart: LiuyaoChart) {
+  const lineSummary = chart.lines
+    .slice()
+    .reverse()
+    .map((line) => `${line.label}：${line.value}${line.isMoving ? "（动）" : ""}`)
+    .join("\n");
+  const movingLines =
+    chart.movingLineIndexes.length > 0
+      ? chart.movingLineIndexes
+          .map((index) => chart.lines[index - 1]?.label ?? `${index}爻`)
+          .join("、")
+      : "无动爻";
+
+  return [
+    `起卦时间：${chart.meta.divinationDateTime}`,
+    `干支：${chart.meta.ganZhi}`,
+    `农历：${chart.meta.lunar}`,
+    `本卦：${chart.originalHexagram.name}（${chart.originalHexagram.upperTrigram}上${chart.originalHexagram.lowerTrigram}下）`,
+    `变卦：${chart.changedHexagram.name}（${chart.changedHexagram.upperTrigram}上${chart.changedHexagram.lowerTrigram}下）`,
+    `动爻：${movingLines}`,
+    `六爻数值：\n${lineSummary}`,
+    chart.meta.notes ? `补充信息：${chart.meta.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function formatDerivedSummary(record: DivinationRecord) {
   const divinationType = resolveDivinationTypeFromRecord(record);
 
@@ -153,6 +181,10 @@ function formatDerivedSummary(record: DivinationRecord) {
 
   if (divinationType === "chenggu") {
     return formatChengguSummary(record.chart_json as unknown as ChengguChart);
+  }
+
+  if (divinationType === "liuyao") {
+    return formatLiuyaoSummary(record.chart_json as unknown as LiuyaoChart);
   }
 
   return formatGenericSummary(record);

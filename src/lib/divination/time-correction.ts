@@ -1,6 +1,6 @@
 import { Lunar, Solar } from "lunar-typescript";
 import tzLookup from "tz-lookup";
-import type { DivinationInput } from "./schemas";
+import type { BirthDivinationInput } from "./schemas";
 
 interface ResolvedBirthContext {
   inputSolar: Solar;
@@ -84,7 +84,7 @@ function shiftSolarByMinutes(solar: Solar, minutes: number) {
   );
 }
 
-function getInputSolar(input: DivinationInput) {
+function getInputSolar(input: BirthDivinationInput) {
   const [year, month, day] = input.birthDate.split("-").map(Number);
   const [hour, minute] = input.birthTime.split(":").map(Number);
 
@@ -95,7 +95,7 @@ function getInputSolar(input: DivinationInput) {
   return Lunar.fromYmdHms(year, input.isLeapMonth ? -month : month, day, hour, minute, 0).getSolar();
 }
 
-export function resolveBirthContext(input: DivinationInput): ResolvedBirthContext {
+export function resolveBirthContext(input: BirthDivinationInput): ResolvedBirthContext {
   const inputSolar = getInputSolar(input);
   const meta = input.birthPlaceMeta;
 

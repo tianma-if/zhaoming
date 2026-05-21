@@ -73,6 +73,7 @@ const systemGroups: SystemGroup[] = [
         title: "六爻占卜",
         alias: "纳甲筮法",
         body: "适合面向具体问题推演变化路径，用更结构化的方式整理卦象信息。",
+        href: "/divinations/liuyao",
       },
       {
         title: "梅花易数",
