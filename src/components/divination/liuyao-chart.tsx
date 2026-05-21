@@ -1,4 +1,5 @@
 import type { LiuyaoChart, LiuyaoLine } from "@/types/divination";
+import { LiuyaoYaoGlyph } from "@/components/divination/liuyao-yao-glyph";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
@@ -16,18 +17,8 @@ function getChangedLineValue(line: LiuyaoLine) {
   return line.value;
 }
 
-function YaoStroke({ isYang }: { isYang: boolean }) {
-  if (isYang) {
-    return <div className="h-[3px] w-full rounded-full bg-black" />;
-  }
-
-  return (
-    <div className="grid grid-cols-[1fr_0.46fr_1fr] items-center gap-2">
-      <div className="h-[3px] rounded-full bg-black" />
-      <div className="h-px rounded-full bg-black/35" />
-      <div className="h-[3px] rounded-full bg-black" />
-    </div>
-  );
+function YaoStroke({ isYang, tone = "dark" }: { isYang: boolean; tone?: "dark" | "light" }) {
+  return <LiuyaoYaoGlyph isYang={isYang} tone={tone} />;
 }
 
 function HexagramRows({
@@ -48,14 +39,14 @@ function HexagramRows({
 
   return (
     <div className="rounded-[1.15rem] border border-black/8 bg-[#f5f5f3] px-6 py-5">
-      <div className="space-y-4">
+      <div className="space-y-4.5">
         {rows.map((line) => (
           <div
             key={`${changed ? "changed" : "original"}-${line.index}`}
             className="grid grid-cols-[4.2rem_minmax(0,1fr)_3.2rem] items-center gap-4"
           >
             <div className="text-right text-sm text-black/62">{line.label}</div>
-            <div className={line.isMoving && !changed ? "rounded-lg bg-white px-3 py-2" : "px-3 py-2"}>
+            <div className="flex items-center justify-center py-2.5">
               <YaoStroke isYang={line.isYang} />
             </div>
             <div className="text-xs text-black/45">{changed ? (line.isMoving ? "变" : "") : line.isMoving ? "动" : ""}</div>

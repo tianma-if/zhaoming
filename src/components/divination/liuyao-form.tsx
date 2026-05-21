@@ -9,6 +9,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { createCoinGeneratedLines } from "@/lib/divination/adapters/liuyao";
 import { getHexagramByLines } from "@/lib/divination/liuyao-hexagrams";
 import { liuyaoInputSchema, type LiuyaoInputForm } from "@/lib/divination/schemas";
+import { LiuyaoYaoGlyph } from "@/components/divination/liuyao-yao-glyph";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -78,29 +79,35 @@ function buildHexagramPreview(lineValues: number[]) {
   };
 }
 
-function YaoStroke({
-  value,
-  changed = false,
-}: {
-  value: number;
-  changed?: boolean;
-}) {
+function YaoStroke({ value, changed = false, tone = "dark" }: { value: number; changed?: boolean; tone?: "dark" | "light" }) {
   const meta = getLineMeta(value);
   const isYang = changed
     ? value === 6 || value === 7
     : meta.yinYang === "yang";
 
-  if (isYang) {
-    return (
-      <div className="h-[3px] w-full rounded-full bg-black" />
-    );
-  }
+  return <LiuyaoYaoGlyph isYang={isYang} tone={tone} />;
+}
+
+function HexagramGlyphStack({
+  lineValues,
+  changed = false,
+}: {
+  lineValues: number[];
+  changed?: boolean;
+}) {
+  const topDownLines = lineValues.slice().reverse();
 
   return (
-    <div className="grid grid-cols-[1fr_0.48fr_1fr] items-center gap-2">
-      <div className="h-[3px] rounded-full bg-black" />
-      <div className="h-px rounded-full bg-black/35" />
-      <div className="h-[3px] rounded-full bg-black" />
+    <div className="rounded-[2rem] border border-black/8 bg-[#f8f8f6] px-8 py-8">
+      <div className="space-y-6">
+        {topDownLines.map((value, index) => (
+          <YaoStroke
+            key={`${changed ? "changed" : "original"}-glyph-${index}`}
+            value={value}
+            changed={changed}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -141,34 +148,28 @@ function HexagramPreviewCard({
       </div>
 
       <div className="space-y-3 px-5 py-5">
+        <HexagramGlyphStack lineValues={lineValues} changed={changed} />
+
+        <div className="space-y-3 pt-2">
         {topDownLines.map((line) => {
           const meta = getLineMeta(line.value);
+          const statusText = changed ? (meta.isMoving ? "已变" : "不变") : `${line.value} ${meta.label}`;
 
           return (
             <div
               key={`${title}-${line.label}`}
-              className={`grid grid-cols-[3.2rem_minmax(0,1fr)_4.5rem] items-center gap-3 rounded-xl px-2 py-1.5 ${
-                meta.isMoving && !changed ? "bg-black text-white" : "bg-transparent"
-              }`}
+              className="grid grid-cols-[3.2rem_4.5rem] items-center justify-between gap-3 px-1 py-1.5"
             >
-              <span
-                className={`text-[11px] tracking-[0.16em] ${
-                  meta.isMoving && !changed ? "text-white/75" : "text-black/45"
-                }`}
-              >
+              <span className="text-[11px] tracking-[0.16em] text-black/45">
                 {line.label}
               </span>
-              <YaoStroke value={line.value} changed={changed} />
-              <span
-                className={`text-right text-xs ${
-                  meta.isMoving && !changed ? "text-white/80" : "text-black/50"
-                }`}
-              >
-                {changed ? (meta.isMoving ? "已变" : "不变") : `${line.value} ${meta.label}`}
+              <span className="text-right text-xs text-black/50">
+                {statusText}
               </span>
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );
