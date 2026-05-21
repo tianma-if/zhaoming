@@ -9,6 +9,7 @@ import {
   formatAgesPreview,
   formatZiweiCenterSummary,
   getZiweiDisplayPalaces,
+  type ZiweiDisplayPalace,
   type ZiweiChartMode,
 } from "@/lib/divination/renderers/ziwei-view-model";
 import type {
@@ -17,6 +18,15 @@ import type {
   ZiweiPalace,
   ZiweiStarState,
 } from "@/types/divination";
+
+function formatCompactList(items: string[], limit: number) {
+  if (!items.length) return "";
+
+  const visible = items.slice(0, limit);
+  const suffix = items.length > limit ? " +" : "";
+
+  return `${visible.join(" · ")}${suffix}`;
+}
 
 function MutagenBadge({ value }: { value: string }) {
   const className =
@@ -63,107 +73,195 @@ function ScopeChip({
   );
 }
 
-function StarLine({
-  title,
-  stars,
-}: {
-  title: string;
-  stars: string[];
-}) {
-  if (!stars.length) return null;
-
-  return (
-    <div className="space-y-1">
-      <p className="text-[11px] tracking-[0.12em] text-muted-foreground">{title}</p>
-      <p className="text-xs leading-5 text-foreground/90">{stars.join(" · ")}</p>
-    </div>
-  );
-}
-
 function getFortuneCellClass(fortune?: ZiweiFortunePalace) {
   if (!fortune) {
-    return "border-border bg-white";
+    return "bg-white";
   }
 
   if (fortune.isDecadalFocus && fortune.isYearlyFocus) {
-    return "border-sky-300 bg-linear-to-br from-sky-50 via-white to-amber-50";
+    return "bg-linear-to-br from-amber-50/80 via-white to-sky-50/80";
   }
 
   if (fortune.isDecadalFocus) {
-    return "border-amber-300 bg-linear-to-br from-amber-50 via-white to-white";
+    return "bg-amber-50/75";
   }
 
   if (fortune.isYearlyFocus) {
-    return "border-sky-300 bg-linear-to-br from-sky-50 via-white to-white";
+    return "bg-sky-50/75";
   }
 
   if (fortune.isAgeFocus) {
-    return "border-violet-300 bg-linear-to-br from-violet-50 via-white to-white";
+    return "bg-violet-50/75";
   }
 
-  return "border-border bg-white";
+  return "bg-white";
+}
+
+function getFortuneAccentClass(fortune?: ZiweiFortunePalace) {
+  if (!fortune) {
+    return "";
+  }
+
+  if (fortune.isDecadalFocus && fortune.isYearlyFocus) {
+    return "ring-1 ring-inset ring-slate-300";
+  }
+
+  if (fortune.isDecadalFocus) {
+    return "ring-1 ring-inset ring-amber-300";
+  }
+
+  if (fortune.isYearlyFocus) {
+    return "ring-1 ring-inset ring-sky-300";
+  }
+
+  if (fortune.isAgeFocus) {
+    return "ring-1 ring-inset ring-violet-300";
+  }
+
+  return "";
+}
+
+function getSelectedPalaceClass(selected: boolean, mode: ZiweiChartMode, fortune?: ZiweiFortunePalace) {
+  if (!selected) {
+    return "hover:bg-slate-50/80";
+  }
+
+  if (mode === "fortune") {
+    if (fortune?.isDecadalFocus && fortune?.isYearlyFocus) {
+      return "bg-linear-to-br from-amber-100 via-white to-sky-100 ring-2 ring-inset ring-slate-400";
+    }
+
+    if (fortune?.isDecadalFocus) {
+      return "bg-amber-100 ring-2 ring-inset ring-amber-400";
+    }
+
+    if (fortune?.isYearlyFocus) {
+      return "bg-sky-100 ring-2 ring-inset ring-sky-400";
+    }
+
+    if (fortune?.isAgeFocus) {
+      return "bg-violet-100 ring-2 ring-inset ring-violet-400";
+    }
+  }
+
+  return "bg-slate-100 ring-2 ring-inset ring-slate-400";
+}
+
+function getPalaceEdgeClass(row: number, col: number) {
+  return cn(
+    row === 1 ? "pt-5 md:pt-6" : "",
+    row === 4 ? "pb-5 md:pb-6" : "",
+    col === 1 ? "pl-5 md:pl-6" : "",
+    col === 4 ? "pr-5 md:pr-6" : "",
+  );
 }
 
 function PalaceCell({
   palace,
   fortune,
   mode,
+  edgeClass,
+  selected,
+  onSelect,
 }: {
   palace: ZiweiPalace;
   fortune?: ZiweiFortunePalace;
   mode: ZiweiChartMode;
+  edgeClass?: string;
+  selected: boolean;
+  onSelect: () => void;
 }) {
   const majorStars: ZiweiStarState[] =
     palace.majorStarStates?.length
       ? palace.majorStarStates
       : palace.majorStars.map((name) => ({ name }));
-  const minorStars = palace.minorStars.slice(0, 6);
-  const adjectiveStars = palace.adjectiveStars.slice(0, 6);
+  const minorStars = palace.minorStarStates?.length
+    ? palace.minorStarStates.map((item) => item.name)
+    : palace.minorStars;
+  const adjectiveStars = palace.adjectiveStarStates?.length
+    ? palace.adjectiveStarStates.map((item) => item.name)
+    : palace.adjectiveStars;
+  const detailLine =
+    mode === "natal"
+      ? formatCompactList(minorStars, 4)
+      : formatCompactList(
+          [
+            ...(fortune?.decadalStars ?? []),
+            ...(fortune?.yearlyStars ?? []),
+            ...(fortune?.ageStars ?? []),
+          ],
+          4,
+        );
+  const supportLine =
+    mode === "natal"
+      ? formatCompactList(adjectiveStars, 4)
+      : formatCompactList(
+          [
+            ...(fortune?.decadalMutagens ?? []),
+            ...(fortune?.yearlyMutagens ?? []),
+            ...(fortune?.ageMutagens ?? []),
+          ],
+          4,
+        );
+  const footerLine =
+    mode === "natal"
+      ? [formatAgeRange(palace), palace.changsheng12].filter(Boolean).join(" · ")
+      : [fortune?.decadalPalaceName, fortune?.yearlyPalaceName, fortune?.agePalaceName]
+          .filter(Boolean)
+          .join(" · ");
 
   return (
-    <article
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={selected}
       className={cn(
-        "flex min-h-52 flex-col rounded-2xl border p-4 transition-colors",
-        mode === "fortune" ? getFortuneCellClass(fortune) : "border-border bg-white",
+        "flex h-full min-h-44 w-full flex-col px-3 py-3 text-left transition-colors duration-150 md:min-h-48 md:px-3.5 md:py-3.5",
+        mode === "fortune" ? getFortuneCellClass(fortune) : "bg-white",
+        mode === "fortune" ? getFortuneAccentClass(fortune) : "",
+        getSelectedPalaceClass(selected, mode, fortune),
+        edgeClass,
       )}
     >
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-2xl font-semibold tracking-[0.04em]">{palace.name}宫</h3>
-            {palace.isBodyPalace ? <ScopeChip label="身宫" tone="sky" /> : null}
-            {palace.isOriginalPalace ? <ScopeChip label="来因" tone="amber" /> : null}
-          </div>
-          {mode === "fortune" && fortune ? (
-            <div className="flex flex-wrap gap-1.5">
-              {fortune.decadalPalaceName ? (
-                <ScopeChip label={`限${fortune.decadalPalaceName}`} tone="amber" />
-              ) : null}
-              {fortune.yearlyPalaceName ? (
-                <ScopeChip label={`年${fortune.yearlyPalaceName}`} tone="sky" />
-              ) : null}
-              {fortune.agePalaceName ? (
-                <ScopeChip label={`小${fortune.agePalaceName}`} tone="violet" />
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-        <div className="text-right">
-          <p className="text-xs tracking-[0.18em] text-muted-foreground">
-            {palace.heavenlyStem}
-            {palace.earthlyBranch}
-          </p>
-          <p className="mt-2 text-sm font-medium text-foreground/70">{palace.changsheng12}</p>
-        </div>
-      </div>
-
       <div className="space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 space-y-1.5">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <h3 className="text-sm font-semibold tracking-[0.14em] text-foreground">
+                {palace.name}宫
+              </h3>
+              {palace.isBodyPalace ? <ScopeChip label="身" tone="sky" /> : null}
+              {palace.isOriginalPalace ? <ScopeChip label="因" tone="amber" /> : null}
+            </div>
+            {mode === "fortune" && fortune ? (
+              <div className="flex flex-wrap gap-1">
+                {fortune.decadalPalaceName ? (
+                  <ScopeChip label={`限${fortune.decadalPalaceName}`} tone="amber" />
+                ) : null}
+                {fortune.yearlyPalaceName ? (
+                  <ScopeChip label={`年${fortune.yearlyPalaceName}`} tone="sky" />
+                ) : null}
+                {fortune.agePalaceName ? (
+                  <ScopeChip label={`小${fortune.agePalaceName}`} tone="violet" />
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          <div className="shrink-0 text-right">
+            <p className="text-[11px] tracking-[0.24em] text-muted-foreground">
+              {palace.heavenlyStem}
+              {palace.earthlyBranch}
+            </p>
+            <p className="mt-1 text-[11px] text-muted-foreground">{palace.changsheng12}</p>
+          </div>
+        </div>
+
         <div>
-          <p className="text-lg font-semibold leading-7">
+          <p className="text-base font-semibold leading-6 tracking-[0.03em] text-foreground md:text-[17px]">
             {majorStars.length ? majorStars.map((item) => item.name).join(" · ") : "无主星"}
           </p>
           {majorStars.length ? (
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
               {majorStars
                 .map((item) => (item.brightness ? `${item.name}${item.brightness}` : item.name))
                 .join(" · ")}
@@ -171,26 +269,19 @@ function PalaceCell({
           ) : null}
         </div>
 
-        {minorStars.length ? (
-          <p className="text-xs leading-5 text-muted-foreground">{minorStars.join(" · ")}</p>
+        {detailLine ? (
+          <p className="line-clamp-2 text-[11px] leading-5 text-muted-foreground">{detailLine}</p>
         ) : null}
-        {adjectiveStars.length ? (
-          <p className="text-xs leading-5 text-muted-foreground/80">{adjectiveStars.join(" · ")}</p>
+        {supportLine ? (
+          <p className="line-clamp-2 text-[11px] leading-5 text-muted-foreground/80">
+            {supportLine}
+          </p>
         ) : null}
+      </div>
 
+      <div className="mt-auto space-y-2 border-t border-slate-100/80 pt-3">
         {mode === "natal" ? (
-          <div className="space-y-2 pt-1 text-xs text-muted-foreground">
-            <p>
-              博士十二神：{palace.boshi12 ?? "未标注"} · 将前：{palace.jiangqian12 ?? "未标注"} · 岁前：
-              {palace.suiqian12 ?? "未标注"}
-            </p>
-            <p>
-              大限：{formatAgeRange(palace) || "未标注"}
-              {palace.decadal
-                ? `（${palace.decadal.heavenlyStem}${palace.decadal.earthlyBranch}）`
-                : ""}
-            </p>
-            <p>小限：{formatAgesPreview(palace) || "未标注"}</p>
+          <>
             {palace.mutagens?.length ? (
               <div className="flex flex-wrap gap-1">
                 {palace.mutagens.map((item) => (
@@ -198,10 +289,22 @@ function PalaceCell({
                 ))}
               </div>
             ) : null}
-          </div>
+            <div className="space-y-1 text-[10px] leading-4 text-muted-foreground">
+              {footerLine ? <p>{footerLine}</p> : null}
+              {(palace.boshi12 || palace.jiangqian12 || palace.suiqian12) && (
+                <p className="line-clamp-1">
+                  {palace.boshi12 ?? "未标注"} · {palace.jiangqian12 ?? "未标注"} ·{" "}
+                  {palace.suiqian12 ?? "未标注"}
+                </p>
+              )}
+              {formatAgesPreview(palace) ? (
+                <p className="line-clamp-1">小限 {formatAgesPreview(palace)}</p>
+              ) : null}
+            </div>
+          </>
         ) : (
-          <div className="space-y-3 pt-1">
-            <div className="flex flex-wrap gap-1.5">
+          <>
+            <div className="flex flex-wrap gap-1">
               {fortune?.decadalMutagens.map((item) => (
                 <MutagenBadge key={`${palace.index}-decadal-${item}`} value={item} />
               ))}
@@ -212,21 +315,101 @@ function PalaceCell({
                 <MutagenBadge key={`${palace.index}-age-${item}`} value={item} />
               ))}
             </div>
+            <div className="space-y-1 text-[10px] leading-4 text-muted-foreground">
+              {footerLine ? <p>{footerLine}</p> : null}
+              {(fortune?.yearlyJiangqian12 || fortune?.yearlySuiqian12) && (
+                <p className="line-clamp-1">
+                  年将前 {fortune?.yearlyJiangqian12 ?? "未标注"} · 年岁前{" "}
+                  {fortune?.yearlySuiqian12 ?? "未标注"}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </button>
+  );
+}
 
-            <StarLine title="大限流耀" stars={fortune?.decadalStars ?? []} />
-            <StarLine title="流年流耀" stars={fortune?.yearlyStars ?? []} />
-            <StarLine title="小限流耀" stars={fortune?.ageStars ?? []} />
+function PalaceInteractionPanel({
+  cell,
+  mode,
+}: {
+  cell: ZiweiDisplayPalace;
+  mode: ZiweiChartMode;
+}) {
+  const palace = cell.palace;
+  const fortune = cell.fortune;
+  const mutagedPalaces = palace.mutagedPalaces?.filter((item): item is string => Boolean(item)) ?? [];
+  const fortuneScopes = [
+    fortune?.decadalPalaceName ? { label: `大限落${fortune.decadalPalaceName}`, tone: "amber" as const } : null,
+    fortune?.yearlyPalaceName ? { label: `流年落${fortune.yearlyPalaceName}`, tone: "sky" as const } : null,
+    fortune?.agePalaceName ? { label: `小限落${fortune.agePalaceName}`, tone: "violet" as const } : null,
+  ].filter(Boolean) as Array<{ label: string; tone: "amber" | "sky" | "violet" }>;
 
-            {(fortune?.yearlyJiangqian12 || fortune?.yearlySuiqian12) && (
-              <p className="text-xs leading-5 text-muted-foreground">
-                年将前：{fortune?.yearlyJiangqian12 ?? "未标注"} · 年岁前：
-                {fortune?.yearlySuiqian12 ?? "未标注"}
-              </p>
+  return (
+    <Card className="rounded-[1.4rem] border border-border bg-white p-5 shadow-none">
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-lg font-semibold tracking-[0.06em]">{palace.name}宫</h3>
+          {palace.isBodyPalace ? <ScopeChip label="身宫" tone="sky" /> : null}
+          {palace.isOriginalPalace ? <ScopeChip label="来因宫" tone="amber" /> : null}
+        </div>
+
+        {mode === "natal" ? (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              点击宫位后展示该宫的四化与飞化去向，方便沿着盘面继续读。
+            </p>
+            {palace.mutagens?.length ? (
+              <div className="flex flex-wrap gap-2">
+                {palace.mutagens.map((item: string) => (
+                  <MutagenBadge key={`${palace.index}-panel-${item}`} value={item} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">当前宫位没有本宫四化。</p>
             )}
+            {mutagedPalaces.length ? (
+              <div className="flex flex-wrap gap-2">
+                {mutagedPalaces.map((item: string, index: number) => (
+                  <ScopeChip key={`${palace.index}-mutaged-${item}-${index}`} label={item} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              当前展示该宫在运势盘中的落宫、流耀与流年提示。
+            </p>
+            {fortuneScopes.length ? (
+              <div className="flex flex-wrap gap-2">
+                {fortuneScopes.map((item) => (
+                  <ScopeChip key={item.label} label={item.label} tone={item.tone} />
+                ))}
+              </div>
+            ) : null}
+            <div className="flex flex-wrap gap-2">
+              {fortune?.decadalMutagens.map((item: string) => (
+                <MutagenBadge key={`${palace.index}-fortune-panel-decadal-${item}`} value={item} />
+              ))}
+              {fortune?.yearlyMutagens.map((item: string) => (
+                <MutagenBadge key={`${palace.index}-fortune-panel-yearly-${item}`} value={item} />
+              ))}
+              {fortune?.ageMutagens.map((item: string) => (
+                <MutagenBadge key={`${palace.index}-fortune-panel-age-${item}`} value={item} />
+              ))}
+            </div>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              {fortune?.decadalStars.length ? <p>大限流耀：{fortune.decadalStars.join(" · ")}</p> : null}
+              {fortune?.yearlyStars.length ? <p>流年流耀：{fortune.yearlyStars.join(" · ")}</p> : null}
+              {fortune?.ageStars.length ? <p>小限流耀：{fortune.ageStars.join(" · ")}</p> : null}
+            </div>
           </div>
         )}
       </div>
-    </article>
+    </Card>
   );
 }
 
@@ -239,68 +422,87 @@ export function ZiweiChartView({
 }) {
   const [mode, setMode] = useState<ZiweiChartMode>("natal");
   const cells = useMemo(() => getZiweiDisplayPalaces(chart), [chart]);
+  const [selectedPalaceIndex, setSelectedPalaceIndex] = useState<number | null>(null);
   const center = useMemo(() => formatZiweiCenterSummary(chart, subjectName), [chart, subjectName]);
+  const selectedCell =
+    cells.find((cell) => cell.index === selectedPalaceIndex) ?? cells[0] ?? null;
 
   return (
     <div className="space-y-5">
-      <Card className="overflow-hidden rounded-[1.8rem] border border-border bg-white p-4 shadow-none md:p-5">
+      <Card className="overflow-hidden rounded-[1.8rem] border border-border bg-white p-3 shadow-none md:p-4">
         <div className="overflow-x-auto">
-          <div className="grid min-w-[920px] grid-cols-4 gap-3">
-          {cells.map((cell) => (
-            <div
-              key={cell.index}
-              className={cn(
-                cell.row === 1 ? "row-start-1" : "",
-                cell.row === 2 ? "row-start-2" : "",
-                cell.row === 3 ? "row-start-3" : "",
-                cell.row === 4 ? "row-start-4" : "",
-                cell.col === 1 ? "col-start-1" : "",
-                cell.col === 2 ? "col-start-2" : "",
-                cell.col === 3 ? "col-start-3" : "",
-                cell.col === 4 ? "col-start-4" : "",
-              )}
-            >
-              <PalaceCell palace={cell.palace} fortune={cell.fortune} mode={mode} />
-            </div>
-          ))}
-
-          <div className="col-start-2 row-start-2 row-span-2 col-span-2">
-            <div className="flex h-full min-h-52 flex-col items-center justify-center rounded-[1.6rem] border border-dashed border-border bg-linear-to-br from-muted/10 via-white to-muted/20 px-6 py-8 text-center">
-              <div className="space-y-3">
-                <h3 className="text-3xl font-semibold tracking-[0.06em]">
-                  {center.title || "紫微命盘"}
-                </h3>
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  {center.soul ? <p>{center.soul}</p> : null}
-                  {center.body ? <p>{center.body}</p> : null}
-                  {center.palaceLine ? <p>{center.palaceLine}</p> : null}
-                  {center.timeLine ? <p>{center.timeLine}</p> : null}
-                  {center.solarLine ? <p>{center.solarLine}</p> : null}
-                  {center.lunarLine ? <p>{center.lunarLine}</p> : null}
-                  {mode === "fortune" && center.fortuneLine ? <p>{center.fortuneLine}</p> : null}
+          <div className="overflow-hidden rounded-[1.5rem] border border-border bg-border p-px shadow-[0_18px_50px_-36px_rgba(15,23,42,0.45)]">
+            <div className="grid min-w-[920px] grid-cols-4 gap-px bg-border">
+              {cells.map((cell) => (
+                <div
+                  key={cell.index}
+                  className={cn(
+                    "h-full",
+                    cell.row === 1 ? "row-start-1" : "",
+                    cell.row === 2 ? "row-start-2" : "",
+                    cell.row === 3 ? "row-start-3" : "",
+                    cell.row === 4 ? "row-start-4" : "",
+                    cell.col === 1 ? "col-start-1" : "",
+                    cell.col === 2 ? "col-start-2" : "",
+                    cell.col === 3 ? "col-start-3" : "",
+                    cell.col === 4 ? "col-start-4" : "",
+                  )}
+                >
+                  <PalaceCell
+                    palace={cell.palace}
+                    fortune={cell.fortune}
+                    mode={mode}
+                    edgeClass={getPalaceEdgeClass(cell.row, cell.col)}
+                    selected={selectedCell?.index === cell.index}
+                    onSelect={() => setSelectedPalaceIndex(cell.index)}
+                  />
                 </div>
-                {mode === "fortune" && chart.fortune ? (
-                  <div className="flex flex-wrap justify-center gap-2 pt-2">
-                    <ScopeChip
-                      label={`${chart.fortune.decadal.name} ${chart.fortune.decadal.heavenlyStem}${chart.fortune.decadal.earthlyBranch}`}
-                      tone="amber"
-                    />
-                    <ScopeChip
-                      label={`${chart.fortune.yearly.name} ${chart.fortune.yearly.heavenlyStem}${chart.fortune.yearly.earthlyBranch}`}
-                      tone="sky"
-                    />
-                    <ScopeChip
-                      label={`${chart.fortune.age.name} ${chart.fortune.age.nominalAge ?? chart.fortune.nominalAge}岁`}
-                      tone="violet"
-                    />
+              ))}
+
+              <div className="col-start-2 row-start-2 row-span-2 col-span-2">
+                <div className="flex h-full min-h-44 flex-col items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100 px-6 py-7 text-center md:min-h-48">
+                  <div className="max-w-sm space-y-3">
+                    <h3 className="text-2xl font-semibold tracking-[0.08em] text-foreground md:text-[28px]">
+                      {center.title || "紫微命盘"}
+                    </h3>
+                    <div className="mx-auto h-px w-16 bg-border" />
+                    <div className="space-y-1 text-xs leading-5 text-muted-foreground md:text-[13px]">
+                      {(center.soul || center.body) && (
+                        <p>{[center.soul, center.body].filter(Boolean).join(" · ")}</p>
+                      )}
+                      {center.palaceLine ? <p>{center.palaceLine}</p> : null}
+                      {center.timeLine ? <p>{center.timeLine}</p> : null}
+                      {center.solarLine ? <p>{center.solarLine}</p> : null}
+                      {center.lunarLine ? <p>{center.lunarLine}</p> : null}
+                      {mode === "fortune" && center.fortuneLine ? (
+                        <p>{center.fortuneLine}</p>
+                      ) : null}
+                    </div>
+                    {mode === "fortune" && chart.fortune ? (
+                      <div className="flex flex-wrap justify-center gap-1.5 pt-2">
+                        <ScopeChip
+                          label={`${chart.fortune.decadal.name} ${chart.fortune.decadal.heavenlyStem}${chart.fortune.decadal.earthlyBranch}`}
+                          tone="amber"
+                        />
+                        <ScopeChip
+                          label={`${chart.fortune.yearly.name} ${chart.fortune.yearly.heavenlyStem}${chart.fortune.yearly.earthlyBranch}`}
+                          tone="sky"
+                        />
+                        <ScopeChip
+                          label={`${chart.fortune.age.name} ${chart.fortune.age.nominalAge ?? chart.fortune.nominalAge}岁`}
+                          tone="violet"
+                        />
+                      </div>
+                    ) : null}
                   </div>
-                ) : null}
+                </div>
               </div>
             </div>
           </div>
-          </div>
         </div>
       </Card>
+
+      {selectedCell ? <PalaceInteractionPanel cell={selectedCell} mode={mode} /> : null}
 
       {chart.fortune ? (
         <div className="flex justify-center">
@@ -310,7 +512,9 @@ export function ZiweiChartView({
               variant="ghost"
               className={cn(
                 "rounded-full px-6",
-                mode === "natal" ? "bg-foreground text-background hover:bg-foreground hover:text-background" : "",
+                mode === "natal"
+                  ? "bg-foreground text-background hover:bg-foreground hover:text-background"
+                  : "",
               )}
               onClick={() => setMode("natal")}
             >
