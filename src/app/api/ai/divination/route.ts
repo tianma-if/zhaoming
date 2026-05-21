@@ -7,6 +7,7 @@ import { buildDivinationPrompt } from "@/lib/ai/prompts";
 import { getAiModel } from "@/lib/ai/provider";
 import { textResponse } from "@/lib/ai/stream";
 import { ensureUserProfile, getDivinationById, updateDivinationResult } from "@/lib/data";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { hasAiProviderEnv } from "@/lib/env";
 
 function getHourlyDivinationPromptLogPath(date = new Date()) {
@@ -144,10 +145,11 @@ export async function POST(request: Request) {
 
     const prompt = buildDivinationPrompt(record, mode);
     const modelName = process.env.AI_MODEL ?? "unknown";
+    const divinationType = resolveDivinationTypeFromRecord(record);
 
     await logDivinationPrompt({
       divinationId: record.id,
-      divinationType: record.divination_type,
+      divinationType,
       mode,
       model: modelName,
       system: prompt.system,

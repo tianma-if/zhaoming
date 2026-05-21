@@ -4,6 +4,7 @@ import {
   type DivinationPromptMode,
 } from "@/lib/ai/divination-prompts";
 import { buildDivinationPromptInput } from "@/lib/ai/divination-prompt-input";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
@@ -11,7 +12,7 @@ export function buildDivinationPrompt(
   record: DivinationRecord,
   mode: DivinationPromptMode = "full",
 ) {
-  const template = getDivinationPromptTemplate(record.divination_type, mode);
+  const template = getDivinationPromptTemplate(resolveDivinationTypeFromRecord(record), mode);
 
   return {
     system: template.system,

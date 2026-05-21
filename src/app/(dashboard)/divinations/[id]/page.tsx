@@ -6,15 +6,23 @@ import {
 } from "@/components/divination/divination-ai-report";
 import { BaziChartView } from "@/components/divination/bazi-chart";
 import { BaziInsights } from "@/components/divination/bazi-insights";
+import { ChengguChartView } from "@/components/divination/chenggu-chart";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
 import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { divinationInputSchema } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
-import type { BaziChart, ZiweiChart } from "@/types/divination";
+import type { BaziChart, ChengguChart, ZiweiChart } from "@/types/divination";
+
+const divinationTitleMap = {
+  bazi: "八字算命",
+  ziwei: "紫微斗数",
+  chenggu: "袁天罡称骨",
+} as const;
 
 export async function generateMetadata({
   params,
@@ -31,8 +39,10 @@ export async function generateMetadata({
     };
   }
 
+  const divinationType = resolveDivinationTypeFromRecord(data);
+
   return {
-    title: data.divination_type === "bazi" ? "八字算命" : "紫微斗数",
+    title: divinationTitleMap[divinationType as keyof typeof divinationTitleMap] ?? "测算记录",
   };
 }
 
@@ -49,8 +59,10 @@ export default async function DivinationDetailPage({
     notFound();
   }
 
+  const divinationType = resolveDivinationTypeFromRecord(data);
+
   const ziweiChart =
-    data.divination_type === "ziwei"
+    divinationType === "ziwei"
       ? (() => {
           const parsed = divinationInputSchema.safeParse(data.input_params);
 
@@ -63,10 +75,19 @@ export default async function DivinationDetailPage({
       : null;
 
   return (
-    <DashboardPage width={data.divination_type === "bazi" ? "default" : "wide"}>
+    <DashboardPage
+      width={divinationType === "ziwei" ? "wide" : "default"}
+      className={divinationType === "ziwei" ? "max-w-6xl" : undefined}
+    >
       <DashboardPageHeader
         eyebrow={<Badge>Reading View</Badge>}
-        title={data.divination_type === "bazi" ? "八字解盘" : "紫微斗数解盘"}
+        title={
+          divinationType === "bazi"
+            ? "八字解盘"
+            : divinationType === "ziwei"
+              ? "紫微斗数解盘"
+              : "袁天罡称骨结果"
+        }
         description={
           <span className="text-xs text-muted-foreground">
             命盘生成时间：{formatDateTime(data.created_at)}
@@ -85,13 +106,15 @@ export default async function DivinationDetailPage({
           divinationId={data.id}
           initialMarkdown={data.ai_result_markdown}
         />
-        {data.divination_type === "bazi" ? (
+        {divinationType === "bazi" ? (
           <>
             <BaziChartView chart={data.chart_json as unknown as BaziChart} />
             <BaziInsights chart={data.chart_json as unknown as BaziChart} />
           </>
-        ) : (
+        ) : divinationType === "ziwei" ? (
           <ZiweiChartView chart={ziweiChart as ZiweiChart} subjectName={data.subject_name} />
+        ) : (
+          <ChengguChartView chart={data.chart_json as unknown as ChengguChart} />
         )}
       </div>
     </DashboardPage>

@@ -15,6 +15,7 @@ type SystemItem = {
   title: string;
   alias?: string;
   body: string;
+  href?: string;
 };
 
 type SystemGroup = {
@@ -51,14 +52,17 @@ const systemGroups: SystemGroup[] = [
         title: "八字算命",
         alias: "四柱推命",
         body: "以出生年、月、日、时建立四柱结构，分析五行流转、格局重心与人生阶段线索。",
+        href: "/divinations/new",
       },
       {
         title: "紫微斗数",
         body: "围绕十二宫位与主星分布，呈现更适合现代阅读的个人命盘结构。",
+        href: "/divinations/ziwei",
       },
       {
         title: "袁天罡称骨算命",
         body: "从更简化的传统规则切入，适合作为轻量级命理体验入口。",
+        href: "/divinations/chenggu",
       },
     ],
   },
@@ -221,10 +225,20 @@ export default async function HomePage() {
                       </div>
                     </div>
 
-                    <div className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3">
-                      敬请期待
-                      <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
-                    </div>
+                    {item.href ? (
+                      <Link
+                        href={item.href}
+                        className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3"
+                      >
+                        立即体验
+                        <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
+                      </Link>
+                    ) : (
+                      <div className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3">
+                        敬请期待
+                        <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
+                      </div>
+                    )}
                   </Card>
                 ))}
               </div>

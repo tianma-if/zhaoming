@@ -19,6 +19,7 @@ import { formatDateTime } from "@/lib/utils";
 function getDivinationTypeLabel(type: string) {
   if (type === "bazi") return "八字";
   if (type === "ziwei") return "紫微斗数";
+  if (type === "chenggu") return "称骨";
   return type;
 }
 

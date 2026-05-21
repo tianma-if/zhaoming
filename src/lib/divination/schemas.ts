@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const divinationInputSchema = z.object({
-  divinationType: z.enum(["bazi", "ziwei"]),
+  divinationType: z.enum(["bazi", "ziwei", "chenggu"]),
   calendarType: z.enum(["solar", "lunar"]),
   birthDate: z.string().min(1, "请选择出生日期。"),
   birthTime: z.string().min(1, "请选择出生时辰。"),

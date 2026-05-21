@@ -38,7 +38,7 @@ create table if not exists public.divinations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.users(id) on delete cascade,
   divination_type text not null
-    check (divination_type in ('bazi', 'ziwei', 'qimen', 'meihua', 'liuyao', 'custom')),
+    check (divination_type in ('bazi', 'ziwei', 'qimen', 'meihua', 'liuyao', 'chenggu', 'custom')),
   subject_name text,
   birth_gregorian timestamptz,
   birth_lunar jsonb,

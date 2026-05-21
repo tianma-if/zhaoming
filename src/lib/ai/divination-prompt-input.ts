@@ -1,7 +1,8 @@
 import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdict";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import type { Database } from "@/types/database";
-import type { BaziChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
+import type { BaziChart, ChengguChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
@@ -19,8 +20,10 @@ function getDivinationTypeLabel(type: string) {
 }
 
 function formatBasicInfo(record: DivinationRecord) {
+  const divinationType = resolveDivinationTypeFromRecord(record);
+
   return [
-    `测算类型：${getDivinationTypeLabel(record.divination_type)}`,
+    `测算类型：${getDivinationTypeLabel(divinationType)}`,
     `用户问题：${record.question}`,
     `性别：${record.gender ?? "unknown"}`,
     `出生公历：${record.birth_gregorian ?? "unknown"}`,
@@ -114,27 +117,51 @@ function formatZiweiSummary(chart: ZiweiChart) {
 }
 
 function formatGenericSummary(record: DivinationRecord) {
+  const divinationType = resolveDivinationTypeFromRecord(record);
+
   return [
     `当前记录状态：${record.status}`,
-    `测算类型：${getDivinationTypeLabel(record.divination_type)}`,
+    `测算类型：${getDivinationTypeLabel(divinationType)}`,
     `问题：${record.question}`,
   ].join("\n");
 }
 
+function formatChengguSummary(chart: ChengguChart) {
+  const breakdown = chart.weights
+    .map((item) => `${item.label}：${item.source}，${item.display}`)
+    .join("\n");
+
+  return [
+    `农历：${chart.meta.lunar}`,
+    `总骨重：${chart.totalText}`,
+    `结构拆分：\n${breakdown}`,
+    `歌诀：${chart.verdict}`,
+    `总结：${chart.summary}`,
+  ].join("\n");
+}
+
 function formatDerivedSummary(record: DivinationRecord) {
-  if (record.divination_type === "bazi") {
+  const divinationType = resolveDivinationTypeFromRecord(record);
+
+  if (divinationType === "bazi") {
     return formatBaziSummary(record.chart_json as unknown as BaziChart);
   }
 
-  if (record.divination_type === "ziwei") {
+  if (divinationType === "ziwei") {
     return formatZiweiSummary(record.chart_json as unknown as ZiweiChart);
+  }
+
+  if (divinationType === "chenggu") {
+    return formatChengguSummary(record.chart_json as unknown as ChengguChart);
   }
 
   return formatGenericSummary(record);
 }
 
 export function buildDivinationPromptInput(record: DivinationRecord) {
-  if (record.divination_type === "bazi") {
+  const divinationType = resolveDivinationTypeFromRecord(record);
+
+  if (divinationType === "bazi") {
     const chart = record.chart_json as unknown as BaziChart;
 
     return [

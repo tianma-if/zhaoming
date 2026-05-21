@@ -1,4 +1,5 @@
 import type { Database, Json } from "@/types/database";
+import { resolveDivinationTypeFromRecord } from "./record-type";
 import type { DivinationInputForm } from "./schemas";
 
 type DivinationRow = Database["public"]["Tables"]["divinations"]["Row"];
@@ -72,7 +73,7 @@ export function toDivinationPrefillRecord(
 
   return {
     id: row.id,
-    divinationType: row.divination_type,
+    divinationType: resolveDivinationTypeFromRecord(row),
     subjectName,
     gender,
     calendarType,

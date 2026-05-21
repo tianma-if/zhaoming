@@ -6,11 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const metadata: Metadata = {
   title: "测算记录",
+};
+
+const divinationTypeLabelMap: Record<string, string> = {
+  bazi: "八字",
+  ziwei: "紫微斗数",
+  chenggu: "称骨",
 };
 
 export default async function DivinationsPage() {
@@ -44,7 +51,10 @@ export default async function DivinationsPage() {
             <TableBody>
               {data.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium capitalize">{item.divination_type}</TableCell>
+                  <TableCell className="font-medium">
+                    {divinationTypeLabelMap[resolveDivinationTypeFromRecord(item)] ??
+                      resolveDivinationTypeFromRecord(item)}
+                  </TableCell>
                   <TableCell className="max-w-xl">
                     <div className="line-clamp-2 leading-7">{item.question}</div>
                   </TableCell>

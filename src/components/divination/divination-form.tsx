@@ -220,6 +220,49 @@ function ZiweiConceptSection() {
   );
 }
 
+function ChengguConceptSection() {
+  const features = [
+    {
+      title: "四项定骨重",
+      description: "按照农历出生年、月、日、时分别取值，再汇总成总骨重。",
+    },
+    {
+      title: "轻量级切入",
+      description: "相比八字和紫微，称骨更像一种快速读法，适合作为总体气质与人生节奏的概览。",
+    },
+    {
+      title: "现代化呈现",
+      description: "保留传统歌诀，同时补上拆分明细与更克制的结果表达，方便理解来源。",
+    },
+  ] as const;
+
+  return (
+    <section className="space-y-8">
+      <div className="space-y-4 text-center">
+        <Badge>概念导读</Badge>
+        <div className="space-y-3">
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是袁天罡称骨？</CardTitle>
+          <CardDescription className="mx-auto max-w-3xl text-base leading-8">
+            称骨算命会把出生的农历年、月、日、时换算成对应骨重，用总骨重和歌诀去看一生的总体基调。
+          </CardDescription>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {features.map((item) => (
+          <article
+            key={item.title}
+            className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
+          >
+            <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function DivinationForm({
   divinationType = "bazi",
   submitLabel = "排盘",
@@ -298,9 +341,14 @@ export function DivinationForm({
         </form>
       </Form>
 
-      {conceptSection ?? (divinationType === "bazi" ? <BaziConceptSection /> : null)}
+      {conceptSection ??
+        (divinationType === "bazi" ? (
+          <BaziConceptSection />
+        ) : divinationType === "chenggu" ? (
+          <ChengguConceptSection />
+        ) : null)}
     </div>
   );
 }
 
-export { BaziConceptSection, ZiweiConceptSection };
+export { BaziConceptSection, ChengguConceptSection, ZiweiConceptSection };

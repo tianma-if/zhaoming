@@ -39,7 +39,7 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
     items: [
       { href: "/divinations/new", title: "八字算命", note: "四柱推命", icon: Calculator },
       { href: "/divinations/ziwei", title: "紫微斗数", note: "命宫排盘", icon: Sparkles },
-      { title: "袁天罡称骨", icon: CalendarDays },
+      { href: "/divinations/chenggu", title: "袁天罡称骨", note: "骨重歌诀", icon: CalendarDays },
     ],
   },
   {
@@ -82,6 +82,7 @@ export function getDashboardBreadcrumbs(pathname: string) {
     divinations: "测算记录",
     new: "新建测算",
     ziwei: "紫微排盘",
+    chenggu: "袁天罡称骨",
     profile: "个人资料",
   };
 

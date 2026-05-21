@@ -137,3 +137,35 @@ export interface ZiweiChart {
   palaces: ZiweiPalace[];
   fortune?: ZiweiFortune;
 }
+
+export interface ChengguComponentWeight {
+  key: "year" | "month" | "day" | "time";
+  label: string;
+  valueQian: number;
+  display: string;
+  source: string;
+}
+
+export interface ChengguChart {
+  kind: "chenggu";
+  meta: {
+    calendarType: "solar" | "lunar";
+    solar: string;
+    inputSolar?: string;
+    lunar: string;
+    lunarYearGanZhi: string;
+    lunarMonth: number;
+    lunarDay: number;
+    timeZhi: string;
+    gender: string;
+    question: string;
+    birthPlace?: string;
+    timezone?: string;
+    longitudeCorrectionMinutes?: number;
+  };
+  weights: ChengguComponentWeight[];
+  totalQian: number;
+  totalText: string;
+  verdict: string;
+  summary: string;
+}

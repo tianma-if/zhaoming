@@ -40,9 +40,14 @@ export function BirthPlaceInput({
   const [suggestions, setSuggestions] = useState<BirthPlaceSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState(value);
 
   useEffect(() => {
-    const trimmed = value.trim();
+    if (!isOpen) {
+      return;
+    }
+
+    const trimmed = query.trim();
 
     if (trimmed.length < 2) {
       return;
@@ -60,7 +65,6 @@ export function BirthPlaceInput({
           | null;
 
         setSuggestions(payload?.suggestions ?? []);
-        setIsOpen(true);
       } catch {
         if (!controller.signal.aborted) {
           setSuggestions([]);
@@ -76,9 +80,10 @@ export function BirthPlaceInput({
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [value]);
+  }, [isOpen, query]);
 
   function handleSelect(suggestion: BirthPlaceSuggestion) {
+    setQuery(suggestion.label);
     onChange(suggestion.label);
     onSelectSuggestion(suggestion);
     setSuggestions([]);
@@ -88,7 +93,23 @@ export function BirthPlaceInput({
   return (
     <div className="space-y-2 text-sm">
       {showLabel ? <span className="text-muted-foreground">出生地点</span> : null}
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+
+          if (open) {
+            setQuery(value);
+            setSuggestions([]);
+            setIsLoading(false);
+            return;
+          }
+
+          setQuery(value);
+          setSuggestions([]);
+          setIsLoading(false);
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -109,8 +130,9 @@ export function BirthPlaceInput({
         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput
-              value={value}
+              value={query}
               onValueChange={(nextValue) => {
+                setQuery(nextValue);
                 onChange(nextValue);
                 onSelectSuggestion(null);
                 if (nextValue.trim().length < 2) {
@@ -137,7 +159,7 @@ export function BirthPlaceInput({
                     <Check
                       className={cn(
                         "mt-0.5 size-4 shrink-0",
-                        value === suggestion.label ? "opacity-100" : "opacity-0",
+                        query === suggestion.label ? "opacity-100" : "opacity-0",
                       )}
                     />
                   </CommandItem>

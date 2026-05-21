@@ -12,9 +12,16 @@ import {
 } from "@/components/layout/dashboard-shell";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile, listRecentDivinations } from "@/lib/data";
+import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 
 export const metadata: Metadata = {
   title: "总览",
+};
+
+const divinationTypeLabelMap: Record<string, string> = {
+  bazi: "八字",
+  ziwei: "紫微斗数",
+  chenggu: "称骨",
 };
 
 export default async function DashboardOverviewPage() {
@@ -111,7 +118,8 @@ export default async function DashboardOverviewPage() {
                 <div className="flex items-center justify-between gap-4">
                   <div className="space-y-2">
                     <p className="text-xs tracking-[0.28em] text-muted-foreground">
-                      {item.divination_type}
+                      {divinationTypeLabelMap[resolveDivinationTypeFromRecord(item)] ??
+                        resolveDivinationTypeFromRecord(item)}
                     </p>
                     <p className="text-sm leading-7">{item.question}</p>
                   </div>
