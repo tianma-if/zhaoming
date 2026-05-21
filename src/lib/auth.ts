@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { nextCookies } from "better-auth/next-js";
 import { Pool } from "pg";
 import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
@@ -33,9 +34,14 @@ export const auth = betterAuth({
       generateId: "uuid",
     },
   },
+  session: {
+    expiresIn: 60 * 60 * 24 * 365 * 3,
+    updateAge: 60 * 60 * 24 * 30,
+  },
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [nextCookies()],
   socialProviders: hasGoogleOAuthEnv()
     ? {
         google: {
