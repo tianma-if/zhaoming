@@ -1,237 +1,198 @@
-import { ArrowRight } from "lucide-react";
 import type { LiuyaoChart, LiuyaoLine } from "@/types/divination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 function formatMethod(method: LiuyaoChart["meta"]["method"]) {
-  return method === "coins" ? "铜钱摇卦" : "手动录入";
+  return method === "coins" ? "随机数起卦" : "手动录入";
 }
 
-function getMovingLineText(chart: LiuyaoChart) {
-  return chart.movingLineIndexes.length
-    ? chart.movingLineIndexes.map((index) => chart.lines[index - 1]?.label).join("、")
-    : "无动爻";
+function getMovingLines(chart: LiuyaoChart) {
+  return chart.lines.filter((line) => line.isMoving);
 }
 
-function YaoStroke({
-  isYang,
-  accent = false,
-}: {
-  isYang: boolean;
-  accent?: boolean;
-}) {
-  const fillClassName = accent ? "bg-black" : "bg-black";
+function getChangedLineValue(line: LiuyaoLine) {
+  if (line.value === 6) return 7;
+  if (line.value === 9) return 8;
+  return line.value;
+}
 
+function YaoStroke({ isYang }: { isYang: boolean }) {
   if (isYang) {
-    return (
-      <div
-        className={`h-[3px] w-full rounded-full ${fillClassName}`}
-      />
-    );
+    return <div className="h-[3px] w-full rounded-full bg-black" />;
   }
 
   return (
-    <div className="grid grid-cols-[1fr_0.42fr_1fr] items-center gap-2">
-      <div className={`h-[3px] rounded-full ${fillClassName}`} />
+    <div className="grid grid-cols-[1fr_0.46fr_1fr] items-center gap-2">
+      <div className="h-[3px] rounded-full bg-black" />
       <div className="h-px rounded-full bg-black/35" />
-      <div className={`h-[3px] rounded-full ${fillClassName}`} />
+      <div className="h-[3px] rounded-full bg-black" />
     </div>
   );
 }
 
-function HexagramColumn({
-  title,
+function HexagramRows({
+  lines,
+  changed = false,
+}: {
+  lines: LiuyaoLine[];
+  changed?: boolean;
+}) {
+  const rows = lines
+    .map((line) => ({
+      ...line,
+      displayValue: changed ? getChangedLineValue(line) : line.value,
+      isYang: changed ? line.value === 6 || line.value === 7 : line.yinYang === "yang",
+    }))
+    .slice()
+    .reverse();
+
+  return (
+    <div className="rounded-[1.15rem] border border-black/8 bg-[#f5f5f3] px-6 py-5">
+      <div className="space-y-4">
+        {rows.map((line) => (
+          <div
+            key={`${changed ? "changed" : "original"}-${line.index}`}
+            className="grid grid-cols-[4.2rem_minmax(0,1fr)_3.2rem] items-center gap-4"
+          >
+            <div className="text-right text-sm text-black/62">{line.label}</div>
+            <div className={line.isMoving && !changed ? "rounded-lg bg-white px-3 py-2" : "px-3 py-2"}>
+              <YaoStroke isYang={line.isYang} />
+            </div>
+            <div className="text-xs text-black/45">{changed ? (line.isMoving ? "变" : "") : line.isMoving ? "动" : ""}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HexagramPanel({
+  badge,
+  name,
   subtitle,
   lines,
-  variant,
+  changed = false,
 }: {
-  title: string;
+  badge: string;
+  name: string;
   subtitle: string;
   lines: LiuyaoLine[];
-  variant: "original" | "changed";
+  changed?: boolean;
 }) {
-  const linesTopDown = lines.slice().reverse();
-
   return (
-    <article className="overflow-hidden rounded-[1.25rem] border border-black/12 bg-white p-5">
-      <div className="space-y-5">
-        <div className="space-y-2">
-          <p className="text-[11px] tracking-[0.28em] text-black/45 uppercase">{title}</p>
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h3 className="font-display text-[2.4rem] leading-none tracking-[0.04em] text-foreground">
-                {subtitle}
-              </h3>
-              <p className="mt-2 text-sm text-black/55">
-                {variant === "original" ? "此刻局势的落点" : "变化之后的走向"}
-              </p>
-            </div>
-            <div className="rounded-full border border-black/10 px-3 py-1 text-xs text-black/50">
-              {variant === "original" ? "本位" : "后势"}
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-[1rem] border border-black/10 p-4">
-          <div className="space-y-4">
-            {linesTopDown.map((line) => {
-              const showYang = variant === "original" ? line.yinYang === "yang" : line.changedSymbol === "────────";
-
-              return (
-                <div
-                  key={`${variant}-${line.index}`}
-                  className={`grid grid-cols-[3.5rem_minmax(0,1fr)_3rem] items-center gap-3 rounded-xl px-2 py-1.5 ${
-                    line.isMoving && variant === "original"
-                      ? "bg-black text-white"
-                      : "bg-transparent"
-                  }`}
-                >
-                  <div className={`text-[11px] tracking-[0.18em] ${line.isMoving && variant === "original" ? "text-white/75" : "text-black/45"}`}>
-                    {line.label}
-                  </div>
-                  <YaoStroke isYang={showYang} accent={line.isMoving && variant === "original"} />
-                  <div className={`text-right text-xs ${line.isMoving && variant === "original" ? "text-white/80" : "text-black/50"}`}>
-                    {variant === "original" ? line.value : line.isMoving ? "变" : "静"}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+    <section className="space-y-5">
+      <div className="flex justify-center">
+        <div className={`rounded-full px-6 py-2 text-lg font-semibold ${changed ? "bg-black/45 text-white" : "bg-black text-white"}`}>
+          {badge}
         </div>
       </div>
-    </article>
+
+      <div className="space-y-3 text-center">
+        <div className="flex items-center justify-center gap-2">
+          <h3 className="text-[2rem] font-semibold tracking-tight text-black">{name}</h3>
+        </div>
+        <p className="text-base text-black/55">{subtitle}</p>
+      </div>
+
+      <div className="mx-auto max-w-[23rem]">
+        <HexagramRows lines={lines} changed={changed} />
+      </div>
+    </section>
   );
 }
 
-function HexagramMeta({
-  label,
-  trigramText,
-  description,
-}: {
-  label: string;
-  trigramText: string;
-  description: string;
-}) {
+function MetaLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1rem] border border-black/10 bg-white p-4">
-      <p className="text-[11px] tracking-[0.24em] text-black/45 uppercase">{label}</p>
-      <p className="mt-2 font-display text-3xl tracking-[0.04em] text-foreground">{trigramText}</p>
-      <p className="mt-2 text-sm leading-7 text-black/65">{description}</p>
-    </div>
+    <span className="text-black/62">
+      {label}：<span className="text-black/88">{value}</span>
+    </span>
   );
 }
 
 export function LiuyaoChartView({ chart }: { chart: LiuyaoChart }) {
-  const movingLineText = getMovingLineText(chart);
+  const movingLines = getMovingLines(chart);
 
   return (
     <div className="space-y-6">
-      <Card className="overflow-hidden rounded-[1.5rem] border border-black/12 bg-white p-0 shadow-none">
-        <section className="px-6 py-7 md:px-8">
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Badge variant="outline" className="rounded-full border-black/10 bg-white px-3 py-1 text-black/60">
-                    六爻卦象
-                  </Badge>
-                  <Badge variant="outline" className="rounded-full border-black/10 bg-white px-3 py-1 text-black/60">
-                    {formatMethod(chart.meta.method)}
-                  </Badge>
-                </div>
-
-                <div className="space-y-3">
-                  <CardTitle className="font-display text-5xl tracking-[0.05em] md:text-6xl">
-                    {chart.originalHexagram.name}
-                  </CardTitle>
-                  <CardDescription className="max-w-3xl text-base leading-8 text-black/68">
-                    {chart.originalHexagram.description}
-                  </CardDescription>
-                </div>
-              </div>
-
-              <div className="rounded-[1rem] border border-black/10 px-4 py-3">
-                <p className="text-[11px] tracking-[0.24em] text-black/45 uppercase">变化焦点</p>
-                <p className="mt-2 text-sm leading-7 text-foreground">{movingLineText}</p>
-              </div>
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <HexagramMeta
-                label="起卦时间"
-                trigramText={chart.meta.divinationDateTime.slice(5, 16)}
-                description={`完整时间：${chart.meta.divinationDateTime}`}
-              />
-              <HexagramMeta
-                label="本卦结构"
-                trigramText={`${chart.originalHexagram.upperTrigram}上${chart.originalHexagram.lowerTrigram}下`}
-                description="更接近事情此刻的整体格局、力量分布和你所处的位置。"
-              />
-              <HexagramMeta
-                label="变卦结构"
-                trigramText={`${chart.changedHexagram.upperTrigram}上${chart.changedHexagram.lowerTrigram}下`}
-                description="更接近变化继续推进后，局势会朝什么方向显现。"
-              />
-              <HexagramMeta
-                label="干支与农历"
-                trigramText={chart.meta.lunar}
-                description={chart.meta.ganZhi}
-              />
-            </div>
-          </div>
-        </section>
-
-        <div className="h-px bg-black/10" />
-
-        <section className="px-6 py-7 md:px-8">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] xl:items-center">
-            <HexagramColumn
-              title="原始卦盘"
-              subtitle={chart.originalHexagram.name}
-              lines={chart.lines}
-              variant="original"
-            />
-
-            <div className="hidden xl:flex xl:justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-black/10 bg-white">
-                <ArrowRight className="size-6 text-black/55" />
-              </div>
-            </div>
-
-            <HexagramColumn
-              title="变化后"
-              subtitle={chart.changedHexagram.name}
-              lines={chart.lines}
-              variant="changed"
-            />
-          </div>
-        </section>
-      </Card>
-
-      <Card className="overflow-hidden rounded-[1.25rem] border border-black/12 bg-white p-0 shadow-none">
-        <div className="grid gap-6 px-6 py-6 md:px-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <Card className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-none md:p-8">
+        <div className="space-y-8">
           <div className="space-y-3">
-            <CardTitle className="text-3xl tracking-[0.04em]">卦象阅读提示</CardTitle>
-            <CardDescription className="text-base leading-8 text-black/68">
-              当前版本更强调六爻的阅读体验和变化感知，会围绕本卦、动爻与变卦来帮助你理解问题走势；完整纳甲、六亲、六神等专业层后续再继续补充。
-            </CardDescription>
+            <CardTitle className="text-4xl tracking-tight text-black">卦象分析结果</CardTitle>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-lg leading-8">
+              <MetaLine label="占卜日期和时间" value={chart.meta.divinationDateTime} />
+              <MetaLine label="起卦方式" value={formatMethod(chart.meta.method)} />
+              <MetaLine label="干支" value={chart.meta.ganZhi} />
+            </div>
           </div>
 
-          <div className="grid gap-3">
-            <div className="rounded-[1rem] border border-black/10 bg-white p-4">
-              <p className="text-sm font-medium text-foreground">如何看这张卦盘</p>
-              <p className="mt-2 text-sm leading-7 text-black/65">
-                先看本卦判断现状，再看动爻寻找关键转折，最后用变卦理解后续可能显现的方向。
+          <div className="rounded-[1.2rem] border border-black/8 bg-[#f7f7f6] px-6 py-7">
+            <p className="text-2xl font-semibold text-black">您的问题：</p>
+            <p className="mt-5 text-xl leading-9 text-black/70">{chart.meta.question}</p>
+          </div>
+
+          <div className="grid gap-10 xl:grid-cols-2 xl:gap-16">
+            <HexagramPanel
+              badge="本卦"
+              name={chart.originalHexagram.name}
+              subtitle={`${chart.originalHexagram.upperTrigram}上 ${chart.originalHexagram.lowerTrigram}下`}
+              lines={chart.lines}
+            />
+            <HexagramPanel
+              badge="变卦"
+              name={chart.changedHexagram.name}
+              subtitle={`${chart.changedHexagram.upperTrigram}上 ${chart.changedHexagram.lowerTrigram}下`}
+              lines={chart.lines}
+              changed
+            />
+          </div>
+
+          <div className="rounded-[1.2rem] border border-black/8 bg-[#f7f7f6] px-6 py-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-semibold text-black">• 变爻位置</span>
+              </div>
+
+              {movingLines.length ? (
+                <div className="flex flex-wrap gap-3">
+                  {movingLines.map((line) => (
+                    <Badge
+                      key={line.index}
+                      variant="outline"
+                      className="rounded-full border-black/10 bg-white px-4 py-2 text-base text-black"
+                    >
+                      {line.label} 发生变化
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-lg text-black/60">本次起卦没有动爻，重点以本卦整体气象为主。</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-2xl font-semibold text-black">卦象说明</h3>
+            <div className="space-y-5 text-lg leading-9 text-black/72">
+              <p>
+                本卦为 {chart.originalHexagram.name}，{chart.originalHexagram.description}
+              </p>
+              <p>
+                变卦为 {chart.changedHexagram.name}，{chart.changedHexagram.description}
+              </p>
+              <p>
+                当前系统已提供本卦、变卦与动爻位置的基础结构化结果；更完整的六亲、六神、世应等传统六爻字段后续再逐步补齐。
               </p>
             </div>
-
-            {chart.meta.notes ? (
-              <div className="rounded-[1rem] border border-black/10 bg-white p-4">
-                <p className="text-sm font-medium text-foreground">补充背景</p>
-                <p className="mt-2 text-sm leading-7 text-black/65">{chart.meta.notes}</p>
-              </div>
-            ) : null}
           </div>
+
+          {chart.meta.notes ? (
+            <div className="space-y-4 border-t border-black/8 pt-6">
+              <h3 className="text-2xl font-semibold text-black">补充背景</h3>
+              <CardDescription className="text-lg leading-9 text-black/68">
+                {chart.meta.notes}
+              </CardDescription>
+            </div>
+          ) : null}
         </div>
       </Card>
     </div>

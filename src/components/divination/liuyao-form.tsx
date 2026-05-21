@@ -486,30 +486,6 @@ export function LiuyaoForm() {
                 </div>
               </div>
 
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>补充背景</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="可补充当前关系、时间节点、你的顾虑等，帮助 AI 更贴近问题本身。"
-                        className="min-h-24 rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">六爻数值说明</p>
-                <p className="mt-2 leading-7">
-                  6 为老阴，7 为少阳，8 为少阴，9 为老阳。老阴与老阳属于动爻，会参与变卦形成。
-                </p>
-              </div>
             </section>
 
             <div className="space-y-3 border-t border-border pt-6">
