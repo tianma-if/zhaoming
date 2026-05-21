@@ -38,6 +38,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${display.variable} ${geistMono.variable} ${sans.variable} h-full`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.css"
+        />
+      </head>
       <body className="min-h-full bg-background text-foreground antialiased">
         {children}
       </body>

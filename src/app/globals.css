@@ -135,3 +135,8 @@ a {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23161411' fill-opacity='0.08'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='64' cy='24' r='1'/%3E%3Ccircle cx='92' cy='66' r='1'/%3E%3Ccircle cx='35' cy='82' r='1'/%3E%3Ccircle cx='105' cy='105' r='1'/%3E%3C/g%3E%3C/svg%3E");
   mix-blend-mode: multiply;
 }
+
+.font-wenkai {
+  font-family: "LXGW WenKai", "Noto Serif SC", serif !important;
+  font-weight: 400;
+}

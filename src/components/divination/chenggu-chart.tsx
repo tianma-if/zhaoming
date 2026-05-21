@@ -1,41 +1,18 @@
 import type { ChengguChart } from "@/types/divination";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-
-const weightToneMap = [
-  {
-    match: (value: number) => value <= 39,
-    label: "轻骨",
-    description: "更强调前期磨炼、异地发展与靠自己把节奏慢慢做出来。",
-  },
-  {
-    match: (value: number) => value <= 54,
-    label: "中骨",
-    description: "整体更偏稳中有进，关键在持续经营与中后段发力。",
-  },
-  {
-    match: () => true,
-    label: "重骨",
-    description: "传统里多视作福禄较盛，也意味着更强的责任感与承载力。",
-  },
-] as const;
+import { Card, CardTitle } from "@/components/ui/card";
 
 const chineseNumberMap = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"] as const;
-
-function getTone(value: number) {
-  return weightToneMap.find((item) => item.match(value)) ?? weightToneMap[1];
-}
 
 function formatWeightText(value: string) {
   return value.replace(/\d/g, (digit) => chineseNumberMap[Number(digit)] ?? digit);
 }
 
 export function ChengguChartView({ chart }: { chart: ChengguChart }) {
-  const tone = getTone(chart.totalQian);
+  const toneLabel = chart.totalQian <= 39 ? "轻骨" : chart.totalQian <= 54 ? "中骨" : "重骨";
 
   return (
-    <div className="space-y-6">
-      <Card className="rounded-[1.6rem] border border-border bg-white px-6 py-5 shadow-none">
+    <Card className="space-y-8 rounded-[1.8rem] border border-border bg-white p-6 shadow-none">
+      <section className="space-y-4">
         <div className="space-y-4">
           <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">称骨总览</p>
 
@@ -50,27 +27,22 @@ export function ChengguChartView({ chart }: { chart: ChengguChart }) {
             <div className="space-y-1">
               <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">命势区间</p>
               <p className="text-[2rem] leading-none tracking-[0.02em] text-foreground">
-                {tone.label}
+                {toneLabel}
               </p>
             </div>
           </div>
 
           <div className="space-y-1.5 text-sm leading-7 text-muted-foreground">
             <p>农历：{chart.meta.lunar} · {chart.meta.lunarYearGanZhi}年 · {chart.meta.timeZhi}时</p>
-            <p>由农历年、月、日、时四项骨重相加得出。{tone.description}</p>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="space-y-6 rounded-[1.6rem] border border-border bg-white p-6 shadow-none">
-        <div className="space-y-3">
-          <Badge variant="outline" className="rounded-full bg-muted/40">
-            结构拆分
-          </Badge>
+      <div className="h-px bg-border/70" />
+
+      <section className="space-y-6">
+        <div className="space-y-2">
           <CardTitle className="text-3xl tracking-[0.04em]">四项骨重</CardTitle>
-          <CardDescription className="text-sm leading-7">
-            使用和现有排盘一致的时间修正逻辑，把出生信息统一换算后再取称骨结果。
-          </CardDescription>
         </div>
 
         <div className="overflow-hidden rounded-[1.35rem] border border-border bg-muted/15">
@@ -122,18 +94,16 @@ export function ChengguChartView({ chart }: { chart: ChengguChart }) {
             ))}
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white p-6 shadow-none">
+      <div className="h-px bg-border/70" />
+
+      <section className="space-y-5">
         <div className="space-y-2">
-          <Badge>歌诀</Badge>
           <CardTitle className="text-3xl tracking-[0.04em]">传统判词</CardTitle>
         </div>
-        <p className="text-lg leading-9 text-foreground">{chart.verdict}</p>
-        <div className="rounded-[1.3rem] border border-border bg-muted/25 p-5">
-          <p className="text-sm leading-8 text-muted-foreground">{chart.summary}</p>
-        </div>
-      </Card>
-    </div>
+        <p className="font-wenkai text-[1.1rem] leading-9 text-foreground">{chart.verdict}</p>
+      </section>
+    </Card>
   );
 }
