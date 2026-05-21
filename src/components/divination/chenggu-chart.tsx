@@ -36,28 +36,28 @@ export function ChengguChartView({ chart }: { chart: ChengguChart }) {
   return (
     <div className="space-y-6">
       <Card className="rounded-[1.6rem] border border-border bg-white px-6 py-5 shadow-none">
-        <div className="grid gap-5 md:grid-cols-[1.2fr_0.8fr] md:items-start">
-          <div className="space-y-2">
-            <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">总骨重</p>
-            <div className="flex items-end gap-3">
+        <div className="space-y-4">
+          <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">称骨总览</p>
+
+          <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+            <div className="space-y-1">
+              <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">总骨重</p>
               <p className="text-[2.85rem] leading-none tracking-[0.02em] text-foreground">
                 {formatWeightText(chart.totalText)}
               </p>
             </div>
-            <p className="text-sm leading-7 text-muted-foreground">
-              由农历年、月、日、时四项骨重相加得出。
-            </p>
-            <p className="text-sm leading-7 text-muted-foreground">
-              农历：{chart.meta.lunar} · {chart.meta.lunarYearGanZhi}年 · {chart.meta.timeZhi}时
-            </p>
+
+            <div className="space-y-1">
+              <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">命势区间</p>
+              <p className="text-[2rem] leading-none tracking-[0.02em] text-foreground">
+                {tone.label}
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-2 border-border/70 md:border-l md:pl-5">
-            <p className="text-xs tracking-[0.22em] text-muted-foreground uppercase">命势区间</p>
-            <p className="text-[2.25rem] leading-none tracking-[0.02em] text-foreground">
-              {tone.label}
-            </p>
-            <p className="text-sm leading-7 text-muted-foreground">{tone.description}</p>
+          <div className="space-y-1.5 text-sm leading-7 text-muted-foreground">
+            <p>农历：{chart.meta.lunar} · {chart.meta.lunarYearGanZhi}年 · {chart.meta.timeZhi}时</p>
+            <p>由农历年、月、日、时四项骨重相加得出。{tone.description}</p>
           </div>
         </div>
       </Card>
