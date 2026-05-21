@@ -31,10 +31,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const lineOptions = [
-  { value: "6", label: "老阴", note: "阴爻，动" },
-  { value: "7", label: "少阳", note: "阳爻，静" },
-  { value: "8", label: "少阴", note: "阴爻，静" },
-  { value: "9", label: "老阳", note: "阳爻，动" },
+  { value: "6", label: "老阴", note: "阴爻，会变" },
+  { value: "7", label: "少阳", note: "阳爻，不变" },
+  { value: "8", label: "少阴", note: "阴爻，不变" },
+  { value: "9", label: "老阳", note: "阳爻，会变" },
 ] as const;
 
 const lineLabels = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"] as const;
@@ -411,7 +411,7 @@ export function LiuyaoForm() {
                             <div className="rounded-[1.1rem] border border-black/12 bg-white p-4">
                               <div className="mb-3 flex items-center gap-4">
                                 <div className="min-w-24 text-sm font-medium text-foreground">
-                                  {value} {option.label}
+                                  {option.label}
                                 </div>
                                 <div className="flex-1">
                                   <YaoStroke value={value} />
@@ -432,7 +432,7 @@ export function LiuyaoForm() {
                                 <SelectContent>
                                   {lineOptions.map((item) => (
                                     <SelectItem key={item.value} value={item.value}>
-                                      {item.value} {item.label} · {item.note}
+                                      {item.label}（{item.note}）
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
