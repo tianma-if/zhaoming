@@ -4,6 +4,7 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CopyContentButton } from "./copy-content-button";
 import {
   formatAgeRange,
   formatAgesPreview,
@@ -56,6 +57,72 @@ function formatCompactList(items: string[], limit: number) {
   const suffix = items.length > limit ? " +" : "";
 
   return `${visible.join(" · ")}${suffix}`;
+}
+
+function formatZiweiCopyText({
+  chart,
+  subjectName,
+  cells,
+  mode,
+}: {
+  chart: ZiweiChart;
+  subjectName?: string | null;
+  cells: ZiweiDisplayPalace[];
+  mode: ZiweiChartMode;
+}) {
+  const center = formatZiweiCenterSummary(chart, subjectName);
+  const headerLines = [
+    center.title ? `紫微命盘：${center.title}` : "紫微命盘",
+    center.soul,
+    center.body,
+    center.palaceLine,
+    center.timeLine,
+    center.solarLine,
+    center.lunarLine,
+    mode === "fortune" ? center.fortuneLine : "",
+  ].filter(Boolean);
+
+  const palaceLines = cells.map((cell) => {
+    const palace = cell.palace;
+    const mainStars =
+      palace.majorStarStates?.length
+        ? palace.majorStarStates
+            .map((item) => (item.brightness ? `${item.name}${item.brightness}` : item.name))
+            .join("、")
+        : palace.majorStars.length
+          ? palace.majorStars.join("、")
+          : "无主星";
+    const supportStars = formatCompactList(
+      palace.minorStarStates?.length
+        ? palace.minorStarStates.map((item) => item.name)
+        : palace.minorStars,
+      4,
+    );
+    const baseLine = [
+      `${palace.name}宫`,
+      mainStars,
+      formatAgeRange(palace),
+      palace.changsheng12,
+    ]
+      .filter(Boolean)
+      .join("｜");
+    const fortuneLine =
+      mode === "fortune"
+        ? [
+            cell.fortune?.decadalPalaceName ? `大限落${cell.fortune.decadalPalaceName}` : "",
+            cell.fortune?.yearlyPalaceName ? `流年落${cell.fortune.yearlyPalaceName}` : "",
+            cell.fortune?.agePalaceName ? `小限落${cell.fortune.agePalaceName}` : "",
+          ]
+            .filter(Boolean)
+            .join("｜")
+        : "";
+
+    return [baseLine, supportStars ? `辅星：${supportStars}` : "", fortuneLine]
+      .filter(Boolean)
+      .join("\n");
+  });
+
+  return [...headerLines, "", ...palaceLines].join("\n");
 }
 
 function MutagenBadge({ value }: { value: string }) {
@@ -455,6 +522,10 @@ export function ZiweiChartView({
   const cells = useMemo(() => getZiweiDisplayPalaces(chart), [chart]);
   const [selectedPalaceIndex, setSelectedPalaceIndex] = useState<number | null>(null);
   const center = useMemo(() => formatZiweiCenterSummary(chart, subjectName), [chart, subjectName]);
+  const copyText = useMemo(
+    () => formatZiweiCopyText({ chart, subjectName, cells, mode }),
+    [cells, chart, mode, subjectName],
+  );
   const selectedCell =
     cells.find((cell) => cell.index === selectedPalaceIndex) ?? cells[0] ?? null;
 
@@ -530,6 +601,13 @@ export function ZiweiChartView({
               </div>
             </div>
           </div>
+        </div>
+        <div className="flex justify-end pt-4">
+          <CopyContentButton
+            className="border-[var(--ziwei-border)] bg-[var(--ziwei-surface)] text-[var(--ziwei-text-muted)] hover:bg-[var(--ziwei-surface-soft)] hover:text-[var(--ziwei-text)]"
+            label="复制命盘"
+            text={copyText}
+          />
         </div>
       </Card>
 
