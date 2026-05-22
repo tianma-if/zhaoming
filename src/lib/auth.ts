@@ -35,7 +35,8 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 365 * 3,
+    // Browsers reject cookies whose Max-Age exceeds 400 days.
+    expiresIn: 60 * 60 * 24 * 400,
     updateAge: 60 * 60 * 24 * 30,
   },
   emailAndPassword: {
