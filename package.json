@@ -5,6 +5,7 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "next dev -p 5555",
+    "dev:vercel": "npx vercel env run --environment=production -- next dev -p 5555",
     "build": "next build",
     "start": "next start -p 5555",
     "lint": "eslint"

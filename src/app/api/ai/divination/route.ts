@@ -3,6 +3,7 @@ import path from "node:path";
 import { streamText } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getAiConfigGuidanceMessage } from "@/lib/ai/config-error";
 import { buildDivinationPrompt } from "@/lib/ai/prompts";
 import { getAiModel } from "@/lib/ai/provider";
 import { textResponse } from "@/lib/ai/stream";
@@ -129,18 +130,11 @@ export async function POST(request: Request) {
     if (!hasAiProviderEnv()) {
       if (mode === "short") {
         return textResponse(
-          "模型配置尚未完成。当前可以先阅读页面中的结构摘要；补齐 AI Provider 环境变量后，这里会生成更贴近命盘气质的命格判词。",
+          "当前 AI 环境变量未完整配置，暂时无法生成短判词。请优先使用 `corepack pnpm dev:vercel` 启动本地环境，或补齐 `.env.local` 里的 `AI_PROVIDER`、`AI_MODEL`、`AI_BASE_URL` 和 `AI_API_KEY`。",
         );
       }
 
-      return textResponse(
-        [
-          "模型配置尚未完成，因此这里先返回引导文本。",
-          "",
-          "你已经拥有完整的结构化排盘、测算记录入库、流式输出 UI 和 Provider 抽象。",
-          "只要补上 `.env.local` 里的 `AI_PROVIDER`、`AI_MODEL` 与对应密钥，就能切换到真实模型。",
-        ].join("\n"),
-      );
+      return textResponse(getAiConfigGuidanceMessage());
     }
 
     const prompt = buildDivinationPrompt(record, mode);

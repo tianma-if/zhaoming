@@ -1,8 +1,9 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { getAppBaseUrl, getEnv } from "@/lib/env";
 
-export function getAiModel() {
+export function getAiModel(modelId?: string) {
   const env = getEnv();
+  const resolvedModelId = modelId ?? env.AI_MODEL;
 
   if (env.AI_PROVIDER === "openai-compatible") {
     const isOpenRouter = env.AI_BASE_URL?.includes("openrouter.ai");
@@ -20,8 +21,8 @@ export function getAiModel() {
       apiKey: env.AI_API_KEY!,
       name: isOpenRouter ? "openrouter" : "custom-compatible",
       headers: openRouterHeaders,
-    }).chatModel(env.AI_MODEL!);
+    }).chatModel(resolvedModelId!);
   }
 
-  return env.AI_MODEL ?? "deepseek/deepseek-v4-pro";
+  return resolvedModelId ?? "deepseek/deepseek-v4-pro";
 }

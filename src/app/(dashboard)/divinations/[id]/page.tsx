@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   DivinationAiReportButton,
@@ -11,6 +12,7 @@ import { LiuyaoChartView } from "@/components/divination/liuyao-chart";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
 import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
@@ -98,10 +100,17 @@ export default async function DivinationDetailPage({
           </span>
         }
         action={
-          <DivinationAiReportButton
-            divinationId={data.id}
-            initialHasContent={Boolean(data.ai_result_markdown)}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            {divinationType === "bazi" ? (
+              <Button asChild className="rounded-xl px-4" variant="outline">
+                <Link href={`/divinations/compare?divinationId=${data.id}`}>模型对比 Demo</Link>
+              </Button>
+            ) : null}
+            <DivinationAiReportButton
+              divinationId={data.id}
+              initialHasContent={Boolean(data.ai_result_markdown)}
+            />
+          </div>
         }
       />
 

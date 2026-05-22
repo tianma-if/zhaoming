@@ -2,17 +2,49 @@ import { z } from "zod";
 
 const LOCAL_APP_URL = "http://localhost:5555";
 
+function optionalNonEmptyString() {
+  return z.preprocess((value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  }, z.string().min(1).optional());
+}
+
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1).optional(),
-  BETTER_AUTH_SECRET: z.string().min(32).optional(),
-  BETTER_AUTH_URL: z.string().url().optional(),
-  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
-  GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  DATABASE_URL: optionalNonEmptyString(),
+  BETTER_AUTH_SECRET: z.preprocess((value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  }, z.string().min(32).optional()),
+  BETTER_AUTH_URL: z.preprocess((value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  }, z.string().url().optional()),
+  GOOGLE_CLIENT_ID: optionalNonEmptyString(),
+  GOOGLE_CLIENT_SECRET: optionalNonEmptyString(),
   AI_PROVIDER: z.enum(["gateway", "openai-compatible"]).optional(),
-  AI_MODEL: z.string().min(1).optional(),
-  AI_BASE_URL: z.string().url().optional(),
-  AI_API_KEY: z.string().min(1).optional(),
-  AUTOMATION_API_KEY: z.string().min(1).optional(),
+  AI_MODEL: optionalNonEmptyString(),
+  AI_BASE_URL: z.preprocess((value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  }, z.string().url().optional()),
+  AI_API_KEY: optionalNonEmptyString(),
+  AUTOMATION_API_KEY: optionalNonEmptyString(),
 });
 
 type AppEnv = z.infer<typeof envSchema>;
