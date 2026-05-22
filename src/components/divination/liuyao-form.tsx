@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const lineLabels = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"] as const;
 
@@ -229,6 +230,7 @@ export function LiuyaoForm() {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [showManualDivinationTime, setShowManualDivinationTime] = useState(false);
   const form = useForm<LiuyaoInputForm>({
     resolver: zodResolver(liuyaoInputSchema),
     defaultValues: createInitialValues(),
@@ -268,8 +270,25 @@ export function LiuyaoForm() {
     });
   }
 
+  function toggleManualDivinationTime(nextChecked: boolean) {
+    if (nextChecked) {
+      const now = new Date();
+      form.setValue("divinationDate", format(now, "yyyy-MM-dd"));
+      form.setValue("divinationTime", format(now, "HH:mm"));
+    }
+
+    setShowManualDivinationTime(nextChecked);
+  }
+
   function handleSubmit(values: LiuyaoInputForm) {
     setSubmitError(null);
+    const nextValues = showManualDivinationTime
+      ? values
+      : {
+          ...values,
+          divinationDate: format(new Date(), "yyyy-MM-dd"),
+          divinationTime: format(new Date(), "HH:mm"),
+        };
 
     startTransition(async () => {
       const response = await fetch("/api/divination/create", {
@@ -277,7 +296,7 @@ export function LiuyaoForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(nextValues),
       });
 
       if (!response.ok) {
@@ -360,33 +379,46 @@ export function LiuyaoForm() {
                 )}
               />
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="divinationDate"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>起卦日期 *</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" className="h-9 rounded-md text-sm" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="divinationTime"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>起卦时间 *</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" className="h-9 rounded-md text-sm" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between rounded-md border border-black/8 bg-white/60 px-3 py-2">
+                  <p className="text-sm font-medium text-foreground">手动修改起卦时间</p>
+                  <Switch
+                    checked={showManualDivinationTime}
+                    onCheckedChange={toggleManualDivinationTime}
+                    aria-label="手动修改起卦时间"
+                  />
+                </div>
+
+                {showManualDivinationTime ? (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FormField
+                      control={form.control}
+                      name="divinationDate"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>起卦日期 *</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="date" className="h-9 rounded-md text-sm" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="divinationTime"
+                      render={({ field }) => (
+                        <FormItem className="space-y-2">
+                          <FormLabel>起卦时间 *</FormLabel>
+                          <FormControl>
+                            <Input {...field} type="time" className="h-9 rounded-md text-sm" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                ) : null}
               </div>
             </section>
 
