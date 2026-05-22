@@ -138,41 +138,34 @@ function getSignals(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>, qi
     {
       label: "所用流派",
       value: SYSTEM_LABELS[input.system],
-      hint: input.system === "qimen" ? "当前结果页已补入奇门盘面层。" : "当前仍以统一摘要层为主。",
     },
     {
       label: "当前主题",
       value: TOPIC_LABELS[input.topic],
-      hint: "用于收束分析方向，避免泛谈。",
     },
     {
       label: "时支与旬空",
       value: `${time.getGanZhi()} / ${time.getXunKong()}`,
-      hint: `对应旬 ${time.getXun()}`,
     },
     {
       label: "九星时势",
       value: `${timeNineStar.getNumber()}${timeNineStar.getColor()}${getNineStarName(input, timeNineStar)}`,
-      hint: `${timeNineStar.getTypeInTaiYi()}，方位 ${timeNineStar.getPositionDesc()}`,
     },
     ...(qimenBoard
       ? [
           {
             label: "值符值使",
             value: `${qimenBoard.chiefDeity} / ${qimenBoard.dutyDoor}`,
-            hint: `${qimenBoard.chiefStar}落${qimenBoard.dutyPalace}`,
           },
         ]
       : []),
     {
       label: "喜财方位",
       value: `${lunar.getPositionXiDesc()} / ${lunar.getPositionCaiDesc()}`,
-      hint: "可作为行动、沟通或会面时的象意参考。",
     },
     {
       label: "当日宜忌",
       value: `${lunar.getDayYi(2).slice(0, 3).join("、") || "无特别宜项"} / ${lunar.getDayJi(2).slice(0, 3).join("、") || "无特别忌项"}`,
-      hint: "仅取前三项，作为简化判断辅助。",
     },
   ];
 }
@@ -283,10 +276,8 @@ function getCaution(chart: SanshiChart) {
   }
 
   return [
-    chart.meta.system === "qimen"
-      ? "当前盘面层是产品内可读的简化奇门盘，不等同于完整拆补、置闰、定局后的专业奇门排盘。"
-      : "当前结果更适合做方向筛选，不适合替代完整专业起局。",
-    "若问题涉及重大签约、诉讼或高风险投资，建议把这次结果当作第一轮筛选而非最终结论。",
+    "关键节点请二次确认，尤其不要在信息不全时过度提速。",
+    "若涉及重大签约、诉讼或高风险投资，先留出回撤空间，再决定是否继续推进。",
   ];
 }
 
@@ -337,10 +328,7 @@ export function buildSanshiChart(input: SanshiInput): {
     qimen: qimenBoard,
     advice: [],
     caution: [],
-    disclaimer:
-      input.system === "qimen"
-        ? "当前版本已提供奇门九宫盘的产品化盘面层，用于观察门、星、神与值符值使的相对落点；但它仍是简化实现，不等同于完整专业奇门排盘。"
-        : "当前版本提供的是三式统一入口下的简化起局摘要，用于时机、策略与风险筛选，不等同于完整太乙局式或大六壬三传四课。",
+    disclaimer: "",
   };
 
   chart.signals = getSignals(input, lunar, qimenBoard);

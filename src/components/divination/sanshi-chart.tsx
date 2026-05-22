@@ -1,4 +1,3 @@
-import { Sparkles } from "lucide-react";
 import { DashboardSection } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -109,7 +108,6 @@ function QimenBoardSection({ chart }: { chart: SanshiChart }) {
     <DashboardSection
       className="space-y-6"
       title="奇门盘面"
-      description="这一层先把盘立起来，再往下看值符值使、门星神和宫位之间的关系。当前为产品化简化盘面，但已经具备可读的九宫结构。"
     >
       <MetaList
         columns="md:grid-cols-2 xl:grid-cols-5"
@@ -168,11 +166,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       <DashboardSection
         className="space-y-5"
         title={`${chart.meta.systemLabel}结果`}
-        description={
-          chart.meta.system === "qimen"
-            ? "当前结果同时包含奇门盘面层与摘要层，适合先看九宫结构，再看行动建议。"
-            : "当前页面展示的是适合产品内使用的三式摘要，重点帮助你看时机、策略、协同与风险。"
-        }
       >
         <MetaList
           items={[
@@ -206,36 +199,9 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       </DashboardSection>
 
       {chart.meta.system === "qimen" ? <QimenBoardSection chart={chart} /> : null}
-
-      <DashboardSection
-        className="space-y-5"
-        title="结构化信号"
-        description="这些字段来自起局时间与盘面摘要整理，适合用来支撑 AI 后续解读。"
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          {chart.signals.map((signal) => (
-            <article
-              key={signal.label}
-              className="rounded-[1.5rem] border border-border/70 bg-white p-5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.16)]"
-            >
-              <div className="space-y-2">
-                <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">
-                  {signal.label}
-                </p>
-                <p className="font-display text-3xl tracking-[0.03em]">{signal.value}</p>
-                {signal.hint ? (
-                  <p className="text-sm leading-7 text-muted-foreground">{signal.hint}</p>
-                ) : null}
-              </div>
-            </article>
-          ))}
-        </div>
-      </DashboardSection>
-
       <DashboardSection
         className="space-y-5"
         title="四个判断维度"
-        description="这一层把盘面信息收束成更容易执行的决策语言。"
       >
         <div className="grid gap-4 md:grid-cols-2">
           {chart.sectors.map((sector) => (
@@ -285,14 +251,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
           </div>
         </DashboardSection>
       </div>
-
-      <DashboardSection className="space-y-4 border-dashed bg-muted/25" title="结果边界">
-        <p className="text-sm leading-8 text-muted-foreground">{chart.disclaimer}</p>
-        <div className="inline-flex items-center gap-2 text-xs tracking-[0.18em] text-muted-foreground uppercase">
-          <Sparkles className="size-4" />
-          建议结合 AI 解读继续展开
-        </div>
-      </DashboardSection>
     </div>
   );
 }
