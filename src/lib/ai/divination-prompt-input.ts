@@ -173,6 +173,23 @@ function formatSanshiSummary(chart: SanshiChart) {
   const sectorSummary = chart.sectors
     .map((sector) => `${sector.label}【${sector.tone}】：${sector.summary}；建议：${sector.action}`)
     .join("\n");
+  const qimenSummary = chart.qimen
+    ? [
+        `遁局：${chart.qimen.dunLabel}${chart.qimen.ju}局`,
+        `值符：${chart.qimen.chiefDeity}`,
+        `值星：${chart.qimen.chiefStar}`,
+        `值使：${chart.qimen.dutyDoor}`,
+        `值使落宫：${chart.qimen.dutyPalace}`,
+        `时干支：${chart.qimen.timeGanZhi}`,
+        `九宫盘：\n${chart.qimen.palaces
+          .map(
+            (palace) =>
+              `${palace.palace}(${palace.direction})：地盘${palace.earthStem} / 天盘${palace.heavenStem ?? "中寄"} / ${palace.star ?? "无星"} / ${palace.door ?? "无门"} / ${palace.deity ?? "无神"}`,
+          )
+          .join("\n")}`,
+        `盘面摘要：${chart.qimen.summary.join("；")}`,
+      ].join("\n")
+    : "";
 
   return [
     `所用流派：${chart.meta.systemLabel}`,
@@ -181,6 +198,7 @@ function formatSanshiSummary(chart: SanshiChart) {
     `干支：${chart.meta.ganZhi}`,
     `旬与旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
     `农历：${chart.meta.lunar}`,
+    qimenSummary ? `奇门盘面：\n${qimenSummary}` : "",
     `结构化信号：\n${signalSummary}`,
     `四个判断维度：\n${sectorSummary}`,
     `行动建议：${chart.advice.join("；")}`,

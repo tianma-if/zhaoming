@@ -243,6 +243,37 @@ export interface SanshiSector {
   action: string;
 }
 
+export interface QimenPalace {
+  index: number;
+  row: number;
+  col: number;
+  palace: string;
+  direction: string;
+  earthStem: string;
+  heavenStem?: string;
+  door?: string;
+  star?: string;
+  deity?: string;
+  isDutyDoor?: boolean;
+  isChiefStar?: boolean;
+  isChiefDeity?: boolean;
+}
+
+export interface QimenBoard {
+  dun: "yin" | "yang";
+  dunLabel: string;
+  ju: number;
+  chiefDeity: string;
+  chiefStar: string;
+  dutyDoor: string;
+  dutyPalace: string;
+  timeGanZhi: string;
+  dayGanZhi: string;
+  hourVoid: string;
+  palaces: QimenPalace[];
+  summary: string[];
+}
+
 export interface SanshiChart {
   kind: "sanshi";
   meta: {
@@ -262,6 +293,7 @@ export interface SanshiChart {
   };
   signals: SanshiSignal[];
   sectors: SanshiSector[];
+  qimen?: QimenBoard;
   advice: string[];
   caution: string[];
   disclaimer: string;

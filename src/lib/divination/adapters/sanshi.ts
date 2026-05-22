@@ -1,5 +1,13 @@
 import { Solar } from "lunar-typescript";
-import type { SanshiChart, SanshiSector, SanshiSignal, SanshiSystem, SanshiTopic } from "@/types/divination";
+import type {
+  QimenBoard,
+  QimenPalace,
+  SanshiChart,
+  SanshiSector,
+  SanshiSignal,
+  SanshiSystem,
+  SanshiTopic,
+} from "@/types/divination";
 import type { SanshiInput } from "../schemas";
 
 const SYSTEM_LABELS: Record<SanshiSystem, string> = {
@@ -10,11 +18,11 @@ const SYSTEM_LABELS: Record<SanshiSystem, string> = {
 
 const TOPIC_LABELS: Record<SanshiTopic, string> = {
   career: "事业推进",
-  wealth: "财务与合作",
-  relationship: "关系与情感",
-  study: "学习与考试",
-  travel: "出行与迁动",
-  lawsuit: "谈判与纠纷",
+  wealth: "财务合作",
+  relationship: "关系情感",
+  study: "学习考试",
+  travel: "出行迁动",
+  lawsuit: "谈判纠纷",
   health: "健康调理",
   general: "综合判断",
 };
@@ -67,6 +75,23 @@ const ACTIONS: Record<SanshiSector["key"], string[]> = {
   ],
 };
 
+const QIMEN_PALACE_LAYOUT = [
+  { index: 4, row: 1, col: 1, palace: "巽四宫", direction: "东南" },
+  { index: 9, row: 1, col: 2, palace: "离九宫", direction: "正南" },
+  { index: 2, row: 1, col: 3, palace: "坤二宫", direction: "西南" },
+  { index: 3, row: 2, col: 1, palace: "震三宫", direction: "正东" },
+  { index: 5, row: 2, col: 2, palace: "中五宫", direction: "中宫" },
+  { index: 7, row: 2, col: 3, palace: "兑七宫", direction: "正西" },
+  { index: 8, row: 3, col: 1, palace: "艮八宫", direction: "东北" },
+  { index: 1, row: 3, col: 2, palace: "坎一宫", direction: "正北" },
+  { index: 6, row: 3, col: 3, palace: "乾六宫", direction: "西北" },
+] as const;
+
+const QIMEN_EARTH_STEMS = ["戊", "己", "庚", "辛", "壬", "癸", "丁", "丙", "乙"] as const;
+const QIMEN_DOORS = ["休门", "生门", "伤门", "杜门", "景门", "死门", "惊门", "开门"] as const;
+const QIMEN_STARS = ["天蓬", "天任", "天冲", "天辅", "天英", "天芮", "天柱", "天心", "天禽"] as const;
+const QIMEN_DEITIES = ["值符", "螣蛇", "太阴", "六合", "白虎", "玄武", "九地", "九天"] as const;
+
 function hashSeed(input: string) {
   let hash = 0;
 
@@ -77,8 +102,12 @@ function hashSeed(input: string) {
   return hash;
 }
 
-function pickBySeed<T>(items: T[], seed: number, offset = 0) {
+function pickBySeed<T>(items: readonly T[], seed: number, offset = 0) {
   return items[(seed + offset) % items.length]!;
+}
+
+function rotate<T>(items: readonly T[], offset: number) {
+  return items.map((_, index) => items[(index + offset) % items.length]!);
 }
 
 function getTone(seed: number, offset: number): SanshiSector["tone"] {
@@ -96,18 +125,12 @@ function getToneSummary(tone: SanshiSector["tone"], seed: number, offset: number
 }
 
 function getNineStarName(input: SanshiInput, star: ReturnType<ReturnType<Solar["getLunar"]>["getTimeNineStar"]>) {
-  if (input.system === "qimen") {
-    return star.getNameInQiMen();
-  }
-
-  if (input.system === "taiyi") {
-    return star.getNameInTaiYi();
-  }
-
+  if (input.system === "qimen") return star.getNameInQiMen();
+  if (input.system === "taiyi") return star.getNameInTaiYi();
   return star.getNameInBeiDou();
 }
 
-function getSignals(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>): SanshiSignal[] {
+function getSignals(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>, qimenBoard?: QimenBoard): SanshiSignal[] {
   const time = lunar.getTime();
   const timeNineStar = lunar.getTimeNineStar();
 
@@ -115,7 +138,7 @@ function getSignals(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>): S
     {
       label: "所用流派",
       value: SYSTEM_LABELS[input.system],
-      hint: "统一三式入口，先以简化局面摘要承接。",
+      hint: input.system === "qimen" ? "当前结果页已补入奇门盘面层。" : "当前仍以统一摘要层为主。",
     },
     {
       label: "当前主题",
@@ -124,14 +147,23 @@ function getSignals(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>): S
     },
     {
       label: "时支与旬空",
-      value: `${time} / ${time.getXunKong()}`,
-      hint: `时支干支 ${time.getGanZhi()}，对应旬 ${time.getXun()}`,
+      value: `${time.getGanZhi()} / ${time.getXunKong()}`,
+      hint: `对应旬 ${time.getXun()}`,
     },
     {
       label: "九星时势",
       value: `${timeNineStar.getNumber()}${timeNineStar.getColor()}${getNineStarName(input, timeNineStar)}`,
       hint: `${timeNineStar.getTypeInTaiYi()}，方位 ${timeNineStar.getPositionDesc()}`,
     },
+    ...(qimenBoard
+      ? [
+          {
+            label: "值符值使",
+            value: `${qimenBoard.chiefDeity} / ${qimenBoard.dutyDoor}`,
+            hint: `${qimenBoard.chiefStar}落${qimenBoard.dutyPalace}`,
+          },
+        ]
+      : []),
     {
       label: "喜财方位",
       value: `${lunar.getPositionXiDesc()} / ${lunar.getPositionCaiDesc()}`,
@@ -159,6 +191,68 @@ function getSectors(seed: number): SanshiSector[] {
   });
 }
 
+function getQimenDun(month: number): QimenBoard["dun"] {
+  return month >= 5 && month <= 10 ? "yin" : "yang";
+}
+
+function buildQimenBoard(input: SanshiInput, lunar: ReturnType<Solar["getLunar"]>, seed: number): QimenBoard {
+  const hour = lunar.getTime();
+  const month = lunar.getMonth();
+  const ju = ((month + lunar.getDay() + hour.getZhiIndex()) % 9) + 1;
+  const dun = getQimenDun(month);
+  const dutyIndex = seed % QIMEN_PALACE_LAYOUT.length;
+  const chiefStarIndex = (seed + 2) % QIMEN_STARS.length;
+  const dutyDoorIndex = (seed + 4) % QIMEN_DOORS.length;
+  const earthStems = rotate(QIMEN_EARTH_STEMS, ju - 1);
+  const heavenStems = rotate(QIMEN_EARTH_STEMS, (seed + ju) % QIMEN_EARTH_STEMS.length);
+  const starOrder = rotate(QIMEN_STARS, chiefStarIndex);
+  const doorOrder = rotate(QIMEN_DOORS, dutyDoorIndex);
+  const deityOrder = rotate(QIMEN_DEITIES, dutyIndex % QIMEN_DEITIES.length);
+
+  const palaces: QimenPalace[] = QIMEN_PALACE_LAYOUT.map((item, index) => {
+    const isCenter = item.index === 5;
+
+    return {
+      ...item,
+      earthStem: earthStems[index]!,
+      heavenStem: heavenStems[index],
+      star: starOrder[index],
+      door: isCenter ? undefined : doorOrder[index % doorOrder.length],
+      deity: isCenter ? "值符" : deityOrder[index % deityOrder.length],
+      isDutyDoor: !isCenter && index % doorOrder.length === 0,
+      isChiefStar: index === 0,
+      isChiefDeity: isCenter || index % deityOrder.length === 0,
+    };
+  });
+
+  const dutyPalace = palaces[dutyIndex]!;
+  const favorablePalaces = palaces
+    .filter((item) => item.door === "生门" || item.door === "开门" || item.door === "休门")
+    .slice(0, 2)
+    .map((item) => `${item.palace}(${item.direction})`);
+
+  return {
+    dun,
+    dunLabel: dun === "yang" ? "阳遁" : "阴遁",
+    ju,
+    chiefDeity: "值符",
+    chiefStar: palaces[0]?.star ?? "天蓬",
+    dutyDoor: dutyPalace.door ?? "开门",
+    dutyPalace: dutyPalace.palace,
+    timeGanZhi: hour.getGanZhi(),
+    dayGanZhi: lunar.getDayInGanZhiExact(),
+    hourVoid: hour.getXunKong(),
+    palaces,
+    summary: [
+      `${dun === "yang" ? "阳遁局更利于主动推进" : "阴遁局更适合收势布局"}，当前为${dun === "yang" ? "外放型" : "内敛型"}节奏。`,
+      `值使落在${dutyPalace.palace}，宜先处理与${dutyPalace.direction}象意相近的事务与对象。`,
+      favorablePalaces.length
+        ? `当前较顺的门位集中在${favorablePalaces.join("、")}，适合优先从这些方向或议题切入。`
+        : "本局没有明显顺手位，宜先求稳，再决定是否提速。",
+    ],
+  };
+}
+
 function getAdvice(chart: SanshiChart) {
   const favorable = chart.sectors.filter((item) => item.tone === "favorable");
   const cautious = chart.sectors.filter((item) => item.tone === "cautious");
@@ -168,7 +262,7 @@ function getAdvice(chart: SanshiChart) {
       ? `优先利用「${favorable[0]?.label}」这条线索推进，当前这部分阻力最小。`
       : "优先做信息整理和轻量试探，避免一上来把局势推得太满。",
     chart.meta.system === "qimen"
-      ? "奇门这一路更适合看行动窗口，决策宜快而不乱。"
+      ? `奇门这一局先看${chart.qimen?.dutyDoor ?? "值使"}所指的入口，再决定要不要加速推进。`
       : chart.meta.system === "taiyi"
         ? "太乙更看整体态势，先校正大方向，再决定局部动作。"
         : "六壬更看人与事的互动关系，关键在于谁先表态、谁先让步。",
@@ -189,7 +283,9 @@ function getCaution(chart: SanshiChart) {
   }
 
   return [
-    "简化盘面更适合做方向筛选，不适合替代完整专业排局。",
+    chart.meta.system === "qimen"
+      ? "当前盘面层是产品内可读的简化奇门盘，不等同于完整拆补、置闰、定局后的专业奇门排盘。"
+      : "当前结果更适合做方向筛选，不适合替代完整专业起局。",
     "若问题涉及重大签约、诉讼或高风险投资，建议把这次结果当作第一轮筛选而非最终结论。",
   ];
 }
@@ -217,6 +313,7 @@ export function buildSanshiChart(input: SanshiInput): {
       input.divinationTime,
     ].join("|"),
   );
+  const qimenBoard = input.system === "qimen" ? buildQimenBoard(input, lunar, seed) : undefined;
 
   const chart: SanshiChart = {
     kind: "sanshi",
@@ -235,14 +332,18 @@ export function buildSanshiChart(input: SanshiInput): {
       gender: input.gender,
       notes: input.notes || undefined,
     },
-    signals: getSignals(input, lunar),
+    signals: [],
     sectors: getSectors(seed),
+    qimen: qimenBoard,
     advice: [],
     caution: [],
     disclaimer:
-      "当前版本提供的是三式统一入口下的简化起局摘要，用于时机、策略与风险筛选，不等同于完整奇门九宫盘、太乙局式或大六壬三传四课。",
+      input.system === "qimen"
+        ? "当前版本已提供奇门九宫盘的产品化盘面层，用于观察门、星、神与值符值使的相对落点；但它仍是简化实现，不等同于完整专业奇门排盘。"
+        : "当前版本提供的是三式统一入口下的简化起局摘要，用于时机、策略与风险筛选，不等同于完整太乙局式或大六壬三传四课。",
   };
 
+  chart.signals = getSignals(input, lunar, qimenBoard);
   chart.advice = getAdvice(chart);
   chart.caution = getCaution(chart);
 
@@ -256,6 +357,14 @@ export function buildSanshiChart(input: SanshiInput): {
       xunKong,
       system: input.system,
       topic: input.topic,
+      qimen: qimenBoard
+        ? {
+            dun: qimenBoard.dun,
+            ju: qimenBoard.ju,
+            dutyDoor: qimenBoard.dutyDoor,
+            chiefStar: qimenBoard.chiefStar,
+          }
+        : undefined,
     },
   };
 }
