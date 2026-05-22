@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { DashboardEmptyState, DashboardPage, DashboardPageHeader, DashboardSection } from "@/components/layout/dashboard-shell";
+import {
+  DashboardEmptyState,
+  DashboardPage,
+  DashboardPageHeader,
+  DashboardSection,
+} from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const metadata: Metadata = {
   title: "测算记录",
@@ -19,6 +24,7 @@ const divinationTypeLabelMap: Record<string, string> = {
   ziwei: "紫微斗数",
   chenggu: "称骨",
   liuyao: "六爻",
+  sanshi: "三式",
 };
 
 export default async function DivinationsPage() {
@@ -30,7 +36,7 @@ export default async function DivinationsPage() {
       <DashboardPageHeader
         eyebrow="History"
         title="测算记录"
-        description="这里改成更稳定的数据视图，而不是继续堆叠随意卡片。后续接筛选、分页和表格组件时可以直接往下扩。"
+        description="这里汇总你已经生成过的命理与占卜结果，后续扩展筛选、分页和更多状态字段时，可以直接在这张表上继续生长。"
         action={
           <Button asChild className="rounded-xl px-4">
             <Link href="/divinations/new">发起新测算</Link>
@@ -83,7 +89,7 @@ export default async function DivinationsPage() {
           <div className="p-6">
             <DashboardEmptyState
               title="还没有测算记录"
-              description="你后面不需要再为记录页重新设计视觉结构了，先从这里进入第一条命盘。"
+              description="先创建一条命盘或占卜记录，后面所有 AI 解读、比较和复看，都会从这里进入。"
               action={
                 <Button asChild>
                   <Link href="/divinations/new">立即新建</Link>

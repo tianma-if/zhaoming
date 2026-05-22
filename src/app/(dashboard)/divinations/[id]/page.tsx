@@ -9,6 +9,7 @@ import { BaziChartView } from "@/components/divination/bazi-chart";
 import { BaziInsights } from "@/components/divination/bazi-insights";
 import { ChengguChartView } from "@/components/divination/chenggu-chart";
 import { LiuyaoChartView } from "@/components/divination/liuyao-chart";
+import { SanshiChartView } from "@/components/divination/sanshi-chart";
 import { ZiweiChartView } from "@/components/divination/ziwei-chart";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
@@ -19,13 +20,20 @@ import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { divinationInputSchema } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
-import type { BaziChart, ChengguChart, LiuyaoChart, ZiweiChart } from "@/types/divination";
+import type {
+  BaziChart,
+  ChengguChart,
+  LiuyaoChart,
+  SanshiChart,
+  ZiweiChart,
+} from "@/types/divination";
 
 const divinationTitleMap = {
   bazi: "八字算命",
   ziwei: "紫微斗数",
   chenggu: "袁天罡称骨",
   liuyao: "六爻占卜",
+  sanshi: "三式占卜",
 } as const;
 
 export async function generateMetadata({
@@ -92,7 +100,9 @@ export default async function DivinationDetailPage({
               ? "紫微斗数解盘"
               : divinationType === "liuyao"
                 ? "六爻解卦"
-              : "袁天罡称骨结果"
+                : divinationType === "sanshi"
+                  ? "三式解局"
+                  : "袁天罡称骨结果"
         }
         description={
           <span className="text-xs text-muted-foreground">
@@ -128,6 +138,8 @@ export default async function DivinationDetailPage({
           <ZiweiChartView chart={ziweiChart as ZiweiChart} subjectName={data.subject_name} />
         ) : divinationType === "liuyao" ? (
           <LiuyaoChartView chart={data.chart_json as unknown as LiuyaoChart} />
+        ) : divinationType === "sanshi" ? (
+          <SanshiChartView chart={data.chart_json as unknown as SanshiChart} />
         ) : (
           <ChengguChartView chart={data.chart_json as unknown as ChengguChart} />
         )}

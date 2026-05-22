@@ -1,6 +1,6 @@
 "use client";
 
-import { History, ChevronRight } from "lucide-react";
+import { ChevronRight, History } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ function getDivinationTypeLabel(type: string) {
   if (type === "ziwei") return "紫微斗数";
   if (type === "chenggu") return "称骨";
   if (type === "liuyao") return "六爻";
+  if (type === "sanshi") return "三式";
   if (type === "custom") return "自定义";
   return type;
 }

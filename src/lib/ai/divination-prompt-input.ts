@@ -2,7 +2,14 @@ import { countBaziElements, getBaziDayMaster } from "@/lib/divination/bazi-verdi
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import type { Database } from "@/types/database";
-import type { BaziChart, ChengguChart, LiuyaoChart, ZiweiChart, ZiweiPalace } from "@/types/divination";
+import type {
+  BaziChart,
+  ChengguChart,
+  LiuyaoChart,
+  SanshiChart,
+  ZiweiChart,
+  ZiweiPalace,
+} from "@/types/divination";
 
 type DivinationRecord = Database["public"]["Tables"]["divinations"]["Row"];
 
@@ -12,6 +19,7 @@ const divinationTypeLabels: Record<string, string> = {
   qimen: "奇门遁甲",
   meihua: "梅花易数",
   liuyao: "六爻占卜",
+  sanshi: "三式占卜",
   chenggu: "称骨算命",
   custom: "自定义测算",
 };
@@ -27,7 +35,7 @@ function formatBasicInfo(record: DivinationRecord) {
     `测算类型：${getDivinationTypeLabel(divinationType)}`,
     `用户问题：${record.question}`,
     `性别：${record.gender ?? "unknown"}`,
-    `出生公历：${record.birth_gregorian ?? "unknown"}`,
+    `公历时间：${record.birth_gregorian ?? "unknown"}`,
   ].join("\n");
 }
 
@@ -53,7 +61,7 @@ function formatBaziSummary(chart: BaziChart) {
   const pillars = chart.pillars.map((pillar) => `${pillar.label}${pillar.ganZhi}`).join(" / ");
   const view = getBaziViewModel(chart);
   const currentDaYun = view.daYun?.current
-    ? `${view.daYun.current.ageRange}，${view.daYun.current.ganZhi}（${view.daYun.current.tenGod || "未标注十神"}）`
+    ? `${view.daYun.current.ageRange}，${view.daYun.current.ganZhi}，${view.daYun.current.tenGod || "未标注十神"}`
     : "未计算出当前大运";
   const summaryFields = view.summary
     .filter((item) => ["农历", "生肖", "命宫", "身宫", "胎元"].includes(item.label))
@@ -117,16 +125,6 @@ function formatZiweiSummary(chart: ZiweiChart) {
     .join("\n");
 }
 
-function formatGenericSummary(record: DivinationRecord) {
-  const divinationType = resolveDivinationTypeFromRecord(record);
-
-  return [
-    `当前记录状态：${record.status}`,
-    `测算类型：${getDivinationTypeLabel(divinationType)}`,
-    `问题：${record.question}`,
-  ].join("\n");
-}
-
 function formatChengguSummary(chart: ChengguChart) {
   const breakdown = chart.weights
     .map((item) => `${item.label}：${item.source}，${item.display}`)
@@ -168,6 +166,39 @@ function formatLiuyaoSummary(chart: LiuyaoChart) {
     .join("\n");
 }
 
+function formatSanshiSummary(chart: SanshiChart) {
+  const signalSummary = chart.signals
+    .map((signal) => `${signal.label}：${signal.value}${signal.hint ? `（${signal.hint}）` : ""}`)
+    .join("\n");
+  const sectorSummary = chart.sectors
+    .map((sector) => `${sector.label}【${sector.tone}】：${sector.summary}；建议：${sector.action}`)
+    .join("\n");
+
+  return [
+    `所用流派：${chart.meta.systemLabel}`,
+    `问题主题：${chart.meta.topicLabel}`,
+    `起局时间：${chart.meta.divinationDateTime}`,
+    `干支：${chart.meta.ganZhi}`,
+    `旬与旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
+    `农历：${chart.meta.lunar}`,
+    `结构化信号：\n${signalSummary}`,
+    `四个判断维度：\n${sectorSummary}`,
+    `行动建议：${chart.advice.join("；")}`,
+    `风险提醒：${chart.caution.join("；")}`,
+    `边界说明：${chart.disclaimer}`,
+  ].join("\n");
+}
+
+function formatGenericSummary(record: DivinationRecord) {
+  const divinationType = resolveDivinationTypeFromRecord(record);
+
+  return [
+    `当前记录状态：${record.status}`,
+    `测算类型：${getDivinationTypeLabel(divinationType)}`,
+    `问题：${record.question}`,
+  ].join("\n");
+}
+
 function formatDerivedSummary(record: DivinationRecord) {
   const divinationType = resolveDivinationTypeFromRecord(record);
 
@@ -185,6 +216,10 @@ function formatDerivedSummary(record: DivinationRecord) {
 
   if (divinationType === "liuyao") {
     return formatLiuyaoSummary(record.chart_json as unknown as LiuyaoChart);
+  }
+
+  if (divinationType === "sanshi") {
+    return formatSanshiSummary(record.chart_json as unknown as SanshiChart);
   }
 
   return formatGenericSummary(record);

@@ -9,6 +9,7 @@ import {
   Calculator,
   HeartHandshake,
   Hand,
+  type LucideIcon,
   LogOut,
   Orbit,
   Sparkles,
@@ -20,13 +21,25 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-const groups = [
+type SidebarItem = {
+  href: string | null;
+  label: string;
+  note?: string;
+  icon: LucideIcon;
+};
+
+type SidebarGroup = {
+  label: string;
+  items: SidebarItem[];
+};
+
+const groups: SidebarGroup[] = [
   {
     label: "命理类",
     items: [
       { href: "/divinations/new", label: "八字算命", note: "四柱推命", icon: Calculator },
       { href: "/divinations/ziwei", label: "紫微斗数", note: "命宫排盘", icon: Sparkles },
-      { href: "/divinations/chenggu", label: "袁天罡称骨算命", note: "骨重歌诀", icon: CalendarDays },
+      { href: "/divinations/chenggu", label: "袁天罡称骨", note: "骨重歌诀", icon: CalendarDays },
     ],
   },
   {
@@ -34,7 +47,7 @@ const groups = [
     items: [
       { href: "/divinations/liuyao", label: "六爻占卜", note: "起卦解读", icon: Ticket },
       { href: null, label: "梅花易数", icon: Orbit },
-      { href: null, label: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
+      { href: "/divinations/sanshi", label: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
     ],
   },
   {
@@ -111,6 +124,7 @@ export function WorkspaceSidebar({
                 {group.items.map((item) => {
                   const isActive = item.href ? activeHref === item.href : false;
                   const Icon = item.icon;
+                  const href = item.href;
 
                   const content = (
                     <>
@@ -131,10 +145,10 @@ export function WorkspaceSidebar({
                     </>
                   );
 
-                  return item.href ? (
+                  return href ? (
                     <Link
                       key={`${group.label}-${item.label}`}
-                      href={item.href}
+                      href={href}
                       onClick={(event) => {
                         if (
                           event.defaultPrevented ||
@@ -147,10 +161,10 @@ export function WorkspaceSidebar({
                           return;
                         }
 
-                        if (item.href !== pathname) {
+                        if (href !== pathname) {
                           setPendingNavigation({
                             from: pathname,
-                            to: item.href,
+                            to: href,
                           });
                         }
                       }}
@@ -178,51 +192,24 @@ export function WorkspaceSidebar({
         </div>
       </div>
 
-      <div className="mt-auto pt-8">
-        <div className="space-y-4">
-          <Button className="h-14 w-full rounded-xl text-base">解锁全部功能</Button>
-
-          <Separator />
-
-          <div className="space-y-4 rounded-t-2xl px-2 pt-3">
-            <div className="flex items-center gap-3">
-              {image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={image}
-                  alt={name || email}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-sm">
-                  {(name || email).slice(0, 1).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{name || "当前账户"}</p>
-                <p className="truncate text-sm text-muted-foreground">{email}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Link href="/profile" className="block">
-                <Button
-                  variant="outline"
-                  className="h-12 w-full justify-center rounded-xl text-base"
-                >
-                  <UserRound className="mr-2 h-4 w-4" />
-                  个人资料
-                </Button>
-              </Link>
-              <SignOutButton
-                variant="outline"
-                className="h-12 w-full justify-center rounded-xl text-base"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                退出登录
-              </SignOutButton>
-            </div>
+      <div className="mt-auto space-y-6 px-2 pb-2 pt-10">
+        <Separator />
+        <div className="space-y-2 rounded-2xl border border-border/60 bg-white/75 p-4">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-foreground">{name ?? "未命名用户"}</p>
+            <p className="text-xs text-muted-foreground">{email}</p>
+            {image ? (
+              <p className="text-[11px] text-muted-foreground/80">
+                当前头像已由 Better Auth 同步
+              </p>
+            ) : null}
           </div>
+          <SignOutButton>
+            <Button variant="outline" className="mt-3 w-full justify-start rounded-xl">
+              <LogOut className="size-4" />
+              退出登录
+            </Button>
+          </SignOutButton>
         </div>
       </div>
     </aside>

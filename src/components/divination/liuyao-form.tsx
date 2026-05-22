@@ -484,7 +484,7 @@ export function LiuyaoForm() {
 
                           <Button
                             type="button"
-                            variant={meta.isMoving ? "secondary" : "ghost"}
+                            variant={meta.isMoving ? "outline" : "ghost"}
                             className={`h-9 rounded-xl px-0 text-sm font-semibold ${getChangeBadgeClass(currentValue)}`}
                             onClick={() => updateLineValue(index, toggleLineMoving(currentValue))}
                           >

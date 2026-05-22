@@ -4,6 +4,7 @@ import { CHENGGU_PROMPT_TEMPLATES } from "./chenggu";
 import { GENERIC_DIVINATION_PROMPT_TEMPLATES } from "./generic";
 import { LIUYAO_PROMPT_TEMPLATES } from "./liuyao";
 import { QIMEN_PROMPT_TEMPLATES } from "./qimen";
+import { SANSHI_PROMPT_TEMPLATES } from "./sanshi";
 import type { DivinationPromptMode, DivinationPromptTemplateGroup } from "./types";
 import { ZIWEI_PROMPT_TEMPLATES } from "./ziwei";
 
@@ -18,6 +19,7 @@ const DIVINATION_PROMPT_REGISTRY: Partial<
   qimen: QIMEN_PROMPT_TEMPLATES,
   chenggu: CHENGGU_PROMPT_TEMPLATES,
   liuyao: LIUYAO_PROMPT_TEMPLATES,
+  sanshi: SANSHI_PROMPT_TEMPLATES,
 };
 
 export function getDivinationPromptTemplate(

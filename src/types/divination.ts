@@ -1,4 +1,12 @@
-export type DivinationType = "bazi" | "ziwei" | "qimen" | "meihua" | "liuyao" | "chenggu" | "custom";
+export type DivinationType =
+  | "bazi"
+  | "ziwei"
+  | "qimen"
+  | "meihua"
+  | "liuyao"
+  | "sanshi"
+  | "chenggu"
+  | "custom";
 
 export interface BaziPillar {
   key: "year" | "month" | "day" | "time";
@@ -207,4 +215,54 @@ export interface LiuyaoChart {
   movingLineIndexes: number[];
   originalHexagram: LiuyaoHexagram;
   changedHexagram: LiuyaoHexagram;
+}
+
+export type SanshiSystem = "qimen" | "taiyi" | "liuren";
+
+export type SanshiTopic =
+  | "career"
+  | "wealth"
+  | "relationship"
+  | "study"
+  | "travel"
+  | "lawsuit"
+  | "health"
+  | "general";
+
+export interface SanshiSignal {
+  label: string;
+  value: string;
+  hint?: string;
+}
+
+export interface SanshiSector {
+  key: "timing" | "initiative" | "coordination" | "risk";
+  label: string;
+  tone: "favorable" | "neutral" | "cautious";
+  summary: string;
+  action: string;
+}
+
+export interface SanshiChart {
+  kind: "sanshi";
+  meta: {
+    system: SanshiSystem;
+    systemLabel: string;
+    topic: SanshiTopic;
+    topicLabel: string;
+    divinationDateTime: string;
+    lunar: string;
+    ganZhi: string;
+    xun: string;
+    xunKong: string;
+    question: string;
+    subjectName: string;
+    gender: string;
+    notes?: string;
+  };
+  signals: SanshiSignal[];
+  sectors: SanshiSector[];
+  advice: string[];
+  caution: string[];
+  disclaimer: string;
 }
