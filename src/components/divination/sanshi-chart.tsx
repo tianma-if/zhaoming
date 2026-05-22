@@ -3,18 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { QimenPalace, SanshiChart } from "@/types/divination";
 
-const toneClassMap = {
-  favorable: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  neutral: "border-amber-200 bg-amber-50 text-amber-700",
-  cautious: "border-rose-200 bg-rose-50 text-rose-700",
-} as const;
-
-const toneLabelMap = {
-  favorable: "可推进",
-  neutral: "先校正",
-  cautious: "宜谨慎",
-} as const;
-
 function MetaList({
   items,
   columns = "md:grid-cols-2 xl:grid-cols-4",
@@ -23,13 +11,15 @@ function MetaList({
   columns?: string;
 }) {
   return (
-    <div className={cn("grid gap-x-6 gap-y-3 rounded-[1.25rem] border border-border/70 bg-muted/15 px-4 py-4", columns)}>
+    <div
+      className={cn(
+        "grid gap-x-6 gap-y-3 rounded-[1.25rem] border border-border/70 bg-muted/15 px-4 py-4",
+        columns,
+      )}
+    >
       {items.map((item) => (
-        <div
-          key={`${item.label}-${item.value}`}
-          className="space-y-1"
-        >
-          <p className="text-[11px] tracking-[0.18em] text-muted-foreground uppercase">
+        <div key={`${item.label}-${item.value}`} className="space-y-1">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
             {item.label}
           </p>
           <p className="text-base font-semibold tracking-[0.01em] text-foreground">
@@ -72,185 +62,78 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className={cn("text-xs tracking-[0.2em] uppercase", accent ? "text-white/70" : "text-muted-foreground")}>
+          <p
+            className={cn(
+              "text-xs uppercase tracking-[0.2em]",
+              accent ? "text-white/70" : "text-muted-foreground",
+            )}
+          >
             {palace.direction}
           </p>
           <h3 className="mt-1 font-display text-2xl tracking-[0.04em]">{palace.palace}</h3>
         </div>
         <div className="flex flex-wrap justify-end gap-1">
-          {palace.isChiefDeity ? <Badge className="border-white/20 bg-white/15 text-white">值符</Badge> : null}
+          {palace.isChiefDeity ? (
+            <Badge className="border-white/20 bg-white/15 text-white">值符</Badge>
+          ) : null}
           {palace.isChiefStar ? (
-            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>值星</Badge>
+            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>
+              值星
+            </Badge>
           ) : null}
           {palace.isDutyDoor ? (
-            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>值使</Badge>
+            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>
+              值使
+            </Badge>
           ) : null}
         </div>
       </div>
 
       <div className={cn("mt-4 space-y-2 text-sm", accent ? "text-white/88" : "text-foreground")}>
-        <p>地盘：{palace.earthStem}</p>
-        <p>天盘：{palace.heavenStem ?? "中寄"}</p>
-        <p>九星：{palace.star ?? "无"}</p>
-        <p>八门：{palace.door ?? "中宫无门"}</p>
-        <p>八神：{palace.deity ?? "无"}</p>
+        <p>地盘: {palace.earthStem}</p>
+        <p>天盘: {palace.heavenStem ?? "中寄"}</p>
+        <p>九星: {palace.star ?? "无"}</p>
+        <p>八门: {palace.door ?? "中宫无门"}</p>
+        <p>八神: {palace.deity ?? "无"}</p>
       </div>
     </article>
   );
 }
 
-function QimenBoardSection({ chart }: { chart: SanshiChart }) {
-  if (!chart.qimen) {
+export function SanshiChartView({ chart }: { chart: SanshiChart }) {
+  if (chart.meta.system !== "qimen" || !chart.qimen) {
     return null;
   }
 
   return (
-    <DashboardSection
-      className="space-y-6"
-      title="奇门盘面"
-    >
-      <MetaList
-        columns="md:grid-cols-2 xl:grid-cols-5"
-        items={[
-          {
-            label: "遁局",
-            value: `${chart.qimen.dunLabel}${chart.qimen.ju}局`,
-            detail: `${chart.qimen.dayGanZhi}日 · ${chart.qimen.timeGanZhi}时`,
-          },
-          {
-            label: "值符",
-            value: chart.qimen.chiefDeity,
-            detail: `主星 ${chart.qimen.chiefStar}`,
-          },
-          {
-            label: "值使",
-            value: chart.qimen.dutyDoor,
-            detail: `落宫 ${chart.qimen.dutyPalace}`,
-          },
-          {
-            label: "旬空",
-            value: chart.qimen.hourVoid,
-            detail: `${chart.meta.xun} / ${chart.meta.xunKong}`,
-          },
-          {
-            label: "起局主题",
-            value: chart.meta.topicLabel,
-            detail: chart.meta.systemLabel,
-          },
-        ]}
-      />
-
-      <div className="grid gap-4 md:grid-cols-3">
-        {chart.qimen.palaces.map((palace) => (
-          <QimenPalaceCell key={palace.index} palace={palace} />
-        ))}
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-3">
-        {chart.qimen.summary.map((item) => (
-          <div
-            key={item}
-            className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-4 text-sm leading-7 text-foreground"
-          >
-            {item}
-          </div>
-        ))}
-      </div>
-    </DashboardSection>
-  );
-}
-
-export function SanshiChartView({ chart }: { chart: SanshiChart }) {
-  return (
     <div className="space-y-6">
-      <DashboardSection
-        className="space-y-5"
-        title={`${chart.meta.systemLabel}结果`}
-      >
+      <DashboardSection className="space-y-6" title="奇门盘面">
         <MetaList
+          columns="xl:grid-cols-[1.2fr_1fr]"
           items={[
             {
-              label: "所用流派",
-              value: chart.meta.systemLabel,
-              detail: `主题：${chart.meta.topicLabel}`,
+              label: "盘面信息",
+              value: `${chart.qimen.dunLabel}${chart.qimen.ju}局 · 值符${chart.qimen.chiefDeity} · 值使${chart.qimen.dutyDoor}`,
+              detail: `${chart.qimen.dayGanZhi}日 · ${chart.qimen.timeGanZhi}时 · 旬空 ${chart.qimen.hourVoid}`,
             },
             {
-              label: "起局时间",
-              value: chart.meta.divinationDateTime,
-              detail: chart.meta.lunar,
-            },
-            {
-              label: "干支与旬",
-              value: chart.meta.ganZhi,
-              detail: `${chart.meta.xun} / ${chart.meta.xunKong}`,
-            },
-            {
-              label: "求测人",
-              value: chart.meta.subjectName,
-              detail: `性别：${chart.meta.gender}`,
+              label: "问题",
+              value: chart.meta.question,
+              detail: `${chart.meta.topicLabel} · ${chart.meta.systemLabel}`,
             },
           ]}
         />
 
-        <div className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-3">
-          <p className="text-[11px] tracking-[0.18em] text-muted-foreground uppercase">问题</p>
-          <p className="mt-1 text-sm leading-7 text-foreground">{chart.meta.question}</p>
-        </div>
-      </DashboardSection>
-
-      {chart.meta.system === "qimen" ? <QimenBoardSection chart={chart} /> : null}
-      <DashboardSection
-        className="space-y-5"
-        title="四个判断维度"
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          {chart.sectors.map((sector) => (
-            <article
-              key={sector.key}
-              className="rounded-[1.5rem] border border-border/70 bg-white p-5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.16)]"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-2">
-                  <h3 className="font-display text-3xl tracking-[0.04em]">{sector.label}</h3>
-                  <p className="text-sm leading-7 text-muted-foreground">{sector.summary}</p>
-                </div>
-                <Badge className={toneClassMap[sector.tone]}>{toneLabelMap[sector.tone]}</Badge>
-              </div>
-              <div className="mt-4 rounded-2xl bg-muted/35 p-4 text-sm leading-7 text-foreground">
-                {sector.action}
-              </div>
-            </article>
+        <div className="grid gap-4 md:grid-cols-3">
+          {chart.qimen.palaces.map((palace) => (
+            <QimenPalaceCell key={palace.index} palace={palace} />
           ))}
         </div>
+
+        <div className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-4 text-sm leading-7 text-foreground">
+          {chart.qimen.summary.join(" ")}
+        </div>
       </DashboardSection>
-
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <DashboardSection className="space-y-5" title="行动建议">
-          <div className="space-y-3">
-            {chart.advice.map((item) => (
-              <div
-                key={item}
-                className="rounded-[1.25rem] border border-border/70 bg-white px-4 py-3 text-sm leading-7"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </DashboardSection>
-
-        <DashboardSection className="space-y-5" title="风险提醒">
-          <div className="space-y-3">
-            {chart.caution.map((item) => (
-              <div
-                key={item}
-                className="rounded-[1.25rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-7 text-rose-900"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </DashboardSection>
-      </div>
     </div>
   );
 }
