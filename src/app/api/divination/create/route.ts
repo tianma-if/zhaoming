@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     const data = await insertDivination({
       userId: user.id,
       divinationType:
-        parsed.data.divinationType === "chenggu"
+        parsed.data.divinationType === "chenggu" || parsed.data.divinationType === "sanshi"
           ? "custom"
           : parsed.data.divinationType,
       subjectName: parsed.data.subjectName || null,
