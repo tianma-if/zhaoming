@@ -4,7 +4,6 @@ import {
   DashboardEmptyState,
   DashboardPage,
   DashboardPageHeader,
-  DashboardSection,
 } from "@/components/layout/dashboard-shell";
 import { DivinationRecordsTable } from "@/components/divination/divination-records-table";
 import { Button } from "@/components/ui/button";
@@ -45,14 +44,13 @@ export default async function DivinationsPage() {
       <DashboardPageHeader
         eyebrow="History"
         title="测算记录"
-        description="这里汇总你已经生成过的命理与占卜结果，后续扩展筛选、分页和更多状态字段时，可以直接在这张表上继续生长。"
         action={
           <Button asChild className="rounded-xl px-4">
             <Link href="/divinations/new">发起新测算</Link>
           </Button>
         }
       />
-      <DashboardSection className="overflow-hidden p-0">
+      <div>
         {tableData.length ? (
           <DivinationRecordsTable data={tableData} />
         ) : (
@@ -68,7 +66,7 @@ export default async function DivinationsPage() {
             />
           </div>
         )}
-      </DashboardSection>
+      </div>
     </DashboardPage>
   );
 }

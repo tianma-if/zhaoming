@@ -28,7 +28,7 @@ export function DataTable<TData>({
   return (
     <div className={cn("flex flex-col", className)}>
       {children}
-      <div className="overflow-hidden border-t">
+      <div className="overflow-hidden rounded-lg border">
         <div className="w-full overflow-x-auto">
           <Table>
             <TableHeader className="bg-muted/35">
