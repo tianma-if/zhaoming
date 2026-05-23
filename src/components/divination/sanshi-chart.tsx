@@ -205,7 +205,7 @@ function TaiyiPalaceCompact({ palace }: { palace: TaiyiPalace }) {
       </div>
       <p className={cn("mt-2 text-xs font-medium", accent ? "text-white" : "text-foreground")}>{palace.trigraph}宫</p>
       <p className={cn("mt-1 text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
-        {palace.markers.join("、") || "无标记"}
+        {palace.markers.join("、") || "无落点"}
       </p>
     </article>
   );
@@ -368,12 +368,12 @@ function formatTaiyiCopyText(chart: SanshiChart) {
     `主客定算：${chart.taiyi.hostCount} / ${chart.taiyi.guestCount} / ${chart.taiyi.setCount} / ${chart.taiyi.trend}`,
     "十六宫：",
     ...chart.taiyi.godSectors.map(
-      (sector) => `${sector.palace}(${sector.branch})：${sector.god} / ${sector.markers.join("、") || "无标记"}`,
+      (sector) => `${sector.palace}(${sector.branch})：${sector.god} / ${sector.markers.join("、") || "无落点"}`,
     ),
     "九宫盘：",
     ...chart.taiyi.palaces.map(
       (palace) =>
-        `${palace.palace}(${palace.direction})：${palace.trigraph}宫 / ${palace.stage} / ${palace.markers.join("、") || "无标记"}`,
+        `${palace.palace}(${palace.direction})：${palace.trigraph}宫 / ${palace.stage} / ${palace.markers.join("、") || "无落点"}`,
     ),
   ].join("\n");
 }

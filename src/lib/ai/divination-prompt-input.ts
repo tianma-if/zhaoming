@@ -198,13 +198,13 @@ function formatSanshiSummary(chart: SanshiChart) {
         `十六宫层：\n${chart.taiyi.godSectors
           .map(
             (sector) =>
-              `${sector.palace}(${sector.branch})：${sector.god} / ${sector.markers.join("、") || "无标记"} / ${sector.summary}`,
+              `${sector.palace}(${sector.branch})：${sector.god} / ${sector.markers.join("、") || "无落点"} / ${sector.summary}`,
           )
           .join("\n")}`,
         `九宫摘录：\n${chart.taiyi.palaces
           .map(
             (palace) =>
-              `${palace.palace}(${palace.direction})：${palace.trigraph}宫 / ${palace.stage} / ${palace.markers.join("、") || "无标记"} / ${palace.summary}`,
+              `${palace.palace}(${palace.direction})：${palace.trigraph}宫 / ${palace.stage} / ${palace.markers.join("、") || "无落点"} / ${palace.summary}`,
           )
           .join("\n")}`,
       ].join("\n")
