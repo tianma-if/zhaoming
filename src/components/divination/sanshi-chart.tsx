@@ -259,11 +259,7 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
         })}
 
         <div className="rounded-[1.35rem] border border-border/70 bg-white/75 p-3">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Inner Nine Palaces</p>
-              <p className="text-sm text-foreground">太乙、文昌、始击等在内盘中的具体落点</p>
-            </div>
+          <div className="mb-3 flex items-center justify-end gap-3">
             <Badge>{chart.taiyi.trend}</Badge>
           </div>
           <div className="grid gap-2 md:grid-cols-3">
@@ -291,11 +287,7 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
         })}
 
         <div className="absolute inset-x-[20%] inset-y-[20%] rounded-[1.35rem] border border-border/70 bg-white/75 p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Inner Nine Palaces</p>
-              <p className="text-sm text-foreground">太乙、文昌、始击等在内盘中的具体落点</p>
-            </div>
+          <div className="mb-3 flex items-center justify-end gap-3">
             <Badge>{chart.taiyi.trend}</Badge>
           </div>
           <div className="grid gap-2 md:grid-cols-3">
