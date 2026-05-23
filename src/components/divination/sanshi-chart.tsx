@@ -118,7 +118,6 @@ function formatQimenCopyText(chart: SanshiChart) {
       (palace) =>
         `${palace.palace}(${palace.direction})：地盘${palace.earthStem} / 天盘${palace.heavenStem ?? "中寄"} / ${palace.star ?? "无星"} / ${palace.door ?? "无门"} / ${palace.deity ?? "无神"}`,
     ),
-    `盘面概要：${chart.qimen.summary.join(" ")}`,
   ].join("\n");
 }
 

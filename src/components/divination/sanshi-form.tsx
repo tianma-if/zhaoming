@@ -305,7 +305,7 @@ export function SanshiForm() {
             ) : null}
 
             <Button className="h-11 w-full rounded-md" type="submit" disabled={isPending}>
-              {isPending ? "正在起局..." : "生成三式摘要"}
+              {isPending ? "正在起局..." : "排盘"}
             </Button>
           </Card>
         </form>
