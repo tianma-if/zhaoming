@@ -48,6 +48,32 @@ function MetaList({
   );
 }
 
+function CompactDetailList({
+  items,
+}: {
+  items: Array<{ label: string; value: string; detail?: string }>;
+}) {
+  return (
+    <article className="rounded-[1.15rem] border border-border/70 bg-white px-5 py-4 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]">
+      <div className="space-y-3">
+        {items.map((item, index) => (
+          <div key={`${item.label}-${item.value}`} className={cn(index > 0 ? "border-t border-border/70 pt-3" : "")}>
+            <div className="flex flex-col gap-1.5 md:flex-row md:items-start md:gap-4">
+              <p className="shrink-0 text-xs uppercase tracking-[0.2em] text-muted-foreground md:w-28">
+                {item.label}
+              </p>
+              <div className="min-w-0 space-y-1">
+                <p className="text-sm font-medium leading-7 text-foreground">{item.value}</p>
+                {item.detail ? <p className="text-xs leading-6 text-muted-foreground">{item.detail}</p> : null}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
 function getQimenCellTone(palace: QimenPalace) {
   if (palace.isDutyDoor || palace.isChiefStar || palace.isChiefDeity) {
     return "border-black/20 bg-black text-white";
@@ -577,11 +603,32 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
   const qimenCopyText = useMemo(() => formatQimenCopyText(chart), [chart]);
   const taiyiCopyText = useMemo(() => formatTaiyiCopyText(chart), [chart]);
   const liurenCopyText = useMemo(() => formatLiurenCopyText(chart), [chart]);
+  const liurenChart = chart.liuren;
   const showTaiyiFocusedView = chart.meta.system === "taiyi" && chart.taiyi;
+  const showCompactLiurenOverview = chart.meta.system === "liuren" && liurenChart;
 
   return (
     <div className="space-y-5">
-      {showTaiyiFocusedView ? null : (
+      {showTaiyiFocusedView ? null : showCompactLiurenOverview ? (
+        <section className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+          <div className="min-w-0 space-y-1.5">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm leading-6 text-foreground">
+              <span className="text-muted-foreground">问题</span>
+              <span className="font-medium">{chart.meta.question}</span>
+              <span className="text-muted-foreground">起局时间</span>
+              <span>{chart.meta.divinationDateTime}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm leading-6 text-muted-foreground">
+              <span>月将时位 {liurenChart.monthGeneral}{liurenChart.monthGeneralPalace} / {liurenChart.timeLeader}{liurenChart.timeLeaderPalace}</span>
+              <span>三传 {liurenChart.transmissions.map((item) => item.branch).join(" / ")}</span>
+              <span>关系焦点 {liurenChart.relationFocus}</span>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <CopyContentButton label="复制解局摘要" text={copyText} />
+          </div>
+        </section>
+      ) : (
         <DashboardSection
           className="space-y-5"
           title={`${chart.meta.systemLabel}概览`}
@@ -609,22 +656,13 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
             ]}
           />
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {chart.signals.map((signal) => (
-              <article
-                key={`${signal.label}-${signal.value}`}
-                className="rounded-[1.15rem] border border-border/70 bg-white px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
-              >
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  {signal.label}
-                </p>
-                <p className="mt-2 text-sm font-medium leading-7 text-foreground">{signal.value}</p>
-                {signal.hint ? (
-                  <p className="mt-1 text-xs leading-6 text-muted-foreground">{signal.hint}</p>
-                ) : null}
-              </article>
-            ))}
-          </div>
+          <CompactDetailList
+            items={chart.signals.map((signal) => ({
+              label: signal.label,
+              value: signal.value,
+              detail: signal.hint,
+            }))}
+          />
         </DashboardSection>
       )}
 
