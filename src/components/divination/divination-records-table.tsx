@@ -156,7 +156,7 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
 
   return (
     <DataTable table={table}>
-      <div className="flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
           <div className="relative w-full md:max-w-sm">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
