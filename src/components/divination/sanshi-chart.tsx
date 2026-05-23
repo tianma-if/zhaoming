@@ -1,4 +1,8 @@
+"use client";
+
+import { useMemo } from "react";
 import { DashboardSection } from "@/components/layout/dashboard-shell";
+import { CopyContentButton } from "@/components/divination/copy-content-button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { QimenPalace, SanshiChart } from "@/types/divination";
@@ -100,7 +104,27 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
   );
 }
 
+function formatQimenCopyText(chart: SanshiChart) {
+  if (!chart.qimen) return "";
+
+  return [
+    `问题：${chart.meta.question}`,
+    `起局时间：${chart.meta.divinationDateTime}`,
+    `干支：${chart.meta.ganZhi}`,
+    `时旬与旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
+    `盘面信息：${chart.qimen.dunLabel}${chart.qimen.ju}局 / 值符${chart.qimen.chiefDeity} / 值星${chart.qimen.chiefStar} / 值使${chart.qimen.dutyDoor} / 值使落宫${chart.qimen.dutyPalace}`,
+    "九宫盘：",
+    ...chart.qimen.palaces.map(
+      (palace) =>
+        `${palace.palace}(${palace.direction})：地盘${palace.earthStem} / 天盘${palace.heavenStem ?? "中寄"} / ${palace.star ?? "无星"} / ${palace.door ?? "无门"} / ${palace.deity ?? "无神"}`,
+    ),
+    `盘面概要：${chart.qimen.summary.join(" ")}`,
+  ].join("\n");
+}
+
 export function SanshiChartView({ chart }: { chart: SanshiChart }) {
+  const copyText = useMemo(() => formatQimenCopyText(chart), [chart]);
+
   if (chart.meta.system !== "qimen" || !chart.qimen) {
     return null;
   }
@@ -130,8 +154,13 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
           ))}
         </div>
 
-        <div className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-4 text-sm leading-7 text-foreground">
-          {chart.qimen.summary.join(" ")}
+        <div className="space-y-3">
+          <div className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-4 text-sm leading-7 text-foreground">
+            {chart.qimen.summary.join(" ")}
+          </div>
+          <div className="flex justify-end">
+            <CopyContentButton label="复制盘面概要" text={copyText} />
+          </div>
         </div>
       </DashboardSection>
     </div>

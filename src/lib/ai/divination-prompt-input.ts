@@ -41,15 +41,15 @@ function formatBasicInfo(record: DivinationRecord) {
 
 function formatBaziPromptBasicInfo(record: DivinationRecord, chart: BaziChart) {
   const birthText = chart.meta.lunar
-    ? `农历${chart.meta.lunar}${chart.meta.inputSolar ? `，${chart.meta.inputSolar}` : ""}`
+    ? `农历${chart.meta.lunar}${chart.meta.inputSolar ? `（${chart.meta.inputSolar}）` : ""}`
     : record.birth_gregorian ?? "unknown";
 
   return [
     "【基础信息】",
-    `• 姓名：${record.subject_name ?? "未提供"}`,
-    `• 生辰：${birthText}`,
-    `• 性别：${record.gender === "male" ? "男" : record.gender === "female" ? "女" : record.gender ?? "未提供"}`,
-    `• 出生地：${(chart.meta.birthPlace ?? "未提供").replaceAll(", ", "")}`,
+    `- 姓名：${record.subject_name ?? "未提供"}`,
+    `- 生辰：${birthText}`,
+    `- 性别：${record.gender === "male" ? "男" : record.gender === "female" ? "女" : record.gender ?? "未提供"}`,
+    `- 出生地：${(chart.meta.birthPlace ?? "未提供").replaceAll(", ", "")}`,
   ].join("\n");
 }
 
@@ -93,7 +93,7 @@ function summarizeZiweiPalace(palace: ZiweiPalace | undefined, label: string) {
   const minorStars = palace.minorStars.slice(0, 4).join("、");
 
   return [
-    `${label}：${palace.name}（${palace.heavenlyStem}${palace.earthlyBranch}）`,
+    `${label}：${palace.name}，${palace.heavenlyStem}${palace.earthlyBranch}`,
     `主星：${majorStars}`,
     minorStars ? `辅星：${minorStars}` : "",
     palace.changsheng12 ? `长生十二神：${palace.changsheng12}` : "",
@@ -167,12 +167,6 @@ function formatLiuyaoSummary(chart: LiuyaoChart) {
 }
 
 function formatSanshiSummary(chart: SanshiChart) {
-  const signalSummary = chart.signals
-    .map((signal) => `${signal.label}：${signal.value}${signal.hint ? `（${signal.hint}）` : ""}`)
-    .join("\n");
-  const sectorSummary = chart.sectors
-    .map((sector) => `${sector.label}【${sector.tone}】：${sector.summary}；建议：${sector.action}`)
-    .join("\n");
   const qimenSummary = chart.qimen
     ? [
         `遁局：${chart.qimen.dunLabel}${chart.qimen.ju}局`,
@@ -187,7 +181,6 @@ function formatSanshiSummary(chart: SanshiChart) {
               `${palace.palace}(${palace.direction})：地盘${palace.earthStem} / 天盘${palace.heavenStem ?? "中寄"} / ${palace.star ?? "无星"} / ${palace.door ?? "无门"} / ${palace.deity ?? "无神"}`,
           )
           .join("\n")}`,
-        `盘面摘要：${chart.qimen.summary.join("；")}`,
       ].join("\n")
     : "";
 
@@ -196,15 +189,16 @@ function formatSanshiSummary(chart: SanshiChart) {
     `问题主题：${chart.meta.topicLabel}`,
     `起局时间：${chart.meta.divinationDateTime}`,
     `干支：${chart.meta.ganZhi}`,
-    `旬与旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
+    `时旬与旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
     `农历：${chart.meta.lunar}`,
+    `问题：${chart.meta.question}`,
+    chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : "",
+    chart.meta.gender ? `性别：${chart.meta.gender}` : "",
     qimenSummary ? `奇门盘面：\n${qimenSummary}` : "",
-    `结构化信号：\n${signalSummary}`,
-    `四个判断维度：\n${sectorSummary}`,
-    `行动建议：${chart.advice.join("；")}`,
-    `风险提醒：${chart.caution.join("；")}`,
-    `边界说明：${chart.disclaimer}`,
-  ].join("\n");
+    chart.meta.notes ? `补充说明：${chart.meta.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function formatGenericSummary(record: DivinationRecord) {
