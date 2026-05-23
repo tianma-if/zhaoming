@@ -37,8 +37,11 @@ function NavItem({
 }) {
   const Icon = item.icon;
   const isActive = item.href ? activeHref === item.href : false;
-  const baseItemClassName =
-    "h-8 rounded-md p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground [&>svg]:size-4";
+  const hasNote = Boolean(item.note);
+  const baseItemClassName = cn(
+    "rounded-md p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground [&>svg]:size-4",
+    hasNote ? "h-auto min-h-8 items-start [&>svg]:mt-0.5" : "h-8",
+  );
 
   if (item.items?.length) {
     return (
@@ -88,7 +91,19 @@ function NavItem({
         >
           <Link href={item.href}>
             <Icon />
-            <span>{item.title}</span>
+            <span className="min-w-0">
+              <span className="block truncate">{item.title}</span>
+              {item.note ? (
+                <span
+                  className={cn(
+                    "block truncate text-[11px] font-normal",
+                    isActive ? "text-sidebar-accent-foreground/70" : "text-sidebar-foreground/55",
+                  )}
+                >
+                  {item.note}
+                </span>
+              ) : null}
+            </span>
           </Link>
         </SidebarMenuButton>
       ) : (
