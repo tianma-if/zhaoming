@@ -11,6 +11,14 @@ const getSessionWithProfile = cache(async () => {
   }
 
   const requestHeaders = await headers();
+  return getSessionFromHeaders(requestHeaders);
+});
+
+export async function getSessionFromHeaders(requestHeaders: Headers) {
+  if (!hasAuthEnv() || !hasDatabaseEnv()) {
+    return null;
+  }
+
   const env = getEnv();
   const cachedSession = (await getCookieCache(requestHeaders, {
     secret:
@@ -30,7 +38,7 @@ const getSessionWithProfile = cache(async () => {
   }
 
   return session;
-});
+}
 
 export async function requireUser() {
   const session = await getSessionWithProfile();

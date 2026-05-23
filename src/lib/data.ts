@@ -7,6 +7,11 @@ type AppUserRow = Database["public"]["Tables"]["users"]["Row"];
 type DivinationRow = Database["public"]["Tables"]["divinations"]["Row"];
 type PostRow = Database["public"]["Tables"]["posts"]["Row"];
 
+export type DivinationSummaryRow = Pick<
+  DivinationRow,
+  "id" | "divination_type" | "question" | "status" | "created_at" | "input_params" | "chart_json"
+>;
+
 interface DbUserProfile {
   id: string;
   email: string;
@@ -82,6 +87,27 @@ export async function listDivinations(userId: string) {
   );
 
   return result.rows as DivinationRow[];
+}
+
+export async function listDivinationSummaries(userId: string) {
+  const result = await query<DivinationSummaryRow>(
+    `
+      select
+        id,
+        divination_type,
+        question,
+        status,
+        created_at,
+        input_params,
+        chart_json
+      from public.divinations
+      where user_id = $1
+      order by created_at desc
+    `,
+    [userId],
+  );
+
+  return result.rows as DivinationSummaryRow[];
 }
 
 export async function getDivinationById(userId: string, id: string) {
