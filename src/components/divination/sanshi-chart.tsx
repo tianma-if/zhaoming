@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import type {
   QimenPalace,
   SanshiChart,
-  SanshiSector,
   TaiyiGodSector,
   TaiyiPalace,
 } from "@/types/divination";
@@ -325,14 +324,20 @@ function formatQimenCopyText(chart: SanshiChart) {
 function formatTaiyiCopyText(chart: SanshiChart) {
   if (!chart.taiyi) return "";
 
+  const countTypeLabel = chart.taiyi.countTypeLabel ?? "未记录";
+  const countSource = chart.taiyi.countSource ?? "旧版记录未保存";
+  const jishenPalace = chart.taiyi.jishenPalace ?? "未记录";
+  const countRuleSummary = chart.taiyi.countRuleSummary ?? "旧版记录未保存计法说明";
+
   return [
     `问题：${chart.meta.question}`,
     `起局时间：${chart.meta.divinationDateTime}`,
     `干支：${chart.meta.ganZhi}`,
     `旬 / 旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
-    `所用计法：${chart.taiyi.countTypeLabel}`,
-    `计法依据：${chart.taiyi.countSource}`,
-    `盘面信息：${chart.taiyi.epoch}第${chart.taiyi.bureau}局 / 太乙${chart.taiyi.taiyiPalace} / 文昌${chart.taiyi.wenchangPalace} / 计神${chart.taiyi.jishenPalace} / 始击${chart.taiyi.shijiPalace}`,
+    `所用计法：${countTypeLabel}`,
+    `计法依据：${countSource}`,
+    `计法说明：${countRuleSummary}`,
+    `盘面信息：${chart.taiyi.epoch}第${chart.taiyi.bureau}局 / 太乙${chart.taiyi.taiyiPalace} / 文昌${chart.taiyi.wenchangPalace} / 计神${jishenPalace} / 始击${chart.taiyi.shijiPalace}`,
     `主客定算：${chart.taiyi.hostCount} / ${chart.taiyi.guestCount} / ${chart.taiyi.setCount} / ${chart.taiyi.trend}`,
     "十六宫：",
     ...chart.taiyi.godSectors.map(
@@ -352,6 +357,10 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
   const qimenCopyText = useMemo(() => formatQimenCopyText(chart), [chart]);
   const taiyiCopyText = useMemo(() => formatTaiyiCopyText(chart), [chart]);
   const showTaiyiFocusedView = chart.meta.system === "taiyi" && chart.taiyi;
+  const taiyiCountTypeLabel = chart.taiyi?.countTypeLabel ?? "未记录";
+  const taiyiCountSource = chart.taiyi?.countSource ?? "旧版记录未保存";
+  const taiyiCountRuleSummary = chart.taiyi?.countRuleSummary ?? "旧版记录未保存计法说明";
+  const taiyiJishenPalace = chart.taiyi?.jishenPalace ?? "未记录";
 
   return (
     <div className="space-y-5">
@@ -378,7 +387,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
                   {
                     label: "计法",
                     value: chart.taiyi?.countTypeLabel ?? chart.meta.systemLabel,
-                    detail: chart.taiyi?.countSource,
+                    detail: taiyiCountSource,
                   },
                   {
                     label: "问题",
@@ -505,12 +514,12 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               {
                 label: "盘面信息",
                 value: `${chart.taiyi.epoch}第${chart.taiyi.bureau}局`,
-                detail: `太乙${chart.taiyi.taiyiPalace} · 文昌${chart.taiyi.wenchangPalace} · 计神${chart.taiyi.jishenPalace} · 始击${chart.taiyi.shijiPalace}`,
+                detail: `太乙${chart.taiyi.taiyiPalace} · 文昌${chart.taiyi.wenchangPalace} · 计神${taiyiJishenPalace} · 始击${chart.taiyi.shijiPalace}`,
               },
               {
                 label: "所用计法",
-                value: chart.taiyi.countTypeLabel,
-                detail: `${chart.taiyi.countSource} · ${chart.taiyi.countRuleSummary}`,
+                value: taiyiCountTypeLabel,
+                detail: `${taiyiCountSource} · ${taiyiCountRuleSummary}`,
               },
               {
                 label: "主客定算",
@@ -524,19 +533,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               },
             ]}
           />
-
-          {chart.taiyi.summary.length ? (
-            <div className="grid gap-3">
-              {chart.taiyi.summary.map((item, index) => (
-                <article
-                  key={`taiyi-summary-${index}`}
-                  className="rounded-[1.15rem] border border-border/70 bg-muted/10 px-4 py-3.5 text-sm leading-7 text-foreground/90"
-                >
-                  {item}
-                </article>
-              ))}
-            </div>
-          ) : null}
 
           <TaiyiCombinedBoard chart={chart} />
 
