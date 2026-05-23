@@ -15,15 +15,18 @@ import type {
 function MetaList({
   items,
   columns = "md:grid-cols-2 xl:grid-cols-4",
+  cardClassName,
 }: {
   items: Array<{ label: string; value: string; detail?: string }>;
   columns?: string;
+  cardClassName?: string;
 }) {
   return (
     <div
       className={cn(
         "grid gap-x-5 gap-y-2.5 rounded-[1.1rem] border border-border/70 bg-muted/15 px-4 py-3.5",
         columns,
+        cardClassName,
       )}
     >
       {items.map((item) => (
@@ -369,13 +372,14 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         title={`${chart.meta.systemLabel}概览`}
         description={
           showTaiyiFocusedView
-            ? "保留本次太乙起局的必要盘面信息，重点直接落在组合盘。"
+            ? undefined
             : "三式统一入口下展示的是便于阅读的简化结果。奇门与太乙会额外展示各自盘层，大六壬当前保留趋势、行动与风险摘要。"
         }
         action={<CopyContentButton label="复制解局摘要" text={copyText} />}
       >
         <MetaList
           columns="md:grid-cols-2 xl:grid-cols-3"
+          cardClassName={showTaiyiFocusedView ? "border-0 bg-transparent px-0 py-0 rounded-none" : undefined}
           items={
             showTaiyiFocusedView
               ? [
