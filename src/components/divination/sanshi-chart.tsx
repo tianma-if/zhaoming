@@ -390,59 +390,34 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
 
   return (
     <div className="space-y-5">
-      <DashboardSection
-        className="space-y-5"
-        title={`${chart.meta.systemLabel}概览`}
-        description={
-          showTaiyiFocusedView
-            ? undefined
-            : "三式统一入口下展示的是便于阅读的简化结果。奇门与太乙会额外展示各自盘层，大六壬当前保留趋势、行动与风险摘要。"
-        }
-        action={<CopyContentButton label="复制解局摘要" text={copyText} />}
-      >
-        <MetaList
-          columns="md:grid-cols-2 xl:grid-cols-3"
-          cardClassName={showTaiyiFocusedView ? "border-0 bg-transparent px-0 py-0 rounded-none" : undefined}
-          items={
-            showTaiyiFocusedView
-              ? [
-                  {
-                    label: "起局时间",
-                    value: chart.meta.divinationDateTime,
-                    detail: chart.meta.lunar,
-                  },
-                  {
-                    label: "计法",
-                    value: chart.taiyi?.countTypeLabel ?? chart.meta.systemLabel,
-                    detail: taiyiCountSource,
-                  },
-                  {
-                    label: "问题",
-                    value: chart.meta.question,
-                    detail: chart.meta.topicLabel,
-                  },
-                ]
-              : [
-                  {
-                    label: "流派",
-                    value: chart.meta.systemLabel,
-                    detail: chart.meta.topicLabel,
-                  },
-                  {
-                    label: "起局时间",
-                    value: chart.meta.divinationDateTime,
-                    detail: chart.meta.lunar,
-                  },
-                  {
-                    label: "问题",
-                    value: chart.meta.question,
-                    detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
-                  },
-                ]
-          }
-        />
+      {showTaiyiFocusedView ? null : (
+        <DashboardSection
+          className="space-y-5"
+          title={`${chart.meta.systemLabel}概览`}
+          description="三式统一入口下展示的是便于阅读的简化结果。奇门与太乙会额外展示各自盘层，大六壬当前保留趋势、行动与风险摘要。"
+          action={<CopyContentButton label="复制解局摘要" text={copyText} />}
+        >
+          <MetaList
+            columns="md:grid-cols-2 xl:grid-cols-3"
+            items={[
+              {
+                label: "流派",
+                value: chart.meta.systemLabel,
+                detail: chart.meta.topicLabel,
+              },
+              {
+                label: "起局时间",
+                value: chart.meta.divinationDateTime,
+                detail: chart.meta.lunar,
+              },
+              {
+                label: "问题",
+                value: chart.meta.question,
+                detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
+              },
+            ]}
+          />
 
-        {showTaiyiFocusedView ? null : (
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {chart.signals.map((signal) => (
               <article
@@ -459,8 +434,8 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               </article>
             ))}
           </div>
-        )}
-      </DashboardSection>
+        </DashboardSection>
+      )}
 
       {showTaiyiFocusedView ? null : (
         <DashboardSection className="space-y-5" title="四象判断">
@@ -532,7 +507,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       {chart.taiyi ? (
         <DashboardSection
           className="space-y-5"
-          title="太乙盘面"
+          title={showTaiyiFocusedView ? undefined : "太乙盘面"}
           action={<CopyContentButton label="复制盘面概要" text={taiyiCopyText} />}
         >
           <MetaList

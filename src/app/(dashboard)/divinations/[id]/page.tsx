@@ -72,6 +72,8 @@ export default async function DivinationDetailPage({
   }
 
   const divinationType = resolveDivinationTypeFromRecord(data);
+  const sanshiChart =
+    divinationType === "sanshi" ? (data.chart_json as unknown as SanshiChart) : null;
 
   const ziweiChart =
     divinationType === "ziwei"
@@ -101,7 +103,7 @@ export default async function DivinationDetailPage({
               : divinationType === "liuyao"
                 ? "六爻解卦"
                 : divinationType === "sanshi"
-                  ? "三式解局"
+                  ? `三式解局-${sanshiChart?.meta.systemLabel ?? "三式"}`
                   : "袁天罡称骨结果"
         }
         description={
@@ -139,7 +141,7 @@ export default async function DivinationDetailPage({
         ) : divinationType === "liuyao" ? (
           <LiuyaoChartView chart={data.chart_json as unknown as LiuyaoChart} />
         ) : divinationType === "sanshi" ? (
-          <SanshiChartView chart={data.chart_json as unknown as SanshiChart} />
+          <SanshiChartView chart={sanshiChart as SanshiChart} />
         ) : (
           <ChengguChartView chart={data.chart_json as unknown as ChengguChart} />
         )}
