@@ -216,22 +216,22 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
 
   const branchMap = new Map(chart.taiyi.godSectors.map((sector) => [sector.branch, sector]));
   const ring = [
-    { branch: "乾", className: "col-start-1 row-start-1" },
-    { branch: "亥", className: "col-start-2 row-start-1" },
-    { branch: "子", className: "col-start-3 row-start-1" },
-    { branch: "丑", className: "col-start-4 row-start-1" },
-    { branch: "艮", className: "col-start-5 row-start-1" },
-    { branch: "寅", className: "col-start-5 row-start-2" },
-    { branch: "卯", className: "col-start-5 row-start-3" },
-    { branch: "辰", className: "col-start-5 row-start-4" },
-    { branch: "巽", className: "col-start-5 row-start-5" },
-    { branch: "巳", className: "col-start-4 row-start-5" },
-    { branch: "午", className: "col-start-3 row-start-5" },
-    { branch: "未", className: "col-start-2 row-start-5" },
-    { branch: "坤", className: "col-start-1 row-start-5" },
-    { branch: "申", className: "col-start-1 row-start-4" },
-    { branch: "酉", className: "col-start-1 row-start-3" },
-    { branch: "戌", className: "col-start-1 row-start-2" },
+    { branch: "乾", className: "col-start-1 row-start-1", style: { left: "8%", top: "8%" } },
+    { branch: "亥", className: "col-start-2 row-start-1", style: { left: "29%", top: "8%" } },
+    { branch: "子", className: "col-start-3 row-start-1", style: { left: "50%", top: "8%" } },
+    { branch: "丑", className: "col-start-4 row-start-1", style: { left: "71%", top: "8%" } },
+    { branch: "艮", className: "col-start-5 row-start-1", style: { left: "92%", top: "8%" } },
+    { branch: "寅", className: "col-start-5 row-start-2", style: { left: "92%", top: "29%" } },
+    { branch: "卯", className: "col-start-5 row-start-3", style: { left: "92%", top: "50%" } },
+    { branch: "辰", className: "col-start-5 row-start-4", style: { left: "92%", top: "71%" } },
+    { branch: "巽", className: "col-start-5 row-start-5", style: { left: "92%", top: "92%" } },
+    { branch: "巳", className: "col-start-4 row-start-5", style: { left: "71%", top: "92%" } },
+    { branch: "午", className: "col-start-3 row-start-5", style: { left: "50%", top: "92%" } },
+    { branch: "未", className: "col-start-2 row-start-5", style: { left: "29%", top: "92%" } },
+    { branch: "坤", className: "col-start-1 row-start-5", style: { left: "8%", top: "92%" } },
+    { branch: "申", className: "col-start-1 row-start-4", style: { left: "8%", top: "71%" } },
+    { branch: "酉", className: "col-start-1 row-start-3", style: { left: "8%", top: "50%" } },
+    { branch: "戌", className: "col-start-1 row-start-2", style: { left: "8%", top: "29%" } },
   ];
   const innerPalaces = chart.taiyi.palaces
     .slice()
@@ -246,19 +246,51 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
         </p>
       </div>
 
-      <div className="grid gap-2 md:grid-cols-5 md:grid-rows-5">
-        {ring.map(({ branch, className }) => {
+      <div className="grid gap-2 md:hidden">
+        {ring.map(({ branch }) => {
           const sector = branchMap.get(branch);
           if (!sector) return null;
 
           return (
-            <div key={`ring-${branch}`} className={className}>
+            <div key={`mobile-ring-${branch}`}>
               <TaiyiGodSectorCompact sector={sector} />
             </div>
           );
         })}
 
-        <div className="md:col-start-2 md:col-end-5 md:row-start-2 md:row-end-5 rounded-[1.35rem] border border-border/70 bg-white/75 p-3 md:p-4">
+        <div className="rounded-[1.35rem] border border-border/70 bg-white/75 p-3">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Inner Nine Palaces</p>
+              <p className="text-sm text-foreground">太乙、文昌、始击等在内盘中的具体落点</p>
+            </div>
+            <Badge>{chart.taiyi.trend}</Badge>
+          </div>
+          <div className="grid gap-2 md:grid-cols-3">
+            {innerPalaces.map((palace) => (
+              <TaiyiPalaceCompact key={`mobile-inner-${palace.index}`} palace={palace} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative hidden min-h-[820px] md:block">
+        {ring.map(({ branch, style }) => {
+          const sector = branchMap.get(branch);
+          if (!sector) return null;
+
+          return (
+            <div
+              key={`ring-${branch}`}
+              className="absolute w-[18%] min-w-[136px] -translate-x-1/2 -translate-y-1/2"
+              style={style}
+            >
+              <TaiyiGodSectorCompact sector={sector} />
+            </div>
+          );
+        })}
+
+        <div className="absolute inset-x-[20%] inset-y-[20%] rounded-[1.35rem] border border-border/70 bg-white/75 p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Inner Nine Palaces</p>
