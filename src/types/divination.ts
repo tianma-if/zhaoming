@@ -218,6 +218,7 @@ export interface LiuyaoChart {
 }
 
 export type SanshiSystem = "qimen" | "taiyi" | "liuren";
+export type TaiyiCountType = "year" | "month" | "day" | "hour";
 
 export type SanshiTopic =
   | "career"
@@ -274,6 +275,48 @@ export interface QimenBoard {
   summary: string[];
 }
 
+export interface TaiyiPalace {
+  index: number;
+  row: number;
+  col: number;
+  palace: string;
+  direction: string;
+  trigraph: string;
+  stage: "旺" | "平" | "守";
+  markers: string[];
+  summary: string;
+}
+
+export interface TaiyiGodSector {
+  index: number;
+  branch: string;
+  palace: string;
+  god: string;
+  elementHint: string;
+  markers: string[];
+  summary: string;
+}
+
+export interface TaiyiBoard {
+  countType: TaiyiCountType;
+  countTypeLabel: string;
+  countSource: string;
+  countRuleSummary: string;
+  bureau: number;
+  epoch: "阳遁" | "阴遁";
+  taiyiPalace: string;
+  wenchangPalace: string;
+  jishenPalace: string;
+  shijiPalace: string;
+  hostCount: number;
+  guestCount: number;
+  setCount: number;
+  trend: "主强" | "客强" | "均衡";
+  godSectors: TaiyiGodSector[];
+  palaces: TaiyiPalace[];
+  summary: string[];
+}
+
 export interface SanshiChart {
   kind: "sanshi";
   meta: {
@@ -294,6 +337,7 @@ export interface SanshiChart {
   signals: SanshiSignal[];
   sectors: SanshiSector[];
   qimen?: QimenBoard;
+  taiyi?: TaiyiBoard;
   advice: string[];
   caution: string[];
   disclaimer: string;

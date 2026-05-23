@@ -42,6 +42,7 @@ export const liuyaoInputSchema = z.object({
 export const sanshiInputSchema = z.object({
   divinationType: z.literal("sanshi"),
   system: z.enum(["qimen", "taiyi", "liuren"]),
+  taiyiCountType: z.enum(["year", "month", "day", "hour"]).optional().default("hour"),
   subjectName: z.string().trim().min(1, "请输入求测人姓名。").max(50, "姓名不能超过 50 个字符。"),
   gender: z.enum(["male", "female", "other", "unknown"]).default("unknown"),
   question: z.string().trim().min(6, "问题至少 6 个字符。").max(600, "问题不能超过 600 个字符。"),

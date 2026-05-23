@@ -56,6 +56,13 @@ const topicOptions = [
   { value: "general", label: "综合判断" },
 ] as const;
 
+const taiyiCountOptions = [
+  { value: "year", label: "年计", description: "偏看年度大势与长期方向。" },
+  { value: "month", label: "月计", description: "偏看阶段节奏与月内推进。" },
+  { value: "day", label: "日计", description: "偏看近日局势与短线判断。" },
+  { value: "hour", label: "时计", description: "偏看当下窗口与即时动作。" },
+] as const;
+
 const principles = [
   {
     title: "统一入口",
@@ -80,6 +87,7 @@ function createInitialValues(): SanshiInputForm {
   return {
     divinationType: "sanshi",
     system: "qimen",
+    taiyiCountType: "hour",
     subjectName: "",
     gender: "unknown",
     question: "",
@@ -184,6 +192,51 @@ export function SanshiForm() {
                   </button>
                 ))}
               </div>
+
+              {currentSystem === "taiyi" ? (
+                <FormField
+                  control={form.control}
+                  name="taiyiCountType"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>太乙计法</FormLabel>
+                      <div className="grid gap-3 md:grid-cols-4">
+                        {taiyiCountOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() =>
+                              form.setValue("taiyiCountType", option.value, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              })
+                            }
+                            className={`rounded-2xl border p-4 text-left transition ${
+                              field.value === option.value
+                                ? "border-black bg-black text-white"
+                                : "border-border bg-white hover:border-black/30"
+                            }`}
+                          >
+                            <div className="space-y-2">
+                              <p className="font-medium">{option.label}</p>
+                              <p
+                                className={`text-sm leading-6 ${
+                                  field.value === option.value
+                                    ? "text-white/80"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {option.description}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : null}
 
               <div className="grid gap-5 md:grid-cols-2">
                 <FormField

@@ -183,6 +183,32 @@ function formatSanshiSummary(chart: SanshiChart) {
           .join("\n")}`,
       ].join("\n")
     : "";
+  const taiyiSummary = chart.taiyi
+    ? [
+        `局序：${chart.taiyi.epoch}第${chart.taiyi.bureau}局`,
+        `所用计法：${chart.taiyi.countTypeLabel}`,
+        `计法依据：${chart.taiyi.countSource}`,
+        `计法说明：${chart.taiyi.countRuleSummary}`,
+        `太乙落宫：${chart.taiyi.taiyiPalace}`,
+        `文昌落宫：${chart.taiyi.wenchangPalace}`,
+        `计神落宫：${chart.taiyi.jishenPalace}`,
+        `始击落宫：${chart.taiyi.shijiPalace}`,
+        `主客定算：${chart.taiyi.hostCount} / ${chart.taiyi.guestCount} / ${chart.taiyi.setCount}`,
+        `态势：${chart.taiyi.trend}`,
+        `十六宫层：\n${chart.taiyi.godSectors
+          .map(
+            (sector) =>
+              `${sector.palace}(${sector.branch})：${sector.god} / ${sector.markers.join("、") || "无标记"} / ${sector.summary}`,
+          )
+          .join("\n")}`,
+        `九宫摘录：\n${chart.taiyi.palaces
+          .map(
+            (palace) =>
+              `${palace.palace}(${palace.direction})：${palace.trigraph}宫 / ${palace.stage} / ${palace.markers.join("、") || "无标记"} / ${palace.summary}`,
+          )
+          .join("\n")}`,
+      ].join("\n")
+    : "";
 
   return [
     `所用流派：${chart.meta.systemLabel}`,
@@ -195,6 +221,7 @@ function formatSanshiSummary(chart: SanshiChart) {
     chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : "",
     chart.meta.gender ? `性别：${chart.meta.gender}` : "",
     qimenSummary ? `奇门盘面：\n${qimenSummary}` : "",
+    taiyiSummary ? `太乙盘面：\n${taiyiSummary}` : "",
     chart.meta.notes ? `补充说明：${chart.meta.notes}` : "",
   ]
     .filter(Boolean)
