@@ -48,9 +48,9 @@ const columnLabels: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  pending: "PENDING",
-  completed: "COMPLETED",
-  failed: "FAILED",
+  pending: "待处理",
+  completed: "已完成",
+  failed: "失败",
 };
 
 interface DivinationRecordsTableProps {

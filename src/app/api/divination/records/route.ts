@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionFromHeaders } from "@/lib/auth/session";
 import { listDivinationSummaries } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
+import type { Json } from "@/types/database";
 
 const divinationTypeLabelMap: Record<string, string> = {
   bazi: "八字",
@@ -10,6 +11,44 @@ const divinationTypeLabelMap: Record<string, string> = {
   liuyao: "六爻",
   sanshi: "三式",
 };
+
+const sanshiSystemLabelMap: Record<string, string> = {
+  qimen: "奇门遁甲",
+  taiyi: "太乙神数",
+  liuren: "大六壬",
+};
+
+function isJsonObject(value: Json | null | undefined): value is Record<string, Json> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function readString(value: Json | undefined) {
+  return typeof value === "string" ? value : "";
+}
+
+function resolveRecordTypeLabel(item: Awaited<ReturnType<typeof listDivinationSummaries>>[number], type: string) {
+  if (type !== "sanshi") {
+    return divinationTypeLabelMap[type] ?? type;
+  }
+
+  if (isJsonObject(item.chart_json) && isJsonObject(item.chart_json.meta)) {
+    const systemLabel = readString(item.chart_json.meta.systemLabel);
+
+    if (systemLabel) {
+      return systemLabel;
+    }
+  }
+
+  if (isJsonObject(item.input_params)) {
+    const system = readString(item.input_params.system);
+
+    if (system) {
+      return sanshiSystemLabelMap[system] ?? system;
+    }
+  }
+
+  return divinationTypeLabelMap[type] ?? type;
+}
 
 export async function GET(request: Request) {
   try {
@@ -26,7 +65,7 @@ export async function GET(request: Request) {
       return {
         id: item.id,
         type,
-        typeLabel: divinationTypeLabelMap[type] ?? type,
+        typeLabel: resolveRecordTypeLabel(item, type),
         question: item.question,
         status: item.status,
         created_at: item.created_at,
