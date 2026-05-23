@@ -238,7 +238,7 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
     .sort((a, b) => a.row - b.row || a.col - b.col);
 
   return (
-    <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-[radial-gradient(circle_at_top,_rgba(250,248,244,0.95),_rgba(255,255,255,0.9)_50%,_rgba(248,246,242,0.98))] p-4 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5">
+    <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5">
       <div className="space-y-1">
         <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">组合盘面</h3>
         <p className="text-sm leading-6 text-muted-foreground">
