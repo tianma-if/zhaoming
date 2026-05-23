@@ -92,30 +92,6 @@ function getTaiyiGodTone(sector: TaiyiGodSector) {
   return "border-border/70 bg-white";
 }
 
-function getSectorToneStyles(tone: SanshiSector["tone"]) {
-  if (tone === "favorable") {
-    return {
-      card: "border-emerald-200/80 bg-emerald-50/70",
-      badge: "border-emerald-200 bg-emerald-100 text-emerald-900",
-      label: "顺势",
-    };
-  }
-
-  if (tone === "cautious") {
-    return {
-      card: "border-amber-200/80 bg-amber-50/80",
-      badge: "border-amber-200 bg-amber-100 text-amber-900",
-      label: "谨慎",
-    };
-  }
-
-  return {
-    card: "border-border/70 bg-white",
-    badge: "border-border bg-muted/60 text-foreground",
-    label: "中性",
-  };
-}
-
 function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
   const accent = palace.isDutyDoor || palace.isChiefStar || palace.isChiefDeity;
 
@@ -166,91 +142,6 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
         <p>八门: {palace.door ?? "中宫无门"}</p>
         <p>八神: {palace.deity ?? "无"}</p>
       </div>
-    </article>
-  );
-}
-
-function TaiyiPalaceCell({ palace }: { palace: TaiyiPalace }) {
-  const accent = palace.markers.includes("太乙");
-
-  return (
-    <article
-      className={cn(
-        "min-h-[188px] rounded-[1.15rem] border px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
-        getTaiyiCellTone(palace),
-      )}
-    >
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="min-w-0 flex-1 pr-2">
-          <p
-            className={cn(
-              "text-xs uppercase tracking-[0.2em]",
-              accent ? "text-white/70" : "text-muted-foreground",
-            )}
-          >
-            {palace.direction}
-          </p>
-          <h3 className="mt-0.5 whitespace-nowrap font-display text-[1.85rem] leading-none tracking-[0.04em]">
-            {palace.palace}
-          </h3>
-        </div>
-        <Badge
-          className={cn(
-            accent ? "border-white/20 bg-white/15 text-white" : "",
-            palace.stage === "旺" && !accent ? "border-emerald-200 bg-emerald-100 text-emerald-900" : "",
-            palace.stage === "守" && !accent ? "border-amber-200 bg-amber-100 text-amber-900" : "",
-          )}
-        >
-          {palace.stage}
-        </Badge>
-      </div>
-
-      <div className={cn("mt-3 space-y-1.5 text-[15px]", accent ? "text-white/88" : "text-foreground")}>
-        <p>宫象: {palace.trigraph}</p>
-        <p>标记: {palace.markers.join("、") || "无"}</p>
-        <p className={cn("text-sm leading-6", accent ? "text-white/80" : "text-muted-foreground")}>
-          {palace.summary}
-        </p>
-      </div>
-    </article>
-  );
-}
-
-function TaiyiGodSectorCard({ sector }: { sector: TaiyiGodSector }) {
-  const accent = sector.markers.includes("太乙");
-
-  return (
-    <article
-      className={cn(
-        "rounded-[1.05rem] border px-3.5 py-3 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
-        getTaiyiGodTone(sector),
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className={cn("text-[11px] uppercase tracking-[0.2em]", accent ? "text-white/70" : "text-muted-foreground")}>
-            {sector.branch}
-          </p>
-          <h4 className="font-semibold">{sector.palace}</h4>
-        </div>
-        <div className="flex flex-wrap justify-end gap-1">
-          {sector.markers.map((marker) => (
-            <Badge
-              key={`${sector.index}-${marker}`}
-              className={accent ? "border-white/20 bg-white/15 text-white" : ""}
-            >
-              {marker}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      <p className={cn("mt-2 text-sm font-medium", accent ? "text-white" : "text-foreground")}>{sector.god}</p>
-      <p className={cn("mt-1 text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
-        {sector.elementHint}
-      </p>
-      <p className={cn("mt-2 text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
-        {sector.summary}
-      </p>
     </article>
   );
 }
@@ -384,64 +275,6 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
   );
 }
 
-function SanshiSectorCard({ sector }: { sector: SanshiSector }) {
-  const tone = getSectorToneStyles(sector.tone);
-
-  return (
-    <article
-      className={cn(
-        "space-y-4 rounded-[1.25rem] border p-5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
-        tone.card,
-      )}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">判断维度</p>
-          <h3 className="font-display text-2xl tracking-[0.04em] text-foreground">
-            {sector.label}
-          </h3>
-        </div>
-        <Badge className={tone.badge}>{tone.label}</Badge>
-      </div>
-      <p className="text-sm leading-7 text-foreground/90">{sector.summary}</p>
-      <div className="rounded-2xl bg-white/70 px-4 py-3 text-sm leading-7 text-muted-foreground">
-        建议动作：{sector.action}
-      </div>
-    </article>
-  );
-}
-
-function BulletList({
-  title,
-  items,
-  emptyText,
-}: {
-  title: string;
-  items: string[];
-  emptyText: string;
-}) {
-  return (
-    <DashboardSection className="space-y-4" title={title}>
-      {items.length ? (
-        <div className="grid gap-3">
-          {items.map((item, index) => (
-            <article
-              key={`${title}-${index}`}
-              className="rounded-[1.15rem] border border-border/70 bg-white px-4 py-3.5 text-sm leading-7 text-foreground/90 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
-            >
-              {item}
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-[1.15rem] border border-dashed border-border/70 bg-muted/20 px-4 py-6 text-sm text-muted-foreground">
-          {emptyText}
-        </div>
-      )}
-    </DashboardSection>
-  );
-}
-
 function formatSanshiCopyText(chart: SanshiChart) {
   return [
     `问题：${chart.meta.question}`,
@@ -456,17 +289,6 @@ function formatSanshiCopyText(chart: SanshiChart) {
     "",
     "关键信号：",
     ...chart.signals.map((signal) => `- ${signal.label}：${signal.value}`),
-    "",
-    "判断维度：",
-    ...chart.sectors.map(
-      (sector) => `- ${sector.label}（${getSectorToneStyles(sector.tone).label}）：${sector.summary}；建议动作：${sector.action}`,
-    ),
-    "",
-    "行动建议：",
-    ...chart.advice.map((item) => `- ${item}`),
-    "",
-    "风险提醒：",
-    ...chart.caution.map((item) => `- ${item}`),
     ...(chart.qimen
       ? [
           "",
@@ -529,61 +351,104 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
   const copyText = useMemo(() => formatSanshiCopyText(chart), [chart]);
   const qimenCopyText = useMemo(() => formatQimenCopyText(chart), [chart]);
   const taiyiCopyText = useMemo(() => formatTaiyiCopyText(chart), [chart]);
+  const showTaiyiFocusedView = chart.meta.system === "taiyi" && chart.taiyi;
 
   return (
     <div className="space-y-5">
       <DashboardSection
         className="space-y-5"
         title={`${chart.meta.systemLabel}概览`}
-        description="三式统一入口下展示的是便于阅读的简化结果。奇门与太乙会额外展示各自盘层，大六壬当前保留趋势、行动与风险摘要。"
+        description={
+          showTaiyiFocusedView
+            ? "保留本次太乙起局的必要盘面信息，重点直接落在组合盘。"
+            : "三式统一入口下展示的是便于阅读的简化结果。奇门与太乙会额外展示各自盘层，大六壬当前保留趋势、行动与风险摘要。"
+        }
         action={<CopyContentButton label="复制解局摘要" text={copyText} />}
       >
         <MetaList
           columns="md:grid-cols-2 xl:grid-cols-3"
-          items={[
-            {
-              label: "流派",
-              value: chart.meta.systemLabel,
-              detail: chart.meta.topicLabel,
-            },
-            {
-              label: "起局时间",
-              value: chart.meta.divinationDateTime,
-              detail: chart.meta.lunar,
-            },
-            {
-              label: "问题",
-              value: chart.meta.question,
-              detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
-            },
-          ]}
+          items={
+            showTaiyiFocusedView
+              ? [
+                  {
+                    label: "起局时间",
+                    value: chart.meta.divinationDateTime,
+                    detail: chart.meta.lunar,
+                  },
+                  {
+                    label: "计法",
+                    value: chart.taiyi?.countTypeLabel ?? chart.meta.systemLabel,
+                    detail: chart.taiyi?.countSource,
+                  },
+                  {
+                    label: "问题",
+                    value: chart.meta.question,
+                    detail: chart.meta.topicLabel,
+                  },
+                ]
+              : [
+                  {
+                    label: "流派",
+                    value: chart.meta.systemLabel,
+                    detail: chart.meta.topicLabel,
+                  },
+                  {
+                    label: "起局时间",
+                    value: chart.meta.divinationDateTime,
+                    detail: chart.meta.lunar,
+                  },
+                  {
+                    label: "问题",
+                    value: chart.meta.question,
+                    detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
+                  },
+                ]
+          }
         />
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {chart.signals.map((signal) => (
-            <article
-              key={`${signal.label}-${signal.value}`}
-              className="rounded-[1.15rem] border border-border/70 bg-white px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
-            >
-              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {signal.label}
-              </p>
-              <p className="mt-2 text-sm font-medium leading-7 text-foreground">{signal.value}</p>
-              {signal.hint ? (
-                <p className="mt-1 text-xs leading-6 text-muted-foreground">{signal.hint}</p>
-              ) : null}
-            </article>
-          ))}
-        </div>
+        {showTaiyiFocusedView ? null : (
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {chart.signals.map((signal) => (
+              <article
+                key={`${signal.label}-${signal.value}`}
+                className="rounded-[1.15rem] border border-border/70 bg-white px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                  {signal.label}
+                </p>
+                <p className="mt-2 text-sm font-medium leading-7 text-foreground">{signal.value}</p>
+                {signal.hint ? (
+                  <p className="mt-1 text-xs leading-6 text-muted-foreground">{signal.hint}</p>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        )}
       </DashboardSection>
 
-      <DashboardSection className="space-y-5" title="四象判断">
-        <div className="grid gap-4 md:grid-cols-2">
-          {chart.sectors.map((sector) => (
-            <SanshiSectorCard key={sector.key} sector={sector} />
-          ))}
-        </div>
-      </DashboardSection>
+      {showTaiyiFocusedView ? null : (
+        <DashboardSection className="space-y-5" title="四象判断">
+          <div className="grid gap-4 md:grid-cols-2">
+            {chart.sectors.map((sector) => (
+              <article
+                key={sector.key}
+                className="space-y-4 rounded-[1.25rem] border border-border/70 bg-white p-5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
+              >
+                <div className="space-y-1">
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">判断维度</p>
+                  <h3 className="font-display text-2xl tracking-[0.04em] text-foreground">
+                    {sector.label}
+                  </h3>
+                </div>
+                <p className="text-sm leading-7 text-foreground/90">{sector.summary}</p>
+                <div className="rounded-2xl bg-muted/20 px-4 py-3 text-sm leading-7 text-muted-foreground">
+                  建议动作：{sector.action}
+                </div>
+              </article>
+            ))}
+          </div>
+        </DashboardSection>
+      )}
 
       {chart.qimen ? (
         <DashboardSection
@@ -632,7 +497,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         <DashboardSection
           className="space-y-5"
           title="太乙盘面"
-          description="这里按“十六宫神层 + 九宫盘层”展示产品内的简化太乙盘，重点呈现太乙、文昌、始击与主客定算在两层结构中的落点。"
           action={<CopyContentButton label="复制盘面概要" text={taiyiCopyText} />}
         >
           <MetaList
@@ -676,40 +540,8 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
 
           <TaiyiCombinedBoard chart={chart} />
 
-          <div className="space-y-3">
-            <div className="space-y-1">
-              <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">十六宫神层</h3>
-              <p className="text-sm leading-6 text-muted-foreground">
-                这一层对应太乙十六宫与十六神，用来看外层神机、主客动势与发力位置。
-              </p>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {chart.taiyi.godSectors.map((sector) => (
-                <TaiyiGodSectorCard key={sector.index} sector={sector} />
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="space-y-1">
-              <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">九宫盘层</h3>
-              <p className="text-sm leading-6 text-muted-foreground">
-                这一层对应内盘九宫，用来看太乙、文昌、始击等落到具体宫位后的内层表现。
-              </p>
-            </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {chart.taiyi.palaces.map((palace) => (
-              <TaiyiPalaceCell key={palace.index} palace={palace} />
-            ))}
-          </div>
-          </div>
         </DashboardSection>
       ) : null}
-
-      <div className="grid gap-5 xl:grid-cols-2">
-        <BulletList title="行动建议" items={chart.advice} emptyText="当前没有可展示的行动建议。" />
-        <BulletList title="风险提醒" items={chart.caution} emptyText="当前没有可展示的风险提醒。" />
-      </div>
     </div>
   );
 }
