@@ -17,7 +17,7 @@ function MetaList({
   return (
     <div
       className={cn(
-        "grid gap-x-6 gap-y-3 rounded-[1.25rem] border border-border/70 bg-muted/15 px-4 py-4",
+        "grid gap-x-5 gap-y-2.5 rounded-[1.1rem] border border-border/70 bg-muted/15 px-4 py-3.5",
         columns,
       )}
     >
@@ -60,11 +60,11 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
   return (
     <article
       className={cn(
-        "min-h-[190px] rounded-[1.4rem] border p-4 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
+        "min-h-[168px] rounded-[1.15rem] border px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
         getQimenCellTone(palace),
       )}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2.5">
         <div>
           <p
             className={cn(
@@ -74,7 +74,9 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
           >
             {palace.direction}
           </p>
-          <h3 className="mt-1 font-display text-2xl tracking-[0.04em]">{palace.palace}</h3>
+          <h3 className="mt-0.5 font-display text-[2rem] leading-none tracking-[0.04em]">
+            {palace.palace}
+          </h3>
         </div>
         <div className="flex flex-wrap justify-end gap-1">
           {palace.isChiefDeity ? (
@@ -93,7 +95,9 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
         </div>
       </div>
 
-      <div className={cn("mt-4 space-y-2 text-sm", accent ? "text-white/88" : "text-foreground")}>
+      <div
+        className={cn("mt-3 space-y-1.5 text-[15px]", accent ? "text-white/88" : "text-foreground")}
+      >
         <p>地盘: {palace.earthStem}</p>
         <p>天盘: {palace.heavenStem ?? "中寄"}</p>
         <p>九星: {palace.star ?? "无"}</p>
@@ -129,8 +133,8 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
   }
 
   return (
-    <div className="space-y-6">
-      <DashboardSection className="space-y-6" title="奇门盘面">
+    <div className="space-y-5">
+      <DashboardSection className="space-y-5" title="奇门盘面">
         <MetaList
           columns="xl:grid-cols-[1.2fr_1fr]"
           items={[
@@ -147,7 +151,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
           ]}
         />
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3">
           {chart.qimen.palaces.map((palace) => (
             <QimenPalaceCell key={palace.index} palace={palace} />
           ))}
