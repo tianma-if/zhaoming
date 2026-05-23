@@ -1,5 +1,9 @@
 import { Solar } from "lunar-typescript";
 import type {
+  LiurenBoard,
+  LiurenLesson,
+  LiurenPalace,
+  LiurenTransmission,
   QimenBoard,
   QimenPalace,
   SanshiChart,
@@ -151,6 +155,74 @@ const TAIYI_GOD_SUMMARIES = [
   "这一路更像真正的作用点，适合把资源放在关键动作上。",
   "这里体现的是暗线影响，适合做校正、缓冲或预案。",
 ] as const;
+const HEAVENLY_STEMS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"] as const;
+const LIUREN_PALACE_LAYOUT = [
+  { index: 1, branch: "子", palace: "子位", direction: "正北" },
+  { index: 2, branch: "丑", palace: "丑位", direction: "东北偏北" },
+  { index: 3, branch: "寅", palace: "寅位", direction: "东北偏东" },
+  { index: 4, branch: "卯", palace: "卯位", direction: "正东" },
+  { index: 5, branch: "辰", palace: "辰位", direction: "东南偏东" },
+  { index: 6, branch: "巳", palace: "巳位", direction: "东南偏南" },
+  { index: 7, branch: "午", palace: "午位", direction: "正南" },
+  { index: 8, branch: "未", palace: "未位", direction: "西南偏南" },
+  { index: 9, branch: "申", palace: "申位", direction: "西南偏西" },
+  { index: 10, branch: "酉", palace: "酉位", direction: "正西" },
+  { index: 11, branch: "戌", palace: "戌位", direction: "西北偏西" },
+  { index: 12, branch: "亥", palace: "亥位", direction: "西北偏北" },
+] as const;
+const LIUREN_GENERALS = [
+  "贵人",
+  "螣蛇",
+  "朱雀",
+  "六合",
+  "勾陈",
+  "青龙",
+  "天空",
+  "白虎",
+  "太常",
+  "玄武",
+  "太阴",
+  "天后",
+] as const;
+const LIUREN_RELATIONS = [
+  "比和",
+  "扶助",
+  "牵制",
+  "回环",
+  "暗耗",
+  "牵引",
+] as const;
+const LIUREN_RELATION_HINTS: Record<string, string[]> = {
+  比和: [
+    "上下气口一致，事情更看执行是否到位。",
+    "内外意见相对统一，重点在节奏，不在表态。",
+  ],
+  扶助: [
+    "外部条件能托住局面，适合顺势接球。",
+    "这课更像得到助力，关键是别浪费窗口期。",
+  ],
+  牵制: [
+    "表面能动，实际仍受制于人或流程。",
+    "这课提示推进时要先拆掉阻滞点。",
+  ],
+  回环: [
+    "容易反复确认、反复沟通，节奏不会太直。",
+    "事情会绕一圈回来，先别急着把话说死。",
+  ],
+  暗耗: [
+    "阻力不一定在台面上，更多来自隐性消耗。",
+    "这一层要防止看不见的成本继续放大。",
+  ],
+  牵引: [
+    "局势由某个关键人或关键条件牵着走。",
+    "先找真正的引线，再决定要不要正面发力。",
+  ],
+};
+const LIUREN_TRANSMISSION_HINTS = [
+  "适合作为第一步动作或第一轮表态的落点。",
+  "这里是局面过渡处，决定事情会不会变形。",
+  "最后真正定调的位置，更适合看结果与代价。",
+] as const;
 
 function hashSeed(input: string) {
   let hash = 0;
@@ -195,6 +267,7 @@ function getSignals(
   lunar: ReturnType<Solar["getLunar"]>,
   qimenBoard?: QimenBoard,
   taiyiBoard?: TaiyiBoard,
+  liurenBoard?: LiurenBoard,
 ): SanshiSignal[] {
   const time = lunar.getTime();
   const timeNineStar = lunar.getTimeNineStar();
@@ -250,6 +323,23 @@ function getSignals(
                     : "主客暂时均衡",
             },
           ]
+        : liurenBoard
+          ? [
+              {
+                label: "月将与时位",
+                value: `${liurenBoard.monthGeneral}${liurenBoard.monthGeneralPalace} / ${liurenBoard.timeLeader}${liurenBoard.timeLeaderPalace}`,
+              },
+              {
+                label: "三传主线",
+                value: liurenBoard.transmissions.map((item) => `${item.label}${item.branch}`).join(" / "),
+                hint: "简化盘层重点看事情如何起头、过渡与收束",
+              },
+              {
+                label: "关系焦点",
+                value: liurenBoard.relationFocus,
+                hint: `发用侧重落在${liurenBoard.dutyFocus}`,
+              },
+            ]
       : []),
     {
       label: "喜财方位",
@@ -289,6 +379,21 @@ function getBranchIndex(ganzhi: string) {
   const index = EARTHLY_BRANCHES.indexOf(branch as (typeof EARTHLY_BRANCHES)[number]);
 
   return index >= 0 ? index : 0;
+}
+
+function getStemIndex(ganzhi: string) {
+  const stem = ganzhi.trim().charAt(0);
+  const index = HEAVENLY_STEMS.indexOf(stem as (typeof HEAVENLY_STEMS)[number]);
+
+  return index >= 0 ? index : 0;
+}
+
+function getLiurenRelation(offset: number) {
+  return LIUREN_RELATIONS[offset % LIUREN_RELATIONS.length]!;
+}
+
+function getLiurenRelationHint(relation: string, seed: number, offset: number) {
+  return pickBySeed(LIUREN_RELATION_HINTS[relation] ?? LIUREN_RELATION_HINTS["比和"], seed, offset);
 }
 
 function getTaiyiCountContext(
@@ -505,6 +610,114 @@ function buildTaiyiBoard(
   };
 }
 
+function buildLiurenBoard(
+  input: SanshiInput,
+  lunar: ReturnType<Solar["getLunar"]>,
+  seed: number,
+): LiurenBoard {
+  const monthGanzhi = lunar.getMonthInGanZhiExact();
+  const dayGanzhi = lunar.getDayInGanZhiExact();
+  const timeGanzhi = lunar.getTimeInGanZhi();
+  const monthBranchIndex = getBranchIndex(monthGanzhi);
+  const dayStemIndex = getStemIndex(dayGanzhi);
+  const dayBranchIndex = getBranchIndex(dayGanzhi);
+  const timeBranchIndex = getBranchIndex(timeGanzhi);
+  const monthGeneralIndex = (monthBranchIndex + 9) % LIUREN_PALACE_LAYOUT.length;
+  const timeLeaderIndex = (timeBranchIndex + seed) % LIUREN_PALACE_LAYOUT.length;
+  const focusIndex = (dayBranchIndex + monthBranchIndex + timeBranchIndex) % LIUREN_PALACE_LAYOUT.length;
+  const heavenBranchShift = (monthGeneralIndex - timeBranchIndex + LIUREN_PALACE_LAYOUT.length) % LIUREN_PALACE_LAYOUT.length;
+  const generalShift = (dayStemIndex + timeBranchIndex + 1) % LIUREN_GENERALS.length;
+  const lessonBase = (seed + dayStemIndex + timeBranchIndex) % LIUREN_PALACE_LAYOUT.length;
+  const lessonIndexes = Array.from({ length: 4 }, (_, index) => (lessonBase + index * 2) % LIUREN_PALACE_LAYOUT.length);
+  const transmissionIndexes = [
+    lessonIndexes[0]!,
+    (lessonIndexes[1]! + dayBranchIndex + 1) % LIUREN_PALACE_LAYOUT.length,
+    (lessonIndexes[3]! + monthBranchIndex + 2) % LIUREN_PALACE_LAYOUT.length,
+  ];
+
+  const palaces: LiurenPalace[] = LIUREN_PALACE_LAYOUT.map((item, index) => {
+    const heavenBranch = EARTHLY_BRANCHES[(index + heavenBranchShift) % EARTHLY_BRANCHES.length]!;
+    const heavenGeneral = LIUREN_GENERALS[(index + generalShift) % LIUREN_GENERALS.length]!;
+    const markers = [
+      index === monthGeneralIndex ? "月将" : null,
+      index === timeLeaderIndex ? "时位" : null,
+      index === focusIndex ? "发用侧重" : null,
+      index === transmissionIndexes[0] ? "初传" : null,
+      index === transmissionIndexes[1] ? "中传" : null,
+      index === transmissionIndexes[2] ? "末传" : null,
+    ].filter(Boolean) as string[];
+    const relation = getLiurenRelation((index + dayStemIndex + timeBranchIndex) % LIUREN_RELATIONS.length);
+
+    return {
+      index: item.index,
+      branch: item.branch,
+      palace: item.palace,
+      direction: item.direction,
+      heavenBranch,
+      heavenGeneral,
+      markers,
+      summary:
+        markers.length > 0
+          ? `${markers.join("、")}集中于此，呈现${relation}的互动感。`
+          : `${heavenBranch}临位，偏向${relation}的局面表达。`,
+    };
+  });
+
+  const lessons: LiurenLesson[] = lessonIndexes.map((index, lessonIndex) => {
+    const palace = palaces[index]!;
+    const relation = getLiurenRelation((index + lessonIndex + dayStemIndex) % LIUREN_RELATIONS.length);
+
+    return {
+      label: (["一课", "二课", "三课", "四课"] as const)[lessonIndex]!,
+      upper: `${palace.heavenBranch}${palace.heavenGeneral}`,
+      lower: `${palace.branch}${palace.palace}`,
+      relation,
+      hint: getLiurenRelationHint(relation, seed, lessonIndex),
+    };
+  });
+
+  const transmissions: LiurenTransmission[] = transmissionIndexes.map((index, transmissionIndex) => {
+    const palace = palaces[index]!;
+
+    return {
+      label: (["初传", "中传", "末传"] as const)[transmissionIndex]!,
+      branch: palace.branch,
+      palace: palace.palace,
+      heavenGeneral: palace.heavenGeneral,
+      summary: LIUREN_TRANSMISSION_HINTS[transmissionIndex]!,
+    };
+  });
+
+  const relationFocus = lessons
+    .map((lesson) => lesson.relation)
+    .reduce<Record<string, number>>((counts, relation) => {
+      counts[relation] = (counts[relation] ?? 0) + 1;
+      return counts;
+    }, {});
+  const primaryRelation =
+    Object.entries(relationFocus).sort((left, right) => right[1] - left[1])[0]?.[0] ?? "比和";
+  const monthGeneralPalace = palaces[monthGeneralIndex]!;
+  const timeLeaderPalace = palaces[timeLeaderIndex]!;
+  const focusPalace = palaces[focusIndex]!;
+
+  return {
+    monthGeneral: monthGeneralPalace.branch,
+    monthGeneralPalace: monthGeneralPalace.palace,
+    timeLeader: timeLeaderPalace.branch,
+    timeLeaderPalace: timeLeaderPalace.palace,
+    dutyFocus: `${focusPalace.branch}${focusPalace.palace}`,
+    relationFocus: primaryRelation,
+    palaces,
+    lessons,
+    transmissions,
+    summary: [
+      `月将落${monthGeneralPalace.palace}，说明这一局更容易被${monthGeneralPalace.direction}象意牵动，先看外部条件如何落地。`,
+      `四课里以「${primaryRelation}」最显，重点不是单点吉凶，而是谁在带节奏、谁在承受关系里的压力。`,
+      `三传从${transmissions.map((item) => `${item.label}${item.branch}`).join(" -> ")}推进，局面通常会先试探、再过渡、最后定调。`,
+    ],
+  };
+}
+
 function getAdvice(chart: SanshiChart) {
   const favorable = chart.sectors.filter((item) => item.tone === "favorable");
   const cautious = chart.sectors.filter((item) => item.tone === "cautious");
@@ -565,6 +778,7 @@ export function buildSanshiChart(input: SanshiInput): {
   );
   const qimenBoard = input.system === "qimen" ? buildQimenBoard(input, lunar, seed) : undefined;
   const taiyiBoard = input.system === "taiyi" ? buildTaiyiBoard(input, lunar, seed) : undefined;
+  const liurenBoard = input.system === "liuren" ? buildLiurenBoard(input, lunar, seed) : undefined;
 
   const chart: SanshiChart = {
     kind: "sanshi",
@@ -587,12 +801,13 @@ export function buildSanshiChart(input: SanshiInput): {
     sectors: getSectors(seed),
     qimen: qimenBoard,
     taiyi: taiyiBoard,
+    liuren: liurenBoard,
     advice: [],
     caution: [],
     disclaimer: "",
   };
 
-  chart.signals = getSignals(input, lunar, qimenBoard, taiyiBoard);
+  chart.signals = getSignals(input, lunar, qimenBoard, taiyiBoard, liurenBoard);
   chart.advice = getAdvice(chart);
   chart.caution = getCaution(chart);
 
@@ -627,6 +842,17 @@ export function buildSanshiChart(input: SanshiInput): {
             jishenPalace: taiyiBoard.jishenPalace,
             shijiPalace: taiyiBoard.shijiPalace,
             trend: taiyiBoard.trend,
+          }
+        : undefined,
+      liuren: liurenBoard
+        ? {
+            monthGeneral: liurenBoard.monthGeneral,
+            monthGeneralPalace: liurenBoard.monthGeneralPalace,
+            timeLeader: liurenBoard.timeLeader,
+            timeLeaderPalace: liurenBoard.timeLeaderPalace,
+            dutyFocus: liurenBoard.dutyFocus,
+            relationFocus: liurenBoard.relationFocus,
+            transmissions: liurenBoard.transmissions,
           }
         : undefined,
     },

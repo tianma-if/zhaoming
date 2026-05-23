@@ -317,6 +317,46 @@ export interface TaiyiBoard {
   summary: string[];
 }
 
+export interface LiurenPalace {
+  index: number;
+  branch: string;
+  palace: string;
+  direction: string;
+  heavenBranch: string;
+  heavenGeneral: string;
+  markers: string[];
+  summary: string;
+}
+
+export interface LiurenLesson {
+  label: "一课" | "二课" | "三课" | "四课";
+  upper: string;
+  lower: string;
+  relation: string;
+  hint: string;
+}
+
+export interface LiurenTransmission {
+  label: "初传" | "中传" | "末传";
+  branch: string;
+  palace: string;
+  heavenGeneral: string;
+  summary: string;
+}
+
+export interface LiurenBoard {
+  monthGeneral: string;
+  monthGeneralPalace: string;
+  timeLeader: string;
+  timeLeaderPalace: string;
+  dutyFocus: string;
+  relationFocus: string;
+  palaces: LiurenPalace[];
+  lessons: LiurenLesson[];
+  transmissions: LiurenTransmission[];
+  summary: string[];
+}
+
 export interface SanshiChart {
   kind: "sanshi";
   meta: {
@@ -338,6 +378,7 @@ export interface SanshiChart {
   sectors: SanshiSector[];
   qimen?: QimenBoard;
   taiyi?: TaiyiBoard;
+  liuren?: LiurenBoard;
   advice: string[];
   caution: string[];
   disclaimer: string;

@@ -209,6 +209,32 @@ function formatSanshiSummary(chart: SanshiChart) {
           .join("\n")}`,
       ].join("\n")
     : "";
+  const liurenSummary = chart.liuren
+    ? [
+        `月将：${chart.liuren.monthGeneral}${chart.liuren.monthGeneralPalace}`,
+        `时位：${chart.liuren.timeLeader}${chart.liuren.timeLeaderPalace}`,
+        `发用侧重：${chart.liuren.dutyFocus}`,
+        `关系焦点：${chart.liuren.relationFocus}`,
+        `四课：\n${chart.liuren.lessons
+          .map(
+            (lesson) =>
+              `${lesson.label}：上神${lesson.upper} / 下神${lesson.lower} / ${lesson.relation} / ${lesson.hint}`,
+          )
+          .join("\n")}`,
+        `三传：\n${chart.liuren.transmissions
+          .map(
+            (transmission) =>
+              `${transmission.label}：${transmission.branch}${transmission.palace} / ${transmission.heavenGeneral} / ${transmission.summary}`,
+          )
+          .join("\n")}`,
+        `十二位盘层：\n${chart.liuren.palaces
+          .map(
+            (palace) =>
+              `${palace.palace}(${palace.branch})：天盘${palace.heavenBranch} / 天将${palace.heavenGeneral} / ${palace.markers.join("、") || "常位"} / ${palace.summary}`,
+          )
+          .join("\n")}`,
+      ].join("\n")
+    : "";
 
   return [
     `所用流派：${chart.meta.systemLabel}`,
@@ -222,6 +248,7 @@ function formatSanshiSummary(chart: SanshiChart) {
     chart.meta.gender ? `性别：${chart.meta.gender}` : "",
     qimenSummary ? `奇门盘面：\n${qimenSummary}` : "",
     taiyiSummary ? `太乙盘面：\n${taiyiSummary}` : "",
+    liurenSummary ? `大六壬盘面：\n${liurenSummary}` : "",
     chart.meta.notes ? `补充说明：${chart.meta.notes}` : "",
   ]
     .filter(Boolean)
