@@ -264,7 +264,7 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
   return (
     <article
       className={cn(
-        "flex min-h-[148px] flex-col rounded-[1.1rem] border px-3 py-3 shadow-[0_14px_30px_-26px_rgba(22,20,17,0.24)] md:h-[240px] md:min-h-0",
+        "flex min-h-[132px] flex-col rounded-[1.1rem] border px-3 py-2.5 shadow-[0_14px_30px_-26px_rgba(22,20,17,0.24)] md:h-[200px] md:min-h-0",
         getLiurenCellTone(palace),
       )}
     >
@@ -273,7 +273,7 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
           <p className={cn("text-[10px] uppercase tracking-[0.18em]", accent ? "text-white/70" : "text-muted-foreground")}>
             {palace.direction}
           </p>
-          <h4 className="font-display text-[1.9rem] leading-none tracking-[0.08em]">{palace.branch}</h4>
+          <h4 className="font-display text-[1.7rem] leading-none tracking-[0.08em]">{palace.branch}</h4>
         </div>
         {markerText ? (
           <Badge
@@ -289,20 +289,12 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
 
       <div
         className={cn(
-          "mt-3 flex-1 space-y-1.5 border-t pt-2.5 text-xs leading-5",
+          "mt-2.5 flex-1 space-y-1 border-t pt-2 text-xs leading-5",
           accent ? "border-white/10 text-white/88" : "border-border/60 text-foreground",
         )}
       >
         <p>天盘 {palace.heavenBranch}</p>
         <p>天将 {palace.heavenGeneral}</p>
-        <p
-          className={cn(
-            "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]",
-            accent ? "text-white/72" : "text-muted-foreground",
-          )}
-        >
-          {palace.summary}
-        </p>
       </div>
     </article>
   );
@@ -310,9 +302,9 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
 
 function LiurenTransmissionChip({ item }: { item: LiurenTransmission }) {
   return (
-    <article className="rounded-[1rem] border border-border/70 bg-white px-3 py-3 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]">
+    <article className="rounded-[1rem] border border-border/70 bg-white px-3 py-2.5 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]">
       <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{item.label}</p>
-      <p className="mt-1 font-display text-[1.55rem] leading-none tracking-[0.08em] text-foreground">
+      <p className="mt-1 font-display text-[1.4rem] leading-none tracking-[0.08em] text-foreground">
         {item.branch}
       </p>
       <p className="mt-1 text-xs text-muted-foreground">{item.palace}</p>
@@ -398,7 +390,7 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
         </div>
       </div>
 
-      <div className="absolute bottom-4 right-4 z-10 md:bottom-5 md:right-5">
+      <div className="absolute right-4 top-0 z-10 md:right-5 md:top-1">
         <CopyContentButton label="复制盘面概要" text={copyText} />
       </div>
     </div>
@@ -447,7 +439,6 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
                   {lesson.upper} / {lesson.lower}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">{lesson.relation}</p>
-                <p className="mt-2 text-xs leading-5 text-foreground/85">{lesson.hint}</p>
               </div>
             ))}
           </div>
@@ -455,7 +446,7 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
       </div>
 
       <div className="hidden md:block">
-        <div className="grid grid-cols-4 grid-rows-[240px_240px_240px_240px] gap-3">
+        <div className="grid grid-cols-4 grid-rows-[200px_200px_200px_200px] gap-3">
           {desktopPlacements.map(({ branch, className }) => {
             const palace = palaceMap.get(branch);
             return palace ? (
@@ -465,9 +456,9 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
             ) : null;
           })}
 
-          <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-3 rounded-[1.9rem] border border-border/70 bg-white/92 p-4">
+          <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-2.5 rounded-[1.9rem] border border-border/70 bg-white/92 p-3.5">
             <div className="text-center">
-              <h4 className="font-display text-[1.6rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
+              <h4 className="font-display text-[1.45rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
               {chart.liuren.transmissions.map((item) => (
@@ -478,14 +469,13 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
               {chart.liuren.lessons.map((lesson) => (
                 <div
                   key={lesson.label}
-                  className="rounded-[1rem] border border-border/70 bg-white/90 px-3 py-3 shadow-[0_10px_24px_-24px_rgba(22,20,17,0.24)]"
+                  className="rounded-[1rem] border border-border/70 bg-white/90 px-3 py-2.5 shadow-[0_10px_24px_-24px_rgba(22,20,17,0.24)]"
                 >
                   <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{lesson.label}</p>
                   <p className="mt-1 text-sm font-semibold text-foreground">
                     {lesson.upper} / {lesson.lower}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{lesson.relation}</p>
-                  <p className="mt-2 text-xs leading-5 text-foreground/85">{lesson.hint}</p>
                 </div>
               ))}
             </div>
@@ -584,16 +574,16 @@ function formatLiurenCopyText(chart: SanshiChart) {
     `关系焦点：${chart.liuren.relationFocus}`,
     "四课：",
     ...chart.liuren.lessons.map(
-      (lesson) => `${lesson.label}：上神${lesson.upper} / 下神${lesson.lower} / ${lesson.relation} / ${lesson.hint}`,
+      (lesson) => `${lesson.label}：上神${lesson.upper} / 下神${lesson.lower} / ${lesson.relation}`,
     ),
     "三传：",
     ...chart.liuren.transmissions.map(
-      (item) => `${item.label}：${item.branch}${item.palace} / ${item.heavenGeneral} / ${item.summary}`,
+      (item) => `${item.label}：${item.branch}${item.palace} / ${item.heavenGeneral}`,
     ),
     "十二位：",
     ...chart.liuren.palaces.map(
       (palace) =>
-        `${palace.palace}(${palace.branch})：天盘${palace.heavenBranch} / 天将${palace.heavenGeneral} / ${palace.markers.join("、") || "常位"} / ${palace.summary}`,
+        `${palace.palace}(${palace.branch})：天盘${palace.heavenBranch} / 天将${palace.heavenGeneral} / ${palace.markers.join("、") || "常位"}`,
     ),
   ].join("\n");
 }
@@ -722,11 +712,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       ) : null}
 
       {chart.liuren ? (
-        <DashboardSection
-          className="space-y-5"
-          title="大六壬盘面"
-          action={<CopyContentButton label="复制盘面概要" text={liurenCopyText} />}
-        >
+        <DashboardSection className="space-y-5">
           <MetaList
             columns="md:grid-cols-2 xl:grid-cols-4"
             items={[
