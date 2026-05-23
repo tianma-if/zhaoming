@@ -65,7 +65,7 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
       )}
     >
       <div className="flex items-start justify-between gap-2.5">
-        <div>
+        <div className="min-w-0 flex-1 pr-2">
           <p
             className={cn(
               "text-xs uppercase tracking-[0.2em]",
@@ -74,11 +74,11 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
           >
             {palace.direction}
           </p>
-          <h3 className="mt-0.5 font-display text-[2rem] leading-none tracking-[0.04em]">
+          <h3 className="mt-0.5 whitespace-nowrap font-display text-[1.85rem] leading-none tracking-[0.04em]">
             {palace.palace}
           </h3>
         </div>
-        <div className="flex flex-wrap justify-end gap-1">
+        <div className="shrink-0 flex flex-wrap justify-end gap-1">
           {palace.isChiefDeity ? (
             <Badge className="border-white/20 bg-white/15 text-white">值符</Badge>
           ) : null}
