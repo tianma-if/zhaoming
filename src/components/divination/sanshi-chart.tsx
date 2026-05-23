@@ -248,7 +248,6 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
             {palace.direction}
           </p>
           <h4 className="font-display text-[1.9rem] leading-none tracking-[0.08em]">{palace.branch}</h4>
-          <p className={cn("text-xs", accent ? "text-white/78" : "text-muted-foreground")}>{palace.palace}</p>
         </div>
         {markerText ? (
           <Badge
