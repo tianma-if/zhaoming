@@ -211,7 +211,13 @@ function TaiyiPalaceCompact({ palace }: { palace: TaiyiPalace }) {
   );
 }
 
-function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
+function TaiyiCombinedBoard({
+  chart,
+  copyText,
+}: {
+  chart: SanshiChart;
+  copyText: string;
+}) {
   if (!chart.taiyi) return null;
 
   const branchMap = new Map(chart.taiyi.godSectors.map((sector) => [sector.branch, sector]));
@@ -238,7 +244,7 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
     .sort((a, b) => a.row - b.row || a.col - b.col);
 
   return (
-    <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5">
+    <div className="relative space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 pb-20 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5 md:pb-24">
       <div className="space-y-1">
         <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">组合盘面</h3>
         <p className="text-sm leading-6 text-muted-foreground">
@@ -296,6 +302,10 @@ function TaiyiCombinedBoard({ chart }: { chart: SanshiChart }) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="absolute bottom-4 right-4 z-10 md:bottom-5 md:right-5">
+        <CopyContentButton label="复制盘面概要" text={copyText} />
       </div>
     </div>
   );
@@ -508,7 +518,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         <DashboardSection
           className="space-y-5"
           title={showTaiyiFocusedView ? undefined : "太乙盘面"}
-          action={<CopyContentButton label="复制盘面概要" text={taiyiCopyText} />}
         >
           <MetaList
             columns="md:grid-cols-2 xl:grid-cols-3"
@@ -536,7 +545,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
             ]}
           />
 
-          <TaiyiCombinedBoard chart={chart} />
+          <TaiyiCombinedBoard chart={chart} copyText={taiyiCopyText} />
 
         </DashboardSection>
       ) : null}
