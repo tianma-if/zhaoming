@@ -19,7 +19,6 @@ import { ArrowUpRight, RotateCcw, Search } from "lucide-react";
 import { DataTable } from "@/components/ui/table/data-table";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/table/data-table-view-options";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -43,14 +42,7 @@ export interface DivinationRecordTableRow {
 const columnLabels: Record<string, string> = {
   typeLabel: "类型",
   question: "问题",
-  status: "状态",
   created_at: "创建时间",
-};
-
-const statusLabels: Record<string, string> = {
-  pending: "待处理",
-  completed: "已完成",
-  failed: "失败",
 };
 
 interface DivinationRecordsTableProps {
@@ -66,10 +58,6 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
 
   const typeOptions = useMemo(() => {
     return Array.from(new Map(data.map((item) => [item.type, item.typeLabel])).entries());
-  }, [data]);
-
-  const statusOptions = useMemo(() => {
-    return Array.from(new Set(data.map((item) => item.status))).filter(Boolean);
   }, [data]);
 
   const columns = useMemo<ColumnDef<DivinationRecordTableRow>[]>(
@@ -88,16 +76,6 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
             {row.original.question}
           </div>
         ),
-      },
-      {
-        accessorKey: "status",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="状态" />,
-        cell: ({ row }) => (
-          <Badge variant="outline" className="bg-muted/40">
-            {statusLabels[row.original.status] ?? row.original.status}
-          </Badge>
-        ),
-        filterFn: (row, id, value) => row.getValue(id) === value,
       },
       {
         accessorKey: "created_at",
@@ -151,7 +129,6 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
 
   const questionFilter = (table.getColumn("question")?.getFilterValue() as string) ?? "";
   const typeFilter = (table.getColumn("typeLabel")?.getFilterValue() as string) ?? "all";
-  const statusFilter = (table.getColumn("status")?.getFilterValue() as string) ?? "all";
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -183,24 +160,6 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
               {typeOptions.map(([value, label]) => (
                 <SelectItem key={value} value={value}>
                   {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={statusFilter}
-            onValueChange={(value) =>
-              table.getColumn("status")?.setFilterValue(value === "all" ? undefined : value)
-            }
-          >
-            <SelectTrigger className="w-full md:w-36">
-              <SelectValue placeholder="状态" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部状态</SelectItem>
-              {statusOptions.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {statusLabels[status] ?? status}
                 </SelectItem>
               ))}
             </SelectContent>

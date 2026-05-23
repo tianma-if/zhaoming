@@ -106,13 +106,12 @@ function DivinationRecordsSkeleton() {
         <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
           <Skeleton className="h-10 w-full md:max-w-sm" />
           <Skeleton className="h-10 w-full md:w-36" />
-          <Skeleton className="h-10 w-full md:w-36" />
         </div>
         <Skeleton className="h-10 w-20" />
       </div>
       <div className="overflow-hidden rounded-lg border">
-        <div className="grid grid-cols-[0.8fr_2fr_1fr_1.4fr_0.6fr] border-b px-2 py-3">
-          {["类型", "问题", "状态", "创建时间", ""].map((item) => (
+        <div className="grid grid-cols-[0.8fr_2fr_1.4fr_0.6fr] border-b px-2 py-3">
+          {["类型", "问题", "创建时间", ""].map((item) => (
             <span key={item} className="text-sm font-medium">
               {item}
             </span>
@@ -121,11 +120,10 @@ function DivinationRecordsSkeleton() {
         {Array.from({ length: 5 }).map((_, index) => (
           <div
             key={index}
-            className="grid grid-cols-[0.8fr_2fr_1fr_1.4fr_0.6fr] items-center border-b px-2 py-4 last:border-b-0"
+            className="grid grid-cols-[0.8fr_2fr_1.4fr_0.6fr] items-center border-b px-2 py-4 last:border-b-0"
           >
             <Skeleton className="h-5 w-12" />
             <Skeleton className="h-5 w-48 max-w-full" />
-            <Skeleton className="h-6 w-24 rounded-full" />
             <Skeleton className="h-5 w-36" />
             <Skeleton className="ml-auto h-5 w-12" />
           </div>
