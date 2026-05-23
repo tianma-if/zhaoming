@@ -154,13 +154,8 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
           ))}
         </div>
 
-        <div className="space-y-3">
-          <div className="rounded-[1.25rem] border border-border/70 bg-muted/20 px-4 py-4 text-sm leading-7 text-foreground">
-            {chart.qimen.summary.join(" ")}
-          </div>
-          <div className="flex justify-end">
-            <CopyContentButton label="复制盘面概要" text={copyText} />
-          </div>
+        <div className="flex justify-end">
+          <CopyContentButton label="复制盘面概要" text={copyText} />
         </div>
       </DashboardSection>
     </div>
