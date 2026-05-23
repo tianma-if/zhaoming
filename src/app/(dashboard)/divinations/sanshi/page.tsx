@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { SanshiForm } from "@/components/divination/sanshi-form";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
-import { requireUser } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "三式占卜",
 };
 
 export default async function NewSanshiDivinationPage() {
-  await requireUser();
-
   return (
     <DashboardPage width="narrow" className="space-y-10 pt-2">
       <DashboardPageHeader

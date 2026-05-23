@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { LiuyaoForm } from "@/components/divination/liuyao-form";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
-import { requireUser } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "六爻占卜",
 };
 
 export default async function NewLiuyaoDivinationPage() {
-  await requireUser();
-
   return (
     <DashboardPage width="narrow" className="space-y-10 pt-2">
       <DashboardPageHeader

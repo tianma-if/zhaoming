@@ -12,8 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
 import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
+import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
 
 function getDivinationTypeLabel(type: string) {
@@ -29,9 +29,11 @@ function getDivinationTypeLabel(type: string) {
 export function DivinationRecordPrefillSheet({
   form,
   records,
+  isLoading = false,
 }: {
   form: UseFormReturn<BirthDivinationInputForm>;
   records: DivinationPrefillRecord[];
+  isLoading?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const sortedRecords = useMemo(
@@ -39,16 +41,16 @@ export function DivinationRecordPrefillSheet({
     [records],
   );
 
-  if (!sortedRecords.length) {
+  if (!isLoading && !sortedRecords.length) {
     return null;
   }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="rounded-xl px-4">
+        <Button variant="outline" className="rounded-xl px-4" disabled={isLoading}>
           <History className="size-4" />
-          从记录填充
+          {isLoading ? "正在加载记录..." : "从记录填充"}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-lg">
@@ -58,6 +60,12 @@ export function DivinationRecordPrefillSheet({
         </SheetHeader>
 
         <div className="space-y-3 overflow-y-auto px-6 py-6">
+          {isLoading ? (
+            <div className="rounded-2xl border border-dashed border-border bg-muted/20 px-4 py-5 text-sm text-muted-foreground">
+              正在读取最近测算记录，稍等片刻。
+            </div>
+          ) : null}
+
           {sortedRecords.map((record) => (
             <button
               key={record.id}

@@ -1,20 +1,12 @@
 import type { Metadata } from "next";
 import { DivinationForm } from "@/components/divination/divination-form";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
-import { requireUser } from "@/lib/auth/session";
-import { listRecentDivinations } from "@/lib/data";
-import { toDivinationPrefillRecord } from "@/lib/divination/prefill";
 
 export const metadata: Metadata = {
   title: "八字算命",
 };
 
-export default async function NewDivinationPage() {
-  const user = await requireUser();
-  const prefillRecords = (await listRecentDivinations(user.id, 8))
-    .map(toDivinationPrefillRecord)
-    .filter((item) => item !== null);
-
+export default function NewDivinationPage() {
   return (
     <DashboardPage width="narrow" className="space-y-10 pt-2">
       <DashboardPageHeader
@@ -22,7 +14,7 @@ export default async function NewDivinationPage() {
         title="八字计算"
         description="精准解析生辰八字，揭示命盘奥秘。业务内容继续保留，但页面容器改成与后台其他模块一致的骨架。"
       />
-      <DivinationForm prefillRecords={prefillRecords} />
+      <DivinationForm />
     </DashboardPage>
   );
 }

@@ -2,7 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { DivinationBaseInfoForm } from "@/components/divination/divination-base-info-form";
 import { DivinationRecordPrefillSheet } from "@/components/divination/divination-record-prefill-sheet";
@@ -270,21 +270,58 @@ export function DivinationForm({
   divinationType = "bazi",
   submitLabel = "排盘",
   conceptSection,
-  prefillRecords = [],
 }: {
   divinationType?: BirthDivinationInputForm["divinationType"];
   submitLabel?: string;
   conceptSection?: ReactNode;
-  prefillRecords?: DivinationPrefillRecord[];
 }) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [prefillRecords, setPrefillRecords] = useState<DivinationPrefillRecord[]>([]);
+  const [isPrefillLoading, setIsPrefillLoading] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const form = useForm<BirthDivinationInputForm>({
     resolver: zodResolver(birthDivinationInputSchema),
     defaultValues: createInitialValues(divinationType),
   });
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadPrefillRecords() {
+      setIsPrefillLoading(true);
+
+      try {
+        const response = await fetch("/api/divination/prefill-records", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          records?: DivinationPrefillRecord[];
+        };
+
+        setPrefillRecords(Array.isArray(payload.records) ? payload.records : []);
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          console.error("Failed to fetch prefill records:", error);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsPrefillLoading(false);
+        }
+      }
+    }
+
+    void loadPrefillRecords();
+
+    return () => controller.abort();
+  }, []);
 
   function handleSubmit(values: DivinationInputForm) {
     setSubmitError(null);
@@ -319,7 +356,15 @@ export function DivinationForm({
     <div className="space-y-12">
       {prefillRecords.length ? (
         <div className="flex justify-end">
-          <DivinationRecordPrefillSheet form={form} records={prefillRecords} />
+          <DivinationRecordPrefillSheet
+            form={form}
+            records={prefillRecords}
+            isLoading={isPrefillLoading}
+          />
+        </div>
+      ) : isPrefillLoading ? (
+        <div className="flex justify-end">
+          <DivinationRecordPrefillSheet form={form} records={[]} isLoading />
         </div>
       ) : null}
 
