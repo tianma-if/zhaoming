@@ -401,13 +401,6 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
 
   return (
     <div className="relative space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 pb-20 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5 md:pb-24">
-      <div className="space-y-1">
-        <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">十二支盘</h3>
-        <p className="text-sm leading-6 text-muted-foreground">
-          外圈按十二支排盘，中宫收四课与三传。当前仍是产品化简版，不是完整地盘、天盘、天将全叠层，但读盘入口会更接近大六壬。
-        </p>
-      </div>
-
       <div className="grid gap-3 md:hidden">
         <div className="grid gap-2 sm:grid-cols-2">
           {chart.liuren.palaces.map((palace) => (
@@ -438,12 +431,6 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
 
       <div className="hidden md:block">
         <div className="rounded-[2rem] border border-border/70 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.99),rgba(249,247,243,0.96))] p-4 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)]">
-          <div className="mb-3 grid grid-cols-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            <span>西北</span>
-            <span>北</span>
-            <span>东北</span>
-          </div>
-
           <div className="grid grid-cols-4 grid-rows-[240px_240px_240px_240px] gap-3">
             {desktopPlacements.map(({ branch, className }) => {
               const palace = palaceMap.get(branch);
@@ -479,12 +466,6 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
                 ))}
               </div>
             </article>
-          </div>
-
-          <div className="mt-3 grid grid-cols-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            <span>西南</span>
-            <span>南</span>
-            <span>东南</span>
           </div>
         </div>
       </div>
