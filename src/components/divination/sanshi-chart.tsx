@@ -425,7 +425,7 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
   ] as const;
 
   return (
-    <div className="relative space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 pb-20 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5 md:pb-24">
+    <div className="relative space-y-4 pb-20 md:pb-24">
       <div className="grid gap-3 md:hidden">
         <div className="grid gap-2 sm:grid-cols-2">
           {chart.liuren.palaces.map((palace) => (
