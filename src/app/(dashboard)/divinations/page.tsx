@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import {
   DashboardEmptyState,
   DashboardPage,
   DashboardPageHeader,
   DashboardSection,
 } from "@/components/layout/dashboard-shell";
-import { Badge } from "@/components/ui/badge";
+import { DivinationRecordsTable } from "@/components/divination/divination-records-table";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireUser } from "@/lib/auth/session";
 import { listDivinations } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
-import { formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "测算记录",
@@ -30,6 +27,18 @@ const divinationTypeLabelMap: Record<string, string> = {
 export default async function DivinationsPage() {
   const user = await requireUser();
   const data = await listDivinations(user.id);
+  const tableData = data.map((item) => {
+    const type = resolveDivinationTypeFromRecord(item);
+
+    return {
+      id: item.id,
+      type,
+      typeLabel: divinationTypeLabelMap[type] ?? type,
+      question: item.question,
+      status: item.status,
+      created_at: item.created_at,
+    };
+  });
 
   return (
     <DashboardPage width="wide">
@@ -43,48 +52,9 @@ export default async function DivinationsPage() {
           </Button>
         }
       />
-      <DashboardSection className="overflow-hidden p-0" title="全部记录">
-        {data?.length ? (
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead>类型</TableHead>
-                <TableHead>问题</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>创建时间</TableHead>
-                <TableHead className="text-right">查看</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">
-                    {divinationTypeLabelMap[resolveDivinationTypeFromRecord(item)] ??
-                      resolveDivinationTypeFromRecord(item)}
-                  </TableCell>
-                  <TableCell className="max-w-xl">
-                    <div className="line-clamp-2 leading-7">{item.question}</div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="rounded-full bg-muted/40">
-                      {item.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatDateTime(item.created_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="sm" className="rounded-full">
-                      <Link href={`/divinations/${item.id}`}>
-                        打开
-                        <ArrowUpRight className="size-4" />
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+      <DashboardSection className="overflow-hidden p-0">
+        {tableData.length ? (
+          <DivinationRecordsTable data={tableData} />
         ) : (
           <div className="p-6">
             <DashboardEmptyState
