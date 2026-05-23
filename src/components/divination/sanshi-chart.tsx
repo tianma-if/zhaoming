@@ -733,22 +733,18 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               {
                 label: "月将",
                 value: `${chart.liuren.monthGeneral} · ${chart.liuren.monthGeneralPalace}`,
-                detail: "先看局势是被什么外部条件牵动",
               },
               {
                 label: "时位",
                 value: `${chart.liuren.timeLeader} · ${chart.liuren.timeLeaderPalace}`,
-                detail: "对应眼下最先起反应的位置",
               },
               {
                 label: "发用侧重",
                 value: chart.liuren.dutyFocus,
-                detail: `关系焦点：${chart.liuren.relationFocus}`,
               },
               {
                 label: "三传主线",
                 value: chart.liuren.transmissions.map((item) => `${item.label}${item.branch}`).join(" / "),
-                detail: "看事情如何起头、过渡与收束",
               },
             ]}
           />
