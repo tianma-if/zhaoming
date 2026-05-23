@@ -238,7 +238,7 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
   return (
     <article
       className={cn(
-        "min-h-[148px] rounded-[1.1rem] border px-3 py-3 shadow-[0_14px_30px_-26px_rgba(22,20,17,0.24)] md:min-h-[132px]",
+        "flex min-h-[148px] flex-col rounded-[1.1rem] border px-3 py-3 shadow-[0_14px_30px_-26px_rgba(22,20,17,0.24)] md:h-[240px] md:min-h-0",
         getLiurenCellTone(palace),
       )}
     >
@@ -264,13 +264,20 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
 
       <div
         className={cn(
-          "mt-3 space-y-1.5 border-t pt-2.5 text-xs leading-5",
+          "mt-3 flex-1 space-y-1.5 border-t pt-2.5 text-xs leading-5",
           accent ? "border-white/10 text-white/88" : "border-border/60 text-foreground",
         )}
       >
         <p>天盘 {palace.heavenBranch}</p>
         <p>天将 {palace.heavenGeneral}</p>
-        <p className={accent ? "text-white/72" : "text-muted-foreground"}>{palace.summary}</p>
+        <p
+          className={cn(
+            "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]",
+            accent ? "text-white/72" : "text-muted-foreground",
+          )}
+        >
+          {palace.summary}
+        </p>
       </div>
     </article>
   );
@@ -377,10 +384,20 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
   if (!chart.liuren) return null;
 
   const palaceMap = new Map(chart.liuren.palaces.map((item) => [item.branch, item]));
-  const topRow = ["亥", "子", "丑", "寅"] as const;
-  const leftColumn = ["戌", "酉"] as const;
-  const rightColumn = ["卯", "辰"] as const;
-  const bottomRow = ["申", "未", "午", "巳"] as const;
+  const desktopPlacements = [
+    { branch: "亥", className: "col-start-1 row-start-1" },
+    { branch: "子", className: "col-start-2 row-start-1" },
+    { branch: "丑", className: "col-start-3 row-start-1" },
+    { branch: "寅", className: "col-start-4 row-start-1" },
+    { branch: "戌", className: "col-start-1 row-start-2" },
+    { branch: "卯", className: "col-start-4 row-start-2" },
+    { branch: "酉", className: "col-start-1 row-start-3" },
+    { branch: "辰", className: "col-start-4 row-start-3" },
+    { branch: "申", className: "col-start-1 row-start-4" },
+    { branch: "未", className: "col-start-2 row-start-4" },
+    { branch: "午", className: "col-start-3 row-start-4" },
+    { branch: "巳", className: "col-start-4 row-start-4" },
+  ] as const;
 
   return (
     <div className="relative space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 pb-20 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5 md:pb-24">
@@ -427,28 +444,19 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
             <span>东北</span>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
-            {topRow.map((branch) => {
+          <div className="grid grid-cols-4 grid-rows-[240px_240px_240px_240px] gap-3">
+            {desktopPlacements.map(({ branch, className }) => {
               const palace = palaceMap.get(branch);
-              return palace ? <LiurenPalaceCell key={`top-${branch}`} palace={palace} /> : null;
+              return palace ? (
+                <div key={`desktop-${branch}`} className={className}>
+                  <LiurenPalaceCell palace={palace} />
+                </div>
+              ) : null;
             })}
-          </div>
 
-          <div className="mt-3 grid grid-cols-[180px_minmax(0,1fr)_180px] gap-3">
-            <div className="grid gap-3">
-              {leftColumn.map((branch) => {
-                const palace = palaceMap.get(branch);
-                return palace ? <LiurenPalaceCell key={`left-${branch}`} palace={palace} /> : null;
-              })}
-            </div>
-
-            <article className="space-y-4 rounded-[1.9rem] border border-border/70 bg-white/92 p-5">
-              <div className="space-y-1 text-center">
-                <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Liuren Center</p>
-                <h4 className="font-display text-[2rem] tracking-[0.08em] text-foreground">四课 · 三传</h4>
-                <p className="text-xs text-muted-foreground">
-                  以月将、发用与三传为主线，沿着中宫判断事情如何起势、过渡与收束。
-                </p>
+            <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-3 rounded-[1.9rem] border border-border/70 bg-white/92 p-4">
+              <div className="text-center">
+                <h4 className="font-display text-[1.6rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
               </div>
               <div className="grid gap-2 sm:grid-cols-3">
                 {chart.liuren.transmissions.map((item) => (
@@ -471,20 +479,6 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
                 ))}
               </div>
             </article>
-
-            <div className="grid gap-3">
-              {rightColumn.map((branch) => {
-                const palace = palaceMap.get(branch);
-                return palace ? <LiurenPalaceCell key={`right-${branch}`} palace={palace} /> : null;
-              })}
-            </div>
-          </div>
-
-          <div className="mt-3 grid grid-cols-4 gap-3">
-            {bottomRow.map((branch) => {
-              const palace = palaceMap.get(branch);
-              return palace ? <LiurenPalaceCell key={`bottom-${branch}`} palace={palace} /> : null;
-            })}
           </div>
 
           <div className="mt-3 grid grid-cols-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -656,30 +650,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         </DashboardSection>
       )}
 
-      {showTaiyiFocusedView ? null : (
-        <DashboardSection className="space-y-5" title="四象判断">
-          <div className="grid gap-4 md:grid-cols-2">
-            {chart.sectors.map((sector) => (
-              <article
-                key={sector.key}
-                className="space-y-4 rounded-[1.25rem] border border-border/70 bg-white p-5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
-              >
-                <div className="space-y-1">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">判断维度</p>
-                  <h3 className="font-display text-2xl tracking-[0.04em] text-foreground">
-                    {sector.label}
-                  </h3>
-                </div>
-                <p className="text-sm leading-7 text-foreground/90">{sector.summary}</p>
-                <div className="rounded-2xl bg-muted/20 px-4 py-3 text-sm leading-7 text-muted-foreground">
-                  建议动作：{sector.action}
-                </div>
-              </article>
-            ))}
-          </div>
-        </DashboardSection>
-      )}
-
       {chart.qimen ? (
         <DashboardSection
           className="space-y-5"
@@ -786,19 +756,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               },
             ]}
           />
-
-          {chart.liuren.summary.length ? (
-            <div className="grid gap-3 md:grid-cols-3">
-              {chart.liuren.summary.map((item, index) => (
-                <article
-                  key={`liuren-summary-${index}`}
-                  className="rounded-[1.15rem] border border-border/70 bg-muted/10 px-4 py-3.5 text-sm leading-7 text-foreground/90"
-                >
-                  {item}
-                </article>
-              ))}
-            </div>
-          ) : null}
 
           <LiurenCombinedBoard chart={chart} copyText={liurenCopyText} />
         </DashboardSection>
