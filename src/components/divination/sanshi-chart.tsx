@@ -321,7 +321,7 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
   const innerPalaces = chart.taiyi.palaces.slice().sort((a, b) => a.row - b.row || a.col - b.col);
 
   return (
-    <div className="relative space-y-4 rounded-[1.5rem] border border-border/70 bg-white p-4 pb-20 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)] md:p-5 md:pb-24">
+    <div className="relative space-y-4 pb-20 md:pb-24">
       <div className="space-y-1">
         <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">组合盘面</h3>
         <p className="text-sm leading-6 text-muted-foreground">
@@ -430,43 +430,41 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
       </div>
 
       <div className="hidden md:block">
-        <div className="rounded-[2rem] border border-border/70 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.99),rgba(249,247,243,0.96))] p-4 shadow-[0_24px_48px_-36px_rgba(22,20,17,0.28)]">
-          <div className="grid grid-cols-4 grid-rows-[240px_240px_240px_240px] gap-3">
-            {desktopPlacements.map(({ branch, className }) => {
-              const palace = palaceMap.get(branch);
-              return palace ? (
-                <div key={`desktop-${branch}`} className={className}>
-                  <LiurenPalaceCell palace={palace} />
-                </div>
-              ) : null;
-            })}
+        <div className="grid grid-cols-4 grid-rows-[240px_240px_240px_240px] gap-3">
+          {desktopPlacements.map(({ branch, className }) => {
+            const palace = palaceMap.get(branch);
+            return palace ? (
+              <div key={`desktop-${branch}`} className={className}>
+                <LiurenPalaceCell palace={palace} />
+              </div>
+            ) : null;
+          })}
 
-            <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-3 rounded-[1.9rem] border border-border/70 bg-white/92 p-4">
-              <div className="text-center">
-                <h4 className="font-display text-[1.6rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
-              </div>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {chart.liuren.transmissions.map((item) => (
-                  <LiurenTransmissionChip key={item.label} item={item} />
-                ))}
-              </div>
-              <div className="grid gap-3 xl:grid-cols-2">
-                {chart.liuren.lessons.map((lesson) => (
-                  <div
-                    key={lesson.label}
-                    className="rounded-[1rem] border border-border/70 bg-white/90 px-3 py-3 shadow-[0_10px_24px_-24px_rgba(22,20,17,0.24)]"
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{lesson.label}</p>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
-                      {lesson.upper} / {lesson.lower}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">{lesson.relation}</p>
-                    <p className="mt-2 text-xs leading-5 text-foreground/85">{lesson.hint}</p>
-                  </div>
-                ))}
-              </div>
-            </article>
-          </div>
+          <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-3 rounded-[1.9rem] border border-border/70 bg-white/92 p-4">
+            <div className="text-center">
+              <h4 className="font-display text-[1.6rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {chart.liuren.transmissions.map((item) => (
+                <LiurenTransmissionChip key={item.label} item={item} />
+              ))}
+            </div>
+            <div className="grid gap-3 xl:grid-cols-2">
+              {chart.liuren.lessons.map((lesson) => (
+                <div
+                  key={lesson.label}
+                  className="rounded-[1rem] border border-border/70 bg-white/90 px-3 py-3 shadow-[0_10px_24px_-24px_rgba(22,20,17,0.24)]"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{lesson.label}</p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {lesson.upper} / {lesson.lower}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{lesson.relation}</p>
+                  <p className="mt-2 text-xs leading-5 text-foreground/85">{lesson.hint}</p>
+                </div>
+              ))}
+            </div>
+          </article>
         </div>
       </div>
 
