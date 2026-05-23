@@ -2,9 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, ChevronRight } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronRight, Sparkles } from "lucide-react";
+import {
+  dashboardNavGroups,
+  getActiveDashboardHref,
+  type DashboardNavItem,
+} from "@/config/dashboard-nav";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -20,11 +25,6 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  dashboardNavGroups,
-  getActiveDashboardHref,
-  type DashboardNavItem,
-} from "@/config/dashboard-nav";
 import { cn } from "@/lib/utils";
 import { DashboardUserMenu } from "./dashboard-user-menu";
 
@@ -112,15 +112,7 @@ function NavItem({
   );
 }
 
-export function AppSidebar({
-  email,
-  name,
-  image,
-}: {
-  email: string;
-  name?: string | null;
-  image?: string | null;
-}) {
+export function AppSidebar() {
   const pathname = usePathname();
   const activeHref = getActiveDashboardHref(pathname);
 
@@ -161,7 +153,7 @@ export function AppSidebar({
           <Sparkles className="size-4" />
           解锁全部功能
         </Button>
-        <DashboardUserMenu email={email} name={name} image={image} />
+        <DashboardUserMenu />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

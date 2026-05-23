@@ -1,16 +1,28 @@
 import { headers } from "next/headers";
+import { getCookieCache } from "better-auth/cookies";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { auth } from "@/lib/auth";
-import { hasAuthEnv, hasDatabaseEnv } from "@/lib/env";
+import { getEnv, hasAuthEnv, hasDatabaseEnv } from "@/lib/env";
 
 const getSessionWithProfile = cache(async () => {
   if (!hasAuthEnv() || !hasDatabaseEnv()) {
     return null;
   }
 
+  const requestHeaders = await headers();
+  const env = getEnv();
+  const cachedSession = (await getCookieCache(requestHeaders, {
+    secret:
+      env.BETTER_AUTH_SECRET ?? "development-placeholder-secret-change-me-123456",
+  })) as Awaited<ReturnType<typeof auth.api.getSession>> | null;
+
+  if (cachedSession?.user) {
+    return cachedSession;
+  }
+
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: requestHeaders,
   });
 
   if (!session?.user) {
