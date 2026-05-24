@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import {
+  AuthTransitionOverlay,
+  finishAuthTransition,
+  startAuthTransition,
+} from "@/components/auth/auth-transition-state";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
@@ -46,6 +51,7 @@ export function GoogleSignInButton({
   async function handleSignIn() {
     setIsLoading(true);
     setError(null);
+    startAuthTransition();
 
     try {
       const result = await authClient.signIn.social({
@@ -54,9 +60,11 @@ export function GoogleSignInButton({
       });
 
       if (result.error) {
+        finishAuthTransition();
         setError(result.error.message ?? "Google 登录暂时不可用。");
       }
     } catch (caughtError) {
+      finishAuthTransition();
       setError(
         caughtError instanceof Error
           ? caughtError.message
@@ -68,22 +76,25 @@ export function GoogleSignInButton({
   }
 
   return (
-    <div className="space-y-3">
-      <Button
-        variant="outline"
-        className={cn(
-          "h-14 w-full rounded-2xl border-[#ded8d0] bg-white text-base text-[#151515] shadow-[0_10px_30px_-24px_rgba(21,21,21,0.3)] hover:bg-[#fbfaf8]",
-          className,
-        )}
-        onClick={handleSignIn}
-        disabled={isLoading}
-      >
-        <span className="mr-3">
-          <GoogleMark />
-        </span>
-        {isLoading ? "正在跳转…" : "使用谷歌账号登录"}
-      </Button>
-      {error ? <p className="text-sm text-fire">{error}</p> : null}
-    </div>
+    <>
+      <AuthTransitionOverlay />
+      <div className="space-y-3">
+        <Button
+          variant="outline"
+          className={cn(
+            "h-14 w-full rounded-2xl border-[#ded8d0] bg-white text-base text-[#151515] shadow-[0_10px_30px_-24px_rgba(21,21,21,0.3)] hover:bg-[#fbfaf8]",
+            className,
+          )}
+          onClick={handleSignIn}
+          disabled={isLoading}
+        >
+          <span className="mr-3">
+            <GoogleMark />
+          </span>
+          {isLoading ? "正在跳转…" : "使用谷歌账号登录"}
+        </Button>
+        {error ? <p className="text-sm text-fire">{error}</p> : null}
+      </div>
+    </>
   );
 }

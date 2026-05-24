@@ -3,6 +3,11 @@
 import { createAuthClient } from "better-auth/react";
 import { oneTapClient } from "better-auth/client/plugins";
 import { useEffect, useMemo, useRef } from "react";
+import {
+  AuthTransitionOverlay,
+  finishAuthTransition,
+  startAuthTransition,
+} from "@/components/auth/auth-transition-state";
 
 export function GoogleOneTapPrompt({
   callbackURL,
@@ -48,11 +53,24 @@ export function GoogleOneTapPrompt({
 
     promptedRef.current = true;
 
-    void oneTapAuthClient.oneTap({
-      callbackURL,
-      context: "signin",
-    });
+    void oneTapAuthClient
+      .oneTap({
+        callbackURL,
+        context: "signin",
+        onPromptNotification: (notification) => {
+          const dismissedReason = notification?.getDismissedReason?.();
+          if (dismissedReason === "credential_returned") {
+            startAuthTransition();
+            return;
+          }
+
+          finishAuthTransition();
+        },
+      })
+      .catch(() => {
+        finishAuthTransition();
+      });
   }, [callbackURL, clientId, enabled, isLocalhost, oneTapAuthClient]);
 
-  return null;
+  return <AuthTransitionOverlay />;
 }

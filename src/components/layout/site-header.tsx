@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/constants";
 import { getAuthSession } from "@/lib/auth/session";
-import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/lib/constants";
+import { SiteHeaderAuthButton } from "@/components/layout/site-header-auth-button";
 
 export async function SiteHeader() {
   const session = await getAuthSession();
@@ -22,15 +22,7 @@ export async function SiteHeader() {
       </nav>
 
       <div className="flex items-center gap-3">
-        {user ? (
-          <Link href="/divinations">
-            <Button>进入工作台</Button>
-          </Link>
-        ) : (
-          <Link href="/login">
-            <Button variant="outline">登录</Button>
-          </Link>
-        )}
+        <SiteHeaderAuthButton isAuthenticated={Boolean(user)} />
       </div>
     </header>
   );

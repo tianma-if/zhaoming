@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LockKeyhole, Sparkles } from "lucide-react";
 import { useState, useSyncExternalStore, useTransition } from "react";
+import { useAuthTransitionPending } from "@/components/auth/auth-transition-state";
 import { GoogleOneTapPrompt } from "@/components/auth/google-one-tap-prompt";
 import { DivinationChartRenderer } from "@/components/divination/divination-chart-renderer";
 import {
@@ -46,6 +47,7 @@ function getServerPreviewSnapshot() {
 export function DivinationPreview({ googleClientId }: { googleClientId: string | null }) {
   const router = useRouter();
   const { data: session, isPending: isSessionPending } = authClient.useSession();
+  const isAuthTransitionPending = useAuthTransitionPending();
   const preview = useSyncExternalStore(
     subscribeToPreviewStorage,
     getPreviewSnapshot,
@@ -106,7 +108,9 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
     );
   }
 
-  const divinationType = resolveDivinationTypeFromRecord(preview as Parameters<typeof resolveDivinationTypeFromRecord>[0]);
+  const divinationType = resolveDivinationTypeFromRecord(
+    preview as Parameters<typeof resolveDivinationTypeFromRecord>[0],
+  );
 
   return (
     <DashboardPage
@@ -139,11 +143,11 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
             <Button
               asChild
               className="h-12 rounded-2xl bg-foreground px-5 text-sm font-medium text-background shadow-[0_18px_38px_-20px_rgba(15,23,42,0.65)] transition-all hover:-translate-y-0.5 hover:bg-foreground/92"
-              disabled={isSessionPending}
+              disabled={isSessionPending || isAuthTransitionPending}
             >
               <Link href="/login?callbackURL=/divinations/preview">
                 <LockKeyhole className="size-4" />
-                登录生成 AI 解读
+                {isAuthTransitionPending ? "登录中…" : "登录生成 AI 解读"}
               </Link>
             </Button>
           )
