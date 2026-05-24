@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   dashboardNavGroups,
   getActiveDashboardHref,
   type DashboardNavItem,
 } from "@/config/dashboard-nav";
-import { Button } from "@/components/ui/button";
+import { SubscriptionPlansDialog } from "@/components/billing/subscription-plans-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
@@ -164,10 +164,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className={cn("border-t border-sidebar-border/90 p-2")}>
-        <Button variant="outline" className="h-10 justify-start rounded-md bg-background shadow-none">
-          <Sparkles className="size-4" />
-          解锁全部功能
-        </Button>
+        <SubscriptionPlansDialog />
         <DashboardUserMenu />
       </SidebarFooter>
       <SidebarRail />
