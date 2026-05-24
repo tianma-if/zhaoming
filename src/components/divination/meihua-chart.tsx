@@ -51,10 +51,14 @@ function HexagramPanel({
         {rows.map((line) => (
           <div
             key={`${title}-${line.index}`}
-            className="grid grid-cols-[3.2rem_minmax(0,1fr)_2.5rem] items-center gap-3"
+            className="grid grid-cols-[3.2rem_minmax(0,13rem)_2.5rem] items-center justify-center gap-3"
           >
             <span className="text-right text-xs text-black/55">{line.label}</span>
-            <LiuyaoYaoGlyph isYang={line.isYang} className="max-w-[11rem]" />
+            <LiuyaoYaoGlyph
+              isYang={line.isYang}
+              className="max-w-[13rem]"
+              strokeClassName="h-2"
+            />
             <span className="text-xs font-medium text-black/45">
               {movingLine === line.index ? "动" : ""}
             </span>

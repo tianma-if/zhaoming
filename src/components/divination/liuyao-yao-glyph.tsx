@@ -2,6 +2,7 @@ interface LiuyaoYaoGlyphProps {
   isYang: boolean;
   tone?: "dark" | "light";
   className?: string;
+  strokeClassName?: string;
 }
 
 function getToneClass(tone: LiuyaoYaoGlyphProps["tone"]) {
@@ -12,13 +13,15 @@ export function LiuyaoYaoGlyph({
   isYang,
   tone = "dark",
   className,
+  strokeClassName,
 }: LiuyaoYaoGlyphProps) {
   const toneClass = getToneClass(tone);
+  const strokeClass = strokeClassName ?? "h-[1.05rem]";
 
   if (isYang) {
     return (
       <div className={`mx-auto w-full max-w-[15rem] ${className ?? ""}`}>
-        <div className={`h-[1.05rem] w-full rounded-full ${toneClass}`} />
+        <div className={`${strokeClass} w-full rounded-full ${toneClass}`} />
       </div>
     );
   }
@@ -26,8 +29,8 @@ export function LiuyaoYaoGlyph({
   return (
     <div className={`mx-auto w-full max-w-[15rem] ${className ?? ""}`}>
       <div className="flex items-center justify-between gap-4">
-        <div className={`h-[1.05rem] w-[42%] rounded-full ${toneClass}`} />
-        <div className={`h-[1.05rem] w-[42%] rounded-full ${toneClass}`} />
+        <div className={`${strokeClass} w-[42%] rounded-full ${toneClass}`} />
+        <div className={`${strokeClass} w-[42%] rounded-full ${toneClass}`} />
       </div>
     </div>
   );
