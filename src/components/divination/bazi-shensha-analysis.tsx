@@ -37,7 +37,7 @@ export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
             i
           </span>
         </div>
-        <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {view.shenSha.map((group) => (
               <section key={group.label} className="space-y-4">
                 <div className="text-center">
