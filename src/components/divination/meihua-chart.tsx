@@ -104,11 +104,8 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
             <MetaLine label="起卦时间" value={chart.meta.divinationDateTime} />
             <MetaLine label="起卦方式" value={formatMethod(chart.meta.method)} />
             <MetaLine label="干支" value={chart.meta.ganZhi} />
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-black/55">所问之事</p>
-            <p className="text-sm leading-6 text-black/80">{chart.meta.question}</p>
+            <div className="basis-full" />
+            <MetaLine label="所问之事" value={chart.meta.question} />
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -137,9 +134,9 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
             <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-black">体用关系</h3>
-                <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-                  <InfoItem
-                    label="体卦"
+              <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                <InfoItem
+                  label="体卦"
                     value={chart.trigrams.body.name}
                     detail={`${chart.trigrams.body.nature} / ${chart.trigrams.body.element}`}
                   />
@@ -147,11 +144,10 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
                     label="用卦"
                     value={chart.trigrams.use.name}
                     detail={`${chart.trigrams.use.nature} / ${chart.trigrams.use.element}`}
-                  />
-                </div>
-                <Badge className="rounded-full px-2.5 py-0.5 text-xs">{chart.relation.label}</Badge>
-                <p className="text-xs leading-6 text-black/68">{chart.relation.summary}</p>
+                />
               </div>
+              <Badge className="rounded-full px-2.5 py-0.5 text-xs">{chart.relation.label}</Badge>
+            </div>
 
               <div className="space-y-3 lg:border-l lg:border-black/10 lg:pl-6">
                 <h3 className="text-lg font-semibold text-black">起卦数字</h3>
