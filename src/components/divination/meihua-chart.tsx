@@ -77,6 +77,24 @@ function MetaLine({ label, value }: { label: string; value: string }) {
   );
 }
 
+function InfoItem({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string | number;
+  detail?: string;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-black/50">{label}</p>
+      <p className="text-base font-semibold leading-5 text-black">{value}</p>
+      {detail ? <p className="text-xs leading-5 text-black/60">{detail}</p> : null}
+    </div>
+  );
+}
+
 export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
   return (
     <div className="space-y-6">
@@ -115,55 +133,35 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
             />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-            <section className="space-y-4 rounded-md border border-black/10 bg-white p-5">
-              <h3 className="text-xl font-semibold text-black">体用关系</h3>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-md bg-[#f7f7f6] p-4">
-                  <p className="text-xs text-black/50">体卦</p>
-                  <p className="mt-1 text-2xl font-semibold">{chart.trigrams.body.name}</p>
-                  <p className="text-sm text-black/60">
-                    {chart.trigrams.body.nature} / {chart.trigrams.body.element}
-                  </p>
+          <section className="rounded-md border border-black/10 bg-white p-4 md:p-5">
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-black">体用关系</h3>
+                <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                  <InfoItem
+                    label="体卦"
+                    value={chart.trigrams.body.name}
+                    detail={`${chart.trigrams.body.nature} / ${chart.trigrams.body.element}`}
+                  />
+                  <InfoItem
+                    label="用卦"
+                    value={chart.trigrams.use.name}
+                    detail={`${chart.trigrams.use.nature} / ${chart.trigrams.use.element}`}
+                  />
                 </div>
-                <div className="rounded-md bg-[#f7f7f6] p-4">
-                  <p className="text-xs text-black/50">用卦</p>
-                  <p className="mt-1 text-2xl font-semibold">{chart.trigrams.use.name}</p>
-                  <p className="text-sm text-black/60">
-                    {chart.trigrams.use.nature} / {chart.trigrams.use.element}
-                  </p>
-                </div>
+                <Badge className="rounded-full px-2.5 py-0.5 text-xs">{chart.relation.label}</Badge>
+                <p className="text-xs leading-6 text-black/68">{chart.relation.summary}</p>
               </div>
-              <Badge className="rounded-full px-3 py-1">{chart.relation.label}</Badge>
-              <p className="text-sm leading-7 text-black/68">{chart.relation.summary}</p>
-            </section>
 
-            <section className="space-y-4 rounded-md border border-black/10 bg-white p-5">
-              <h3 className="text-xl font-semibold text-black">起卦数字</h3>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-md bg-[#f7f7f6] p-4">
-                  <p className="text-xs text-black/50">上卦数</p>
-                  <p className="mt-1 text-2xl font-semibold">{chart.numbers.upper}</p>
+              <div className="space-y-3 lg:border-l lg:border-black/10 lg:pl-6">
+                <h3 className="text-lg font-semibold text-black">起卦数字</h3>
+                <div className="grid gap-x-8 gap-y-4 sm:grid-cols-3">
+                  <InfoItem label="上卦数" value={chart.numbers.upper} />
+                  <InfoItem label="下卦数" value={chart.numbers.lower} />
+                  <InfoItem label="动爻" value={`第 ${chart.movingLine} 爻`} />
                 </div>
-                <div className="rounded-md bg-[#f7f7f6] p-4">
-                  <p className="text-xs text-black/50">下卦数</p>
-                  <p className="mt-1 text-2xl font-semibold">{chart.numbers.lower}</p>
-                </div>
-                <div className="rounded-md bg-[#f7f7f6] p-4">
-                  <p className="text-xs text-black/50">动爻</p>
-                  <p className="mt-1 text-2xl font-semibold">第 {chart.movingLine} 爻</p>
-                </div>
+                <p className="text-xs leading-6 text-black/60">{chart.numbers.source}</p>
               </div>
-              <p className="text-sm leading-7 text-black/60">{chart.numbers.source}</p>
-            </section>
-          </div>
-
-          <section className="space-y-4">
-            <h3 className="text-2xl font-semibold text-black">结构提示</h3>
-            <div className="space-y-3 text-base leading-8 text-black/72">
-              {chart.guidance.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
             </div>
           </section>
 
