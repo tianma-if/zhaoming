@@ -1,7 +1,7 @@
 import type { MeihuaChart } from "@/types/divination";
 import { LiuyaoYaoGlyph } from "@/components/divination/liuyao-yao-glyph";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription } from "@/components/ui/card";
 
 const lineLabels = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"] as const;
 
@@ -78,18 +78,15 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
     <div className="space-y-6">
       <Card className="rounded-xl border border-black/10 bg-white p-6 shadow-none md:p-8">
         <div className="space-y-8">
-          <div className="space-y-3">
-            <CardTitle className="text-4xl tracking-tight text-black">梅花易数起卦结果</CardTitle>
-            <div className="flex flex-wrap gap-x-4 gap-y-2 text-base leading-7">
-              <MetaLine label="起卦时间" value={chart.meta.divinationDateTime} />
-              <MetaLine label="起卦方式" value={formatMethod(chart.meta.method)} />
-              <MetaLine label="干支" value={chart.meta.ganZhi} />
-            </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm leading-6">
+            <MetaLine label="起卦时间" value={chart.meta.divinationDateTime} />
+            <MetaLine label="起卦方式" value={formatMethod(chart.meta.method)} />
+            <MetaLine label="干支" value={chart.meta.ganZhi} />
           </div>
 
-          <div className="rounded-md border border-black/8 bg-[#f7f7f6] px-5 py-5">
-            <p className="text-lg font-semibold text-black">所问之事</p>
-            <p className="mt-3 text-base leading-8 text-black/70">{chart.meta.question}</p>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-black/55">所问之事</p>
+            <p className="text-sm leading-6 text-black/80">{chart.meta.question}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
