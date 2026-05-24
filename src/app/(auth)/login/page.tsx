@@ -14,7 +14,7 @@ export default async function LoginPage() {
   const user = session?.user ?? null;
 
   if (user) {
-    redirect("/dashboard");
+    redirect("/divinations");
   }
 
   return (

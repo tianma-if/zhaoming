@@ -60,7 +60,6 @@ const groups: SidebarGroup[] = [
   {
     label: "其他功能",
     items: [
-      { href: "/dashboard", label: "总览", icon: Sparkles },
       { href: "/divinations", label: "测算记录", icon: CalendarDays },
       { href: null, label: "AI 老黄历", icon: Bot },
     ],

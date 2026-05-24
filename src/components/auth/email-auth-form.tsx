@@ -80,7 +80,7 @@ export function EmailAuthForm() {
           const result = await authClient.signIn.email({
             email: values.email,
             password: values.password,
-            callbackURL: "/dashboard",
+            callbackURL: "/divinations",
           });
 
           if (result.error) {
@@ -92,7 +92,7 @@ export function EmailAuthForm() {
             email: values.email,
             password: values.password,
             name: getNameFromEmail(values.email),
-            callbackURL: "/dashboard",
+            callbackURL: "/divinations",
           });
 
           if (result.error) {
@@ -101,7 +101,7 @@ export function EmailAuthForm() {
           }
         }
 
-        window.location.assign("/dashboard");
+        window.location.assign("/divinations");
       } catch (caughtError) {
         setSubmitError(getErrorMessage(caughtError));
       }

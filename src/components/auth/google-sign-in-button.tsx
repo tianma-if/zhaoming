@@ -44,7 +44,7 @@ export function GoogleSignInButton({ className }: { className?: string }) {
     try {
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: "/divinations",
       });
 
       if (result.error) {

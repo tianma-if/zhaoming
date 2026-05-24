@@ -23,7 +23,7 @@ export async function SiteHeader() {
 
       <div className="flex items-center gap-3">
         {user ? (
-          <Link href="/dashboard">
+          <Link href="/divinations">
             <Button>进入工作台</Button>
           </Link>
         ) : (

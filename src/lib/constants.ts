@@ -5,7 +5,7 @@ export const siteConfig = {
     { href: "/", label: "首页" },
     { href: "/pricing", label: "定价" },
     { href: "/blog", label: "博客" },
-    { href: "/dashboard", label: "工作台" },
+    { href: "/divinations", label: "工作台" },
   ],
 } as const;
 

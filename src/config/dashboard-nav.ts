@@ -5,7 +5,6 @@ import {
   Columns4,
   Fingerprint,
   Flower2,
-  LayoutDashboard,
   ScanFace,
   Scale,
   SunMoon,
@@ -30,7 +29,6 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
   {
     label: "工作台",
     items: [
-      { href: "/dashboard", title: "总览", icon: LayoutDashboard },
       { href: "/divinations", title: "测算记录", icon: ClipboardList },
     ],
   },
@@ -78,7 +76,7 @@ export function getDashboardBreadcrumbs(pathname: string) {
   }
 
   const labels: Record<string, string> = {
-    dashboard: "总览",
+    dashboard: "测算记录",
     divinations: "测算记录",
     new: "新建测算",
     ziwei: "紫微排盘",
