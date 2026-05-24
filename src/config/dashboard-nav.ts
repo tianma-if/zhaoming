@@ -1,15 +1,16 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Bot,
-  CalendarDays,
-  Calculator,
-  Hand,
-  HeartHandshake,
+  CircleDotDashed,
+  ClipboardList,
+  Columns4,
+  Fingerprint,
+  Flower2,
   LayoutDashboard,
-  Orbit,
-  Sparkles,
-  Ticket,
-  UserRound,
+  ScanFace,
+  Scale,
+  SunMoon,
+  Tally5,
+  Waypoints,
 } from "lucide-react";
 
 export type DashboardNavItem = {
@@ -30,31 +31,31 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
     label: "工作台",
     items: [
       { href: "/dashboard", title: "总览", icon: LayoutDashboard },
-      { href: "/divinations", title: "测算记录", icon: CalendarDays },
+      { href: "/divinations", title: "测算记录", icon: ClipboardList },
     ],
   },
   {
     label: "命理类",
     items: [
-      { href: "/divinations/new", title: "八字算命", note: "四柱推命", icon: Calculator },
-      { href: "/divinations/ziwei", title: "紫微斗数", note: "命宫排盘", icon: Sparkles },
-      { href: "/divinations/chenggu", title: "袁天罡称骨", note: "骨重歌诀", icon: CalendarDays },
+      { href: "/divinations/new", title: "八字算命", note: "四柱推命", icon: Columns4 },
+      { href: "/divinations/ziwei", title: "紫微斗数", note: "命宫排盘", icon: CircleDotDashed },
+      { href: "/divinations/chenggu", title: "袁天罡称骨", note: "骨重歌诀", icon: Scale },
     ],
   },
   {
     label: "占卜类",
     items: [
-      { href: "/divinations/liuyao", title: "六爻占卜", note: "起卦解读", icon: Ticket },
-      { href: "/divinations/meihua", title: "梅花易数", note: "象数起卦", icon: Orbit },
-      { href: "/divinations/sanshi", title: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
+      { href: "/divinations/liuyao", title: "六爻占卜", note: "起卦解读", icon: Tally5 },
+      { href: "/divinations/meihua", title: "梅花易数", note: "象数起卦", icon: Flower2 },
+      { href: "/divinations/sanshi", title: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: Waypoints },
     ],
   },
   {
     label: "相术与工具",
     items: [
-      { title: "面相学", icon: UserRound },
-      { title: "手相学", icon: Hand },
-      { title: "AI 老黄历", icon: Bot },
+      { title: "面相学", icon: ScanFace },
+      { title: "手相学", icon: Fingerprint },
+      { title: "AI 老黄历", icon: SunMoon },
     ],
   },
 ];
