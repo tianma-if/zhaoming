@@ -39,6 +39,40 @@ export const liuyaoInputSchema = z.object({
   notes: z.string().trim().max(300, "补充信息不能超过 300 个字符。").optional().default(""),
 });
 
+export const meihuaInputSchema = z.object({
+  divinationType: z.literal("meihua"),
+  method: z.enum(["time", "number"]),
+  subjectName: z.string().trim().min(1, "请输入求测人姓名。").max(50, "姓名不能超过 50 个字符。"),
+  gender: z.enum(["male", "female", "other", "unknown"]).default("unknown"),
+  question: z.string().trim().min(6, "问题至少 6 个字符。").max(600, "问题不能超过 600 个字符。"),
+  divinationDate: z.string().min(1, "请选择起卦日期。"),
+  divinationTime: z.string().min(1, "请选择起卦时间。"),
+  upperNumber: z.coerce.number().int().positive("上卦数字必须为正整数。").max(9999, "数字不能超过 9999。").optional(),
+  lowerNumber: z.coerce.number().int().positive("下卦数字必须为正整数。").max(9999, "数字不能超过 9999。").optional(),
+  movingNumber: z.coerce.number().int().positive("动爻数字必须为正整数。").max(9999, "数字不能超过 9999。").optional(),
+  notes: z.string().trim().max(300, "补充信息不能超过 300 个字符。").optional().default(""),
+}).superRefine((value, context) => {
+  if (value.method !== "number") {
+    return;
+  }
+
+  if (!value.upperNumber) {
+    context.addIssue({
+      code: "custom",
+      message: "数字起卦时请输入上卦数字。",
+      path: ["upperNumber"],
+    });
+  }
+
+  if (!value.lowerNumber) {
+    context.addIssue({
+      code: "custom",
+      message: "数字起卦时请输入下卦数字。",
+      path: ["lowerNumber"],
+    });
+  }
+});
+
 export const sanshiInputSchema = z.object({
   divinationType: z.literal("sanshi"),
   system: z.enum(["qimen", "taiyi", "liuren"]),
@@ -55,6 +89,7 @@ export const sanshiInputSchema = z.object({
 export const divinationInputSchema = z.discriminatedUnion("divinationType", [
   birthDivinationInputSchema,
   liuyaoInputSchema,
+  meihuaInputSchema,
   sanshiInputSchema,
 ]);
 
@@ -62,6 +97,8 @@ export type BirthDivinationInputForm = z.input<typeof birthDivinationInputSchema
 export type BirthDivinationInput = z.output<typeof birthDivinationInputSchema>;
 export type LiuyaoInputForm = z.input<typeof liuyaoInputSchema>;
 export type LiuyaoInput = z.output<typeof liuyaoInputSchema>;
+export type MeihuaInputForm = z.input<typeof meihuaInputSchema>;
+export type MeihuaInput = z.output<typeof meihuaInputSchema>;
 export type SanshiInputForm = z.input<typeof sanshiInputSchema>;
 export type SanshiInput = z.output<typeof sanshiInputSchema>;
 export type DivinationInputForm = z.input<typeof divinationInputSchema>;

@@ -9,6 +9,7 @@ const divinationTypeLabelMap: Record<string, string> = {
   ziwei: "紫微斗数",
   chenggu: "称骨",
   liuyao: "六爻",
+  meihua: "梅花",
   sanshi: "三式",
 };
 

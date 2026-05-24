@@ -217,6 +217,58 @@ export interface LiuyaoChart {
   changedHexagram: LiuyaoHexagram;
 }
 
+export type MeihuaMethod = "time" | "number";
+
+export interface MeihuaTrigram {
+  number: number;
+  name: string;
+  nature: string;
+  element: string;
+  code: string;
+}
+
+export interface MeihuaRelation {
+  bodyTrigram: string;
+  useTrigram: string;
+  bodyElement: string;
+  useElement: string;
+  relation: "same" | "body-generates-use" | "use-generates-body" | "body-controls-use" | "use-controls-body";
+  label: string;
+  summary: string;
+}
+
+export interface MeihuaChart {
+  kind: "meihua";
+  meta: {
+    method: MeihuaMethod;
+    divinationDateTime: string;
+    lunar: string;
+    ganZhi: string;
+    question: string;
+    subjectName: string;
+    gender: string;
+    notes?: string;
+  };
+  numbers: {
+    upper: number;
+    lower: number;
+    moving: number;
+    source: string;
+  };
+  trigrams: {
+    upper: MeihuaTrigram;
+    lower: MeihuaTrigram;
+    body: MeihuaTrigram;
+    use: MeihuaTrigram;
+  };
+  movingLine: number;
+  originalHexagram: LiuyaoHexagram;
+  mutualHexagram: LiuyaoHexagram;
+  changedHexagram: LiuyaoHexagram;
+  relation: MeihuaRelation;
+  guidance: string[];
+}
+
 export type SanshiSystem = "qimen" | "taiyi" | "liuren";
 export type TaiyiCountType = "year" | "month" | "day" | "hour";
 

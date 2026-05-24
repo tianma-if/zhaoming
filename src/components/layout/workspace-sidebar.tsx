@@ -46,7 +46,7 @@ const groups: SidebarGroup[] = [
     label: "占卜类",
     items: [
       { href: "/divinations/liuyao", label: "六爻占卜", note: "起卦解读", icon: Ticket },
-      { href: null, label: "梅花易数", icon: Orbit },
+      { href: "/divinations/meihua", label: "梅花易数", note: "象数起卦", icon: Orbit },
       { href: "/divinations/sanshi", label: "三式", note: "奇门遁甲、太乙神数、大六壬", icon: HeartHandshake },
     ],
   },

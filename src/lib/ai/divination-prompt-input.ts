@@ -6,6 +6,7 @@ import type {
   BaziChart,
   ChengguChart,
   LiuyaoChart,
+  MeihuaChart,
   SanshiChart,
   ZiweiChart,
   ZiweiPalace,
@@ -166,6 +167,25 @@ function formatLiuyaoSummary(chart: LiuyaoChart) {
     .join("\n");
 }
 
+function formatMeihuaSummary(chart: MeihuaChart) {
+  return [
+    `起卦方式：${chart.meta.method === "time" ? "时间起卦" : "数字起卦"}`,
+    `起卦时间：${chart.meta.divinationDateTime}`,
+    `干支：${chart.meta.ganZhi}`,
+    `农历：${chart.meta.lunar}`,
+    `本卦：${chart.originalHexagram.name}（${chart.originalHexagram.upperTrigram}上${chart.originalHexagram.lowerTrigram}下）`,
+    `互卦：${chart.mutualHexagram.name}（${chart.mutualHexagram.upperTrigram}上${chart.mutualHexagram.lowerTrigram}下）`,
+    `变卦：${chart.changedHexagram.name}（${chart.changedHexagram.upperTrigram}上${chart.changedHexagram.lowerTrigram}下）`,
+    `动爻：第${chart.movingLine}爻`,
+    `体用：体卦${chart.trigrams.body.name}${chart.trigrams.body.element}，用卦${chart.trigrams.use.name}${chart.trigrams.use.element}，${chart.relation.label}`,
+    `体用说明：${chart.relation.summary}`,
+    `取数来源：${chart.numbers.source}`,
+    chart.meta.notes ? `补充信息：${chart.meta.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function formatSanshiSummary(chart: SanshiChart) {
   const qimenSummary = chart.qimen
     ? [
@@ -282,6 +302,10 @@ function formatDerivedSummary(record: DivinationRecord) {
 
   if (divinationType === "liuyao") {
     return formatLiuyaoSummary(record.chart_json as unknown as LiuyaoChart);
+  }
+
+  if (divinationType === "meihua") {
+    return formatMeihuaSummary(record.chart_json as unknown as MeihuaChart);
   }
 
   if (divinationType === "sanshi") {

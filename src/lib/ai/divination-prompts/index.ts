@@ -3,6 +3,7 @@ import { BAZI_PROMPT_TEMPLATES } from "./bazi";
 import { CHENGGU_PROMPT_TEMPLATES } from "./chenggu";
 import { GENERIC_DIVINATION_PROMPT_TEMPLATES } from "./generic";
 import { LIUYAO_PROMPT_TEMPLATES } from "./liuyao";
+import { MEIHUA_PROMPT_TEMPLATES } from "./meihua";
 import { QIMEN_PROMPT_TEMPLATES } from "./qimen";
 import { SANSHI_LIUREN_PROMPT_TEMPLATES } from "./sanshi-liuren";
 import { SANSHI_QIMEN_PROMPT_TEMPLATES } from "./sanshi-qimen";
@@ -22,6 +23,7 @@ const DIVINATION_PROMPT_REGISTRY: Partial<
   qimen: QIMEN_PROMPT_TEMPLATES,
   chenggu: CHENGGU_PROMPT_TEMPLATES,
   liuyao: LIUYAO_PROMPT_TEMPLATES,
+  meihua: MEIHUA_PROMPT_TEMPLATES,
   sanshi: SANSHI_PROMPT_TEMPLATES,
   "sanshi:qimen": SANSHI_QIMEN_PROMPT_TEMPLATES,
   "sanshi:taiyi": SANSHI_TAIYI_PROMPT_TEMPLATES,

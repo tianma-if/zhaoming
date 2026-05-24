@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { buildBaziChart } from "@/lib/divination/adapters/bazi";
 import { buildChengguChart } from "@/lib/divination/adapters/chenggu";
 import { buildLiuyaoChart } from "@/lib/divination/adapters/liuyao";
+import { buildMeihuaChart } from "@/lib/divination/adapters/meihua";
 import { buildSanshiChart } from "@/lib/divination/adapters/sanshi";
 import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
 import { divinationInputSchema } from "@/lib/divination/schemas";
@@ -41,6 +42,8 @@ export async function POST(request: Request) {
     const { chart, birthGregorian, birthLunar } =
       parsed.data.divinationType === "liuyao"
         ? buildLiuyaoChart(parsed.data)
+        : parsed.data.divinationType === "meihua"
+          ? buildMeihuaChart(parsed.data)
         : parsed.data.divinationType === "sanshi"
           ? buildSanshiChart(parsed.data)
         : parsed.data.divinationType === "bazi"

@@ -78,6 +78,7 @@ const systemGroups: SystemGroup[] = [
       {
         title: "梅花易数",
         body: "偏向即时起念与场景判断，适合作为日常问题的快速观察工具。",
+        href: "/divinations/meihua",
       },
       {
         title: "三式",
