@@ -29,6 +29,10 @@ function toPoints(points: Array<{ x: number; y: number }>) {
   return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
 
+function toCollapsedPoints(total: number) {
+  return Array.from({ length: total }, () => "160,160").join(" ");
+}
+
 export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
   const maxCount = Math.max(...data.map((item) => item.count), 1);
   const domainMax = Math.max(maxCount, 5);
@@ -38,6 +42,8 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
   const valuePoints = data.map((item, index) =>
     getPoint(index, data.length, (item.count / domainMax) * 112),
   );
+  const collapsedPoints = toCollapsedPoints(data.length);
+  const expandedPoints = toPoints(valuePoints);
 
   return (
     <div className="space-y-3 rounded-[1.1rem] border border-border bg-muted/30 px-3 py-4">
@@ -45,7 +51,7 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
         {data.map((item) => (
           <div
             key={item.element}
-            className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium"
+            className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-transform duration-300 hover:-translate-y-0.5"
             style={{
               backgroundColor: getWuxingPalette(item.element).bg,
               borderColor: getWuxingPalette(item.element).border,
@@ -63,12 +69,7 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
       </div>
 
       <div className="mx-auto aspect-square w-full max-w-[24rem]">
-        <svg
-          aria-label="五行雷达图"
-          className="h-full w-full"
-          role="img"
-          viewBox="0 0 320 320"
-        >
+        <svg aria-label="五行雷达图" className="h-full w-full" role="img" viewBox="0 0 320 320">
           {rings.map((radius, index) => (
             <polygon
               key={radius}
@@ -103,29 +104,193 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
             </text>
           ))}
 
-          <polygon
-            fill={dominantPalette.accent}
-            fillOpacity="0.16"
-            points={toPoints(valuePoints)}
-            stroke={dominantPalette.accent}
-            strokeLinejoin="round"
-            strokeWidth="2.5"
-          />
+          <g>
+            <animateTransform
+              attributeName="transform"
+              begin="0.4s"
+              calcMode="spline"
+              dur="4.2s"
+              keySplines="0.42 0 0.58 1;0.42 0 0.58 1"
+              keyTimes="0;0.5;1"
+              repeatCount="indefinite"
+              type="matrix"
+              values="
+                0.978 0 0 0.978 3.52 3.52;
+                1.028 0 0 1.028 -4.48 -4.48;
+                0.978 0 0 0.978 3.52 3.52
+              "
+            />
+            <animate
+              attributeName="opacity"
+              begin="0.4s"
+              dur="4.2s"
+              repeatCount="indefinite"
+              values="0.92;1;0.92"
+            />
+
+            <polygon
+              fill={dominantPalette.accent}
+              fillOpacity="0.16"
+              points={expandedPoints}
+              stroke={dominantPalette.accent}
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+            >
+              <animate
+                attributeName="points"
+                calcMode="spline"
+                dur="0.4s"
+                fill="freeze"
+                keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                keyTimes="0;0.42;1"
+                values={`${collapsedPoints};${collapsedPoints};${expandedPoints}`}
+              />
+            </polygon>
+
+            <polygon
+              fill={dominantPalette.accent}
+              fillOpacity="0.08"
+              points={expandedPoints}
+              stroke="none"
+            >
+              <animate
+                attributeName="points"
+                calcMode="spline"
+                dur="0.4s"
+                fill="freeze"
+                keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                keyTimes="0;0.42;1"
+                values={`${collapsedPoints};${collapsedPoints};${expandedPoints}`}
+              />
+              <animate
+                attributeName="fill-opacity"
+                calcMode="spline"
+                dur="0.4s"
+                fill="freeze"
+                keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                keyTimes="0;0.42;1"
+                values="0;0.03;0.08"
+              />
+              <animate
+                attributeName="fill-opacity"
+                begin="0.4s"
+                dur="4.2s"
+                repeatCount="indefinite"
+                values="0.04;0.18;0.04"
+              />
+            </polygon>
+          </g>
 
           {valuePoints.map((point, index) => {
             const item = data[index];
             const palette = getWuxingPalette(item?.element ?? "");
+            const pulseBegin = `${0.4 + index * 0.18}s`;
 
             return (
-              <circle
-                key={`point-${item?.element}`}
-                cx={point.x}
-                cy={point.y}
-                fill={palette.accent}
-                r="4.5"
-                stroke="#ffffff"
-                strokeWidth="2"
-              />
+              <g key={`point-${item?.element}`}>
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  fill={palette.accent}
+                  fillOpacity="0.1"
+                  r="8"
+                >
+                  <animate
+                    attributeName="cx"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values={`160;160;${point.x}`}
+                  />
+                  <animate
+                    attributeName="cy"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values={`160;160;${point.y}`}
+                  />
+                  <animate
+                    attributeName="r"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values="0;3.5;8"
+                  />
+                  <animate
+                    attributeName="fill-opacity"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values="0;0.03;0.1"
+                  />
+                  <animate
+                    attributeName="r"
+                    begin={pulseBegin}
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                    values="6;11.5;6"
+                  />
+                  <animate
+                    attributeName="fill-opacity"
+                    begin={pulseBegin}
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                    values="0.04;0.24;0.04"
+                  />
+                </circle>
+
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  fill={palette.accent}
+                  r="4.5"
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                >
+                  <animate
+                    attributeName="cx"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values={`160;160;${point.x}`}
+                  />
+                  <animate
+                    attributeName="cy"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values={`160;160;${point.y}`}
+                  />
+                  <animate
+                    attributeName="r"
+                    calcMode="spline"
+                    dur="0.4s"
+                    fill="freeze"
+                    keySplines="0.45 0 0.7 0.2;0.2 0.8 0.2 1"
+                    keyTimes="0;0.42;1"
+                    values="0;2.2;4.5"
+                  />
+                  <animate
+                    attributeName="r"
+                    begin={pulseBegin}
+                    dur="3.2s"
+                    repeatCount="indefinite"
+                    values="4.2;5.4;4.2"
+                  />
+                </circle>
+              </g>
             );
           })}
 
