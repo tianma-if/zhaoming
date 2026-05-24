@@ -276,6 +276,7 @@ AI_API_KEY=your_openrouter_key
 ## 下一步计划
 
 - 补上 `Better Auth` 的正式 schema/migrate 流程，避免只依赖手写 SQL
-- 接通真实 Google OAuth 后做一次完整登录验收
+- 基于现有 `Better Auth + Google OAuth` 登录链路，完成生产回调配置核对与一次完整登录验收
 - 把积分扣减与 Stripe 订阅状态真正落库
-- 继续扩展奇门遁甲、梅花易数等适配器
+- 为博客自动化发布落地 `Markdown + 受控组件嵌入` 方案：正文继续以 Markdown 为主，仅白名单开放盘面层组件嵌入，优先服务 SEO 稳定收录与批量发文
+- 在现有三式、六爻、梅花与称骨基础上，继续补强盘面展示细节、预填充体验与 AI 解读模板
