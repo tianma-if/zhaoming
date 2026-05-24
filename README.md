@@ -86,6 +86,8 @@ BETTER_AUTH_SECRET=
 BETTER_AUTH_URL=http://localhost:5555
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+GOOGLE_CLIENT_ID_LOCAL=
+GOOGLE_CLIENT_SECRET_LOCAL=
 
 AI_PROVIDER=openai-compatible
 AI_MODEL=deepseek/deepseek-v4-pro
@@ -101,6 +103,7 @@ AUTOMATION_API_KEY=
 - `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串
 - `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:5555`
 - `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
+- `GOOGLE_CLIENT_ID_LOCAL / GOOGLE_CLIENT_SECRET_LOCAL`：可选，本地开发专用 Google OAuth 凭据；如果配置，则 `localhost` 会优先使用这一组，避免和线上 client 共用导致 One Tap / origin 校验不稳定
 - `AI_PROVIDER`：
   - `gateway` 表示走 AI Gateway 风格的模型名
   - `openai-compatible` 表示走 OpenRouter 或其他 OpenAI 兼容接口

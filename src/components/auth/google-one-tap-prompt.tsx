@@ -14,6 +14,12 @@ export function GoogleOneTapPrompt({
   enabled?: boolean;
 }) {
   const promptedRef = useRef(false);
+  const isLocalhost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "::1");
+
   const oneTapAuthClient = useMemo(() => {
     if (!clientId) {
       return null;
@@ -27,12 +33,13 @@ export function GoogleOneTapPrompt({
           cancelOnTapOutside: true,
           context: "signin",
           promptOptions: {
+            fedCM: !isLocalhost,
             maxAttempts: 1,
           },
         }),
       ],
     });
-  }, [clientId]);
+  }, [clientId, isLocalhost]);
 
   useEffect(() => {
     if (!enabled || !oneTapAuthClient || promptedRef.current) {
@@ -44,13 +51,8 @@ export function GoogleOneTapPrompt({
     void oneTapAuthClient.oneTap({
       callbackURL,
       context: "signin",
-      onPromptNotification: (notification) => {
-        if (process.env.NODE_ENV === "development") {
-          console.info("Google One Tap prompt was not displayed or was dismissed.", notification);
-        }
-      },
     });
-  }, [callbackURL, enabled, oneTapAuthClient]);
+  }, [callbackURL, clientId, enabled, isLocalhost, oneTapAuthClient]);
 
   return null;
 }

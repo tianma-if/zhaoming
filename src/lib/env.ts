@@ -33,6 +33,8 @@ const envSchema = z.object({
   }, z.string().url().optional()),
   GOOGLE_CLIENT_ID: optionalNonEmptyString(),
   GOOGLE_CLIENT_SECRET: optionalNonEmptyString(),
+  GOOGLE_CLIENT_ID_LOCAL: optionalNonEmptyString(),
+  GOOGLE_CLIENT_SECRET_LOCAL: optionalNonEmptyString(),
   AI_PROVIDER: z.enum(["gateway", "openai-compatible"]).optional(),
   AI_MODEL: optionalNonEmptyString(),
   AI_BASE_URL: z.preprocess((value) => {
@@ -101,8 +103,40 @@ export function hasAuthEnv() {
 }
 
 export function hasGoogleOAuthEnv() {
+  return Boolean(getGoogleOAuthConfig());
+}
+
+export function getGoogleOAuthConfig() {
   const env = readEnv();
-  return Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+  const useLocalGoogleClient =
+    isDevelopmentRuntime() &&
+    Boolean(env.GOOGLE_CLIENT_ID_LOCAL && env.GOOGLE_CLIENT_SECRET_LOCAL);
+
+  if (useLocalGoogleClient) {
+    return {
+      clientId: env.GOOGLE_CLIENT_ID_LOCAL!,
+      clientSecret: env.GOOGLE_CLIENT_SECRET_LOCAL!,
+    };
+  }
+
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+    return null;
+  }
+
+  return {
+    clientId: env.GOOGLE_CLIENT_ID,
+    clientSecret: env.GOOGLE_CLIENT_SECRET,
+  };
+}
+
+export function getGoogleOneTapClientId() {
+  const env = readEnv();
+
+  if (isDevelopmentRuntime() && env.GOOGLE_CLIENT_ID_LOCAL) {
+    return env.GOOGLE_CLIENT_ID_LOCAL;
+  }
+
+  return env.GOOGLE_CLIENT_ID;
 }
 
 export function hasAiProviderEnv() {

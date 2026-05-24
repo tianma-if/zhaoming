@@ -12,7 +12,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getAuthSession } from "@/lib/auth/session";
-import { getEnv } from "@/lib/env";
+import { getGoogleOneTapClientId } from "@/lib/env";
 
 type SystemItem = {
   title: string;
@@ -108,7 +108,7 @@ const systemGroups: SystemGroup[] = [
 export default async function HomePage() {
   const session = await getAuthSession();
   const user = session?.user ?? null;
-  const googleClientId = getEnv().GOOGLE_CLIENT_ID ?? null;
+  const googleClientId = getGoogleOneTapClientId() ?? null;
   const interactiveCardClassName =
     "group transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#111111] hover:shadow-[0_24px_44px_-30px_rgba(17,17,17,0.28)]";
 
