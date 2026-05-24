@@ -1,4 +1,5 @@
 import type { MeihuaChart } from "@/types/divination";
+import { CopyContentButton } from "@/components/divination/copy-content-button";
 import { LiuyaoYaoGlyph } from "@/components/divination/liuyao-yao-glyph";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription } from "@/components/ui/card";
@@ -77,6 +78,25 @@ function MetaLine({ label, value }: { label: string; value: string }) {
   );
 }
 
+function buildMeihuaSummaryText(chart: MeihuaChart) {
+  return [
+    `起卦时间：${chart.meta.divinationDateTime}`,
+    `起卦方式：${formatMethod(chart.meta.method)}`,
+    `干支：${chart.meta.ganZhi}`,
+    `所问之事：${chart.meta.question}`,
+    `本卦：${chart.originalHexagram.name}（${chart.originalHexagram.upperTrigram}上${chart.originalHexagram.lowerTrigram}下）`,
+    `互卦：${chart.mutualHexagram.name}（${chart.mutualHexagram.upperTrigram}上${chart.mutualHexagram.lowerTrigram}下）`,
+    `变卦：${chart.changedHexagram.name}（${chart.changedHexagram.upperTrigram}上${chart.changedHexagram.lowerTrigram}下）`,
+    `体卦：${chart.trigrams.body.name} ${chart.trigrams.body.nature}/${chart.trigrams.body.element}`,
+    `用卦：${chart.trigrams.use.name} ${chart.trigrams.use.nature}/${chart.trigrams.use.element}`,
+    `关系：${chart.relation.label}`,
+    `上卦数：${chart.numbers.upper}`,
+    `下卦数：${chart.numbers.lower}`,
+    `动爻：第 ${chart.movingLine} 爻`,
+    `取数来源：${chart.numbers.source}`,
+  ].join("\n");
+}
+
 function InfoItem({
   label,
   value,
@@ -96,6 +116,8 @@ function InfoItem({
 }
 
 export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
+  const summaryText = buildMeihuaSummaryText(chart);
+
   return (
     <div className="space-y-6">
       <Card className="rounded-xl border border-black/10 bg-white p-6 shadow-none md:p-8">
@@ -158,6 +180,9 @@ export function MeihuaChartView({ chart }: { chart: MeihuaChart }) {
                 </div>
                 <p className="text-xs leading-6 text-black/60">{chart.numbers.source}</p>
               </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <CopyContentButton label="复制概要信息" text={summaryText} />
             </div>
           </section>
 
