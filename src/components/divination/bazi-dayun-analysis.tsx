@@ -34,31 +34,31 @@ export function BaziDaYunAnalysis({ daYun }: { daYun: NonNullable<BaziViewModel[
           ) : null}
         </div>
 
-        <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {daYun.periods.map((period) => {
             const isChildStage = period.index === 0;
 
             return (
               <article
                 key={`${period.index}-${period.ganZhi || "child"}`}
-                className="space-y-4 rounded-xl border border-border bg-white p-4 shadow-[0_1px_2px_rgba(22,20,17,0.04)]"
+                className="space-y-3 rounded-xl border border-border bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(22,20,17,0.04)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm text-muted-foreground">
                       {isChildStage ? "童年阶段" : `第${period.index}运 · ${period.startYear}年`}
                     </p>
-                    <p className="mt-3 text-2xl font-semibold">
+                    <p className="mt-2.5 text-xl font-semibold">
                       年龄范围： {period.ageRange}
                     </p>
-                    <p className="mt-2 text-muted-foreground">
+                    <p className="mt-1.5 text-sm text-muted-foreground">
                       {isChildStage ? "小运阶段" : period.tenGod}
                     </p>
                   </div>
                   {period.ganZhi ? (
-                    <p className="whitespace-nowrap text-xl font-semibold">{period.ganZhi}</p>
+                    <p className="whitespace-nowrap text-lg font-semibold">{period.ganZhi}</p>
                   ) : (
-                    <p className="whitespace-nowrap text-xl font-semibold">父母庇护期</p>
+                    <p className="whitespace-nowrap text-lg font-semibold">父母庇护期</p>
                   )}
                 </div>
                 <Separator />
