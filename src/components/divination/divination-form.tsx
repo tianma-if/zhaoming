@@ -7,6 +7,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { DivinationBaseInfoForm } from "@/components/divination/divination-base-info-form";
 import { DivinationRecordPrefillSheet } from "@/components/divination/divination-record-prefill-sheet";
 import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
+import { saveDivinationPreview, type DivinationCreateResponse } from "@/lib/divination/preview";
 import {
   birthDivinationInputSchema,
   type BirthDivinationInputForm,
@@ -343,7 +344,14 @@ export function DivinationForm({
         return;
       }
 
-      const payload = (await response.json()) as { divination: { id: string } };
+      const payload = (await response.json()) as DivinationCreateResponse;
+
+      if (!payload.persisted) {
+        saveDivinationPreview(payload.divination);
+        router.push("/divinations/preview");
+        return;
+      }
+
       router.push(`/divinations/${payload.divination.id}`);
       router.refresh();
     });

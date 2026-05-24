@@ -5,30 +5,15 @@ import {
   DivinationAiReportButton,
   DivinationAiReportCard,
 } from "@/components/divination/divination-ai-report";
-import { BaziChartView } from "@/components/divination/bazi-chart";
-import { BaziInsights } from "@/components/divination/bazi-insights";
-import { ChengguChartView } from "@/components/divination/chenggu-chart";
-import { LiuyaoChartView } from "@/components/divination/liuyao-chart";
-import { MeihuaChartView } from "@/components/divination/meihua-chart";
-import { SanshiChartView } from "@/components/divination/sanshi-chart";
-import { ZiweiChartView } from "@/components/divination/ziwei-chart";
+import { DivinationChartRenderer } from "@/components/divination/divination-chart-renderer";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { getDivinationById } from "@/lib/data";
-import { buildZiweiChart } from "@/lib/divination/adapters/ziwei";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
-import { divinationInputSchema } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
-import type {
-  BaziChart,
-  ChengguChart,
-  LiuyaoChart,
-  MeihuaChart,
-  SanshiChart,
-  ZiweiChart,
-} from "@/types/divination";
+import type { SanshiChart } from "@/types/divination";
 
 const divinationTitleMap = {
   bazi: "八字算命",
@@ -63,10 +48,13 @@ export async function generateMetadata({
 
 export default async function DivinationDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ ai?: string }>;
 }) {
   const { id } = await params;
+  const { ai } = await searchParams;
   const user = await requireUser();
   const data = await getDivinationById(user.id, id);
 
@@ -77,19 +65,6 @@ export default async function DivinationDetailPage({
   const divinationType = resolveDivinationTypeFromRecord(data);
   const sanshiChart =
     divinationType === "sanshi" ? (data.chart_json as unknown as SanshiChart) : null;
-
-  const ziweiChart =
-    divinationType === "ziwei"
-      ? (() => {
-          const parsed = divinationInputSchema.safeParse(data.input_params);
-
-          if (parsed.success && parsed.data.divinationType === "ziwei") {
-            return buildZiweiChart(parsed.data).chart;
-          }
-
-          return data.chart_json as unknown as ZiweiChart;
-        })()
-      : null;
 
   return (
     <DashboardPage
@@ -135,23 +110,9 @@ export default async function DivinationDetailPage({
         <DivinationAiReportCard
           divinationId={data.id}
           initialMarkdown={data.ai_result_markdown}
+          autoStart={ai === "1"}
         />
-        {divinationType === "bazi" ? (
-          <>
-            <BaziChartView chart={data.chart_json as unknown as BaziChart} />
-            <BaziInsights chart={data.chart_json as unknown as BaziChart} />
-          </>
-        ) : divinationType === "ziwei" ? (
-          <ZiweiChartView chart={ziweiChart as ZiweiChart} subjectName={data.subject_name} />
-        ) : divinationType === "liuyao" ? (
-          <LiuyaoChartView chart={data.chart_json as unknown as LiuyaoChart} />
-        ) : divinationType === "meihua" ? (
-          <MeihuaChartView chart={data.chart_json as unknown as MeihuaChart} />
-        ) : divinationType === "sanshi" ? (
-          <SanshiChartView chart={sanshiChart as SanshiChart} />
-        ) : (
-          <ChengguChartView chart={data.chart_json as unknown as ChengguChart} />
-        )}
+        <DivinationChartRenderer record={data} />
       </div>
     </DashboardPage>
   );

@@ -17,12 +17,6 @@ export async function POST(request: Request) {
     });
     const user = session?.user ?? null;
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await ensureUserProfile(user);
-
     const parsed = divinationInputSchema.safeParse(await request.json());
 
     if (!parsed.success) {
@@ -30,13 +24,6 @@ export async function POST(request: Request) {
         { error: parsed.error.issues[0]?.message ?? "Invalid input." },
         { status: 400 },
       );
-    }
-
-    const profile = await getUserProfile(user.id);
-    const permission = canConsumeCredits(profile);
-
-    if (!permission.allowed) {
-      return NextResponse.json({ error: permission.reason }, { status: 402 });
     }
 
     const { chart, birthGregorian, birthLunar } =
@@ -52,14 +39,47 @@ export async function POST(request: Request) {
             ? buildZiweiChart(parsed.data)
             : buildChengguChart(parsed.data);
 
+    const divinationType =
+      parsed.data.divinationType === "chenggu" || parsed.data.divinationType === "sanshi"
+        ? "custom"
+        : parsed.data.divinationType;
+
+    if (!user) {
+      return NextResponse.json({
+        persisted: false,
+        divination: {
+          id: `preview-${crypto.randomUUID()}`,
+          divination_type: divinationType,
+          subject_name: parsed.data.subjectName || null,
+          birth_gregorian: birthGregorian,
+          birth_lunar: birthLunar,
+          gender: parsed.data.gender,
+          question: parsed.data.question,
+          input_params: parsed.data,
+          chart_json: chart,
+          ai_result_markdown: null,
+          ai_model: null,
+          status: "preview",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      });
+    }
+
+    await ensureUserProfile(user);
+
+    const profile = await getUserProfile(user.id);
+    const permission = canConsumeCredits(profile);
+
+    if (!permission.allowed) {
+      return NextResponse.json({ error: permission.reason }, { status: 402 });
+    }
+
     await reserveDivinationCredits();
 
     const data = await insertDivination({
       userId: user.id,
-      divinationType:
-        parsed.data.divinationType === "chenggu" || parsed.data.divinationType === "sanshi"
-          ? "custom"
-          : parsed.data.divinationType,
+      divinationType,
       subjectName: parsed.data.subjectName || null,
       birthGregorian,
       birthLunar,
@@ -69,7 +89,7 @@ export async function POST(request: Request) {
       chartJson: chart,
     });
 
-    return NextResponse.json({ divination: data });
+    return NextResponse.json({ persisted: true, divination: data });
   } catch (error) {
     console.error("Divination creation failed:", error);
 

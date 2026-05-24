@@ -2,10 +2,9 @@
 
 import { useCompletion } from "@ai-sdk/react";
 import { WandSparkles } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { MarkdownRenderer } from "@/components/prose/markdown-renderer";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AiReportCard } from "@/components/divination/ai-report-card";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
 
 const REQUEST_EVENT = "divination-ai-report:generate";
 const STATE_EVENT = "divination-ai-report:state";
@@ -76,11 +75,14 @@ export function DivinationAiReportButton({
 export function DivinationAiReportCard({
   divinationId,
   initialMarkdown,
+  autoStart = false,
 }: {
   divinationId: string;
   initialMarkdown: string | null;
+  autoStart?: boolean;
 }) {
   const [requested, setRequested] = useState(Boolean(initialMarkdown));
+  const autoStartedRef = useRef(false);
   const { complete, completion, error, isLoading } = useCompletion({
     api: "/api/ai/divination",
     body: {
@@ -128,36 +130,26 @@ export function DivinationAiReportCard({
     );
   }, [divinationId, hasContent, isLoading]);
 
+  useEffect(() => {
+    if (!autoStart || initialMarkdown || autoStartedRef.current) {
+      return;
+    }
+
+    autoStartedRef.current = true;
+    setRequested(true);
+    void complete("");
+  }, [autoStart, complete, initialMarkdown]);
+
   if (!requested && !hasContent) {
     return null;
   }
 
   return (
-    <Card
-      className="overflow-hidden rounded-[1.6rem] border border-border bg-white p-0"
+    <AiReportCard
+      content={content}
+      errorMessage={error ? `AI 解读生成失败：${error.message || "请稍后再试。"}` : null}
       id={`ai-report-${divinationId}`}
-    >
-      <div className="grid gap-5 border-b border-border px-6 py-5 min-[1100px]:grid-cols-[minmax(0,1fr)_auto] min-[1100px]:items-start">
-        <div className="space-y-3">
-          <CardTitle className="text-3xl tracking-[0.04em]">AI 解读报告</CardTitle>
-        </div>
-      </div>
-
-      <div className="bg-muted/25 px-6 py-6">
-        {hasContent ? (
-          <MarkdownRenderer content={content} />
-        ) : (
-          <p className="text-sm leading-7 text-muted-foreground">
-            正在根据命盘结构生成 AI 解读，请稍候片刻。
-          </p>
-        )}
-
-        {error ? (
-          <p className="mt-4 text-sm text-destructive">
-            AI 解读生成失败：{error.message || "请稍后再试。"}
-          </p>
-        ) : null}
-      </div>
-    </Card>
+      isLoading={isLoading}
+    />
   );
 }

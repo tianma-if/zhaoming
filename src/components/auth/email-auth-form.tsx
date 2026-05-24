@@ -57,7 +57,7 @@ function getErrorMessage(error: unknown) {
   return "当前无法完成操作，请稍后再试。";
 }
 
-export function EmailAuthForm() {
+export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: string }) {
   const [mode, setMode] = useState<AuthMode>("sign-in");
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -80,7 +80,7 @@ export function EmailAuthForm() {
           const result = await authClient.signIn.email({
             email: values.email,
             password: values.password,
-            callbackURL: "/divinations",
+            callbackURL,
           });
 
           if (result.error) {
@@ -92,7 +92,7 @@ export function EmailAuthForm() {
             email: values.email,
             password: values.password,
             name: getNameFromEmail(values.email),
-            callbackURL: "/divinations",
+            callbackURL,
           });
 
           if (result.error) {
@@ -101,7 +101,7 @@ export function EmailAuthForm() {
           }
         }
 
-        window.location.assign("/divinations");
+        window.location.assign(callbackURL);
       } catch (caughtError) {
         setSubmitError(getErrorMessage(caughtError));
       }

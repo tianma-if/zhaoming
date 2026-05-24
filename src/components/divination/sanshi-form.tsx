@@ -6,6 +6,7 @@ import { Compass, Shield, Sparkles, TimerReset } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { saveDivinationPreview, type DivinationCreateResponse } from "@/lib/divination/preview";
 import { sanshiInputSchema, type SanshiInputForm } from "@/lib/divination/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -135,7 +136,14 @@ export function SanshiForm() {
         return;
       }
 
-      const payload = (await response.json()) as { divination: { id: string } };
+      const payload = (await response.json()) as DivinationCreateResponse;
+
+      if (!payload.persisted) {
+        saveDivinationPreview(payload.divination);
+        router.push("/divinations/preview");
+        return;
+      }
+
       router.push(`/divinations/${payload.divination.id}`);
       router.refresh();
     });

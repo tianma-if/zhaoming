@@ -22,8 +22,8 @@ export function DashboardUserMenu() {
   const [isPending, setIsPending] = useState(false);
   const { data: session, isPending: isSessionPending } = authClient.useSession();
   const user = session?.user;
-  const email = user?.email ?? "loading@zhiwei.local";
-  const displayName = user?.name || email || "当前账户";
+  const email = user?.email ?? (isSessionPending ? "loading@zhiwei.local" : "guest@zhiwei.local");
+  const displayName = user?.name || (user ? email : "游客模式");
   const initials = displayName.slice(0, 1).toUpperCase();
 
   async function handleSignOut() {

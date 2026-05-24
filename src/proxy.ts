@@ -8,6 +8,20 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const publicDivinationPaths = new Set([
+    "/divinations/new",
+    "/divinations/preview",
+    "/divinations/ziwei",
+    "/divinations/chenggu",
+    "/divinations/liuyao",
+    "/divinations/meihua",
+    "/divinations/sanshi",
+  ]);
+
+  if (publicDivinationPaths.has(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
   const isProtected = protectedPrefixes.some((prefix) =>
     request.nextUrl.pathname.startsWith(prefix),
   );

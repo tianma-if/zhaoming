@@ -9,12 +9,26 @@ import { getAuthSession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+function normalizeCallbackUrl(callbackURL?: string) {
+  if (!callbackURL?.startsWith("/") || callbackURL.startsWith("//")) {
+    return "/divinations";
+  }
+
+  return callbackURL;
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackURL?: string }>;
+}) {
+  const { callbackURL } = await searchParams;
+  const nextUrl = normalizeCallbackUrl(callbackURL);
   const session = await getAuthSession();
   const user = session?.user ?? null;
 
   if (user) {
-    redirect("/divinations");
+    redirect(nextUrl);
   }
 
   return (
@@ -45,7 +59,7 @@ export default async function LoginPage() {
               </CardDescription>
             </div>
 
-            <GoogleSignInButton />
+            <GoogleSignInButton callbackURL={nextUrl} />
 
             <div className="flex w-full items-center gap-4 text-sm text-[#9b9185]">
               <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
@@ -53,7 +67,7 @@ export default async function LoginPage() {
               <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
             </div>
 
-            <EmailAuthForm />
+            <EmailAuthForm callbackURL={nextUrl} />
           </div>
         </Card>
       </div>

@@ -33,7 +33,13 @@ function GoogleMark() {
   );
 }
 
-export function GoogleSignInButton({ className }: { className?: string }) {
+export function GoogleSignInButton({
+  className,
+  callbackURL = "/divinations",
+}: {
+  className?: string;
+  callbackURL?: string;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +50,7 @@ export function GoogleSignInButton({ className }: { className?: string }) {
     try {
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/divinations",
+        callbackURL,
       });
 
       if (result.error) {

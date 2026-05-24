@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { getHexagramByLines } from "@/lib/divination/liuyao-hexagrams";
+import { saveDivinationPreview, type DivinationCreateResponse } from "@/lib/divination/preview";
 import { meihuaInputSchema, type MeihuaInputForm } from "@/lib/divination/schemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -197,7 +198,14 @@ export function MeihuaForm() {
         return;
       }
 
-      const payload = (await response.json()) as { divination: { id: string } };
+      const payload = (await response.json()) as DivinationCreateResponse;
+
+      if (!payload.persisted) {
+        saveDivinationPreview(payload.divination);
+        router.push("/divinations/preview");
+        return;
+      }
+
       router.push(`/divinations/${payload.divination.id}`);
       router.refresh();
     });
