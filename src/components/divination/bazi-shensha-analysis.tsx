@@ -4,20 +4,16 @@ import { Separator } from "@/components/ui/separator";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
-function getShenShaType(label: string) {
+function getShenShaTitleClass(label: string) {
   if (label.includes("吉神")) {
-    return "吉";
+    return "text-emerald-700";
   }
 
   if (label.includes("凶") || label.includes("煞")) {
-    return "煞";
+    return "text-rose-700";
   }
 
-  if (label.includes("冲")) {
-    return "冲";
-  }
-
-  return "神";
+  return "text-sky-700";
 }
 
 export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
@@ -38,34 +34,33 @@ export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
           </span>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {view.shenSha.map((group) => (
-              <section key={group.label} className="space-y-4">
-                <div className="text-center">
-                  <h3 className="text-2xl font-semibold tracking-[0.04em]">{group.label}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {group.values.length} 项
-                  </p>
-                </div>
-                <div className="space-y-2.5">
-                  {group.values.map((item) => (
-                    <article
-                      key={`${group.label}-${item}`}
-                      className="grid min-h-[4.75rem] grid-cols-[minmax(0,1fr)_2.25rem] gap-3 rounded-lg border border-border bg-white px-3 py-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-lg font-semibold leading-6">{item}</p>
-                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                          来源：{group.label}
-                        </p>
-                      </div>
-                      <span className="inline-flex size-8 items-center justify-center rounded-md bg-foreground text-sm font-semibold text-background">
-                        {getShenShaType(group.label)}
-                      </span>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ))}
+          {view.shenSha.map((group) => (
+            <section key={group.label} className="space-y-4">
+              <div className="text-center">
+                <h3
+                  className={[
+                    "text-2xl font-semibold tracking-[0.04em]",
+                    getShenShaTitleClass(group.label),
+                  ].join(" ")}
+                >
+                  {group.label}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {group.values.length} 项
+                </p>
+              </div>
+              <div className="space-y-2.5">
+                {group.values.map((item) => (
+                  <article
+                    key={`${group.label}-${item}`}
+                    className="rounded-lg border border-border bg-white px-3 py-3"
+                  >
+                    <p className="truncate text-lg font-semibold leading-6">{item}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       </div>
     </Card>
