@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LockKeyhole, Sparkles } from "lucide-react";
 import { useState, useSyncExternalStore, useTransition } from "react";
+import { GoogleOneTapPrompt } from "@/components/auth/google-one-tap-prompt";
 import { DivinationChartRenderer } from "@/components/divination/divination-chart-renderer";
 import {
   DashboardEmptyState,
@@ -42,7 +43,7 @@ function getServerPreviewSnapshot() {
   return null;
 }
 
-export function DivinationPreview() {
+export function DivinationPreview({ googleClientId }: { googleClientId: string | null }) {
   const router = useRouter();
   const { data: session, isPending: isSessionPending } = authClient.useSession();
   const preview = useSyncExternalStore(
@@ -147,6 +148,12 @@ export function DivinationPreview() {
             </Button>
           )
         }
+      />
+
+      <GoogleOneTapPrompt
+        callbackURL="/divinations/preview"
+        clientId={googleClientId}
+        enabled={!session?.user && Boolean(preview)}
       />
 
       <div className="space-y-6">

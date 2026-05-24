@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
+import { oneTap } from "better-auth/plugins";
 import { Pool } from "pg";
 import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
@@ -46,7 +47,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [nextCookies()],
+  plugins: [oneTap(), nextCookies()],
   socialProviders: hasGoogleOAuthEnv()
     ? {
         google: {

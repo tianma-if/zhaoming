@@ -6,10 +6,13 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
+import { GoogleOneTapPrompt } from "@/components/auth/google-one-tap-prompt";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { getAuthSession } from "@/lib/auth/session";
+import { getEnv } from "@/lib/env";
 
 type SystemItem = {
   title: string;
@@ -103,12 +106,20 @@ const systemGroups: SystemGroup[] = [
 ];
 
 export default async function HomePage() {
+  const session = await getAuthSession();
+  const user = session?.user ?? null;
+  const googleClientId = getEnv().GOOGLE_CLIENT_ID ?? null;
   const interactiveCardClassName =
     "group transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#111111] hover:shadow-[0_24px_44px_-30px_rgba(17,17,17,0.28)]";
 
   return (
     <main className="min-h-screen bg-white">
       <SiteHeader />
+      <GoogleOneTapPrompt
+        callbackURL="/divinations"
+        clientId={googleClientId}
+        enabled={!user}
+      />
 
       <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-16 pt-10 text-center md:px-10 md:pb-24 md:pt-20">
         <h1 className="font-display text-[4.3rem] leading-[0.95] tracking-[0.01em] text-foreground md:text-[6.6rem]">
