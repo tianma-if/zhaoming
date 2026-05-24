@@ -31,7 +31,6 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
     items: [
       { href: "/dashboard", title: "总览", icon: LayoutDashboard },
       { href: "/divinations", title: "测算记录", icon: CalendarDays },
-      { href: "/profile", title: "个人资料", icon: UserRound },
     ],
   },
   {
