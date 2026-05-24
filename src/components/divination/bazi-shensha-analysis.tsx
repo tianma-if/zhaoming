@@ -1,6 +1,7 @@
 import type { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getBaziShenShaBrief } from "@/lib/divination/bazi-shensha-briefs";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
@@ -56,6 +57,9 @@ export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
                     className="rounded-lg border border-border bg-white px-3 py-3"
                   >
                     <p className="truncate text-lg font-semibold leading-6">{item}</p>
+                    <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+                      {getBaziShenShaBrief(item, group.label)}
+                    </p>
                   </article>
                 ))}
               </div>
