@@ -33,7 +33,7 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
         <CardDescription className="text-sm leading-7">八字中的主要十神关系</CardDescription>
       </div>
       <Separator />
-      <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {view.pillars.map((pillar) => {
           const entries = [
             {
