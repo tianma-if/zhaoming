@@ -1,5 +1,10 @@
 import type { User } from "better-auth";
 import { query } from "@/lib/db";
+import { buildBaziChart } from "@/lib/divination/adapters/bazi";
+import {
+  TRUMP_SAMPLE_BAZI_INPUT,
+  TRUMP_SAMPLE_DIVINATION_KEY,
+} from "@/lib/divination/sample-records";
 import { hasDatabaseEnv } from "@/lib/env";
 import type { Database } from "@/types/database";
 
@@ -9,7 +14,14 @@ type PostRow = Database["public"]["Tables"]["posts"]["Row"];
 
 export type DivinationSummaryRow = Pick<
   DivinationRow,
-  "id" | "divination_type" | "question" | "status" | "created_at" | "input_params" | "chart_json"
+  | "id"
+  | "divination_type"
+  | "subject_name"
+  | "question"
+  | "status"
+  | "created_at"
+  | "input_params"
+  | "chart_json"
 >;
 
 interface DbUserProfile {
@@ -76,6 +88,75 @@ export async function listRecentDivinations(userId: string, limit = 5) {
   return result.rows as DivinationRow[];
 }
 
+export async function ensureTrumpSampleDivinationForUser(user: User) {
+  await ensureUserProfile(user);
+
+  const { chart, birthGregorian, birthLunar } = buildBaziChart(TRUMP_SAMPLE_BAZI_INPUT);
+  const inputParams = {
+    ...TRUMP_SAMPLE_BAZI_INPUT,
+    sampleKey: TRUMP_SAMPLE_DIVINATION_KEY,
+  };
+  const sampleMarkdown = [
+    "# 测试记录",
+    "",
+    "这是一条系统自动生成的特朗普八字测试记录，用于产品内体验排盘、记录列表与后续 AI 解读流程。",
+    "",
+    "- 生日：1946-06-14",
+    "- 时间：10:54",
+    "- 地点：Queens, New York, United States",
+  ].join("\n");
+
+  await query(
+    `
+      insert into public.divinations (
+        user_id,
+        divination_type,
+        subject_name,
+        birth_gregorian,
+        birth_lunar,
+        gender,
+        question,
+        input_params,
+        chart_json,
+        ai_result_markdown,
+        ai_model,
+        status
+      )
+      select
+        $1,
+        'bazi',
+        $2,
+        $3,
+        $4::jsonb,
+        $5,
+        $6,
+        $7::jsonb,
+        $8::jsonb,
+        $9,
+        'system-sample',
+        'completed'
+      where not exists (
+        select 1
+        from public.divinations
+        where user_id = $1
+          and input_params ->> 'sampleKey' = $10
+      )
+    `,
+    [
+      user.id,
+      TRUMP_SAMPLE_BAZI_INPUT.subjectName,
+      birthGregorian,
+      JSON.stringify(birthLunar),
+      TRUMP_SAMPLE_BAZI_INPUT.gender,
+      TRUMP_SAMPLE_BAZI_INPUT.question,
+      JSON.stringify(inputParams),
+      JSON.stringify(chart),
+      sampleMarkdown,
+      TRUMP_SAMPLE_DIVINATION_KEY,
+    ],
+  );
+}
+
 export async function listDivinations(userId: string) {
   const result = await query<DivinationRow>(
     `
@@ -95,6 +176,7 @@ export async function listDivinationSummaries(userId: string) {
       select
         id,
         divination_type,
+        subject_name,
         question,
         status,
         created_at,

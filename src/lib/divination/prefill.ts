@@ -1,4 +1,5 @@
 import type { Database, Json } from "@/types/database";
+import { TRUMP_SAMPLE_DIVINATION_KEY } from "./sample-records";
 import { resolveDivinationTypeFromRecord } from "./record-type";
 import type { BirthDivinationInputForm } from "./schemas";
 
@@ -16,6 +17,7 @@ export type DivinationPrefillRecord = {
   birthPlaceMeta: BirthDivinationInputForm["birthPlaceMeta"];
   isLeapMonth: boolean;
   createdAt: string;
+  source?: "history" | "sample";
 };
 
 function isJsonObject(value: Json | null | undefined): value is Record<string, Json> {
@@ -68,6 +70,7 @@ export function toDivinationPrefillRecord(
   const birthDate = readString(row.input_params.birthDate);
   const birthTime = readString(row.input_params.birthTime);
   const birthPlace = readString(row.input_params.birthPlace);
+  const sampleKey = readString(row.input_params.sampleKey);
 
   if (!gender || !calendarType || !birthDate || !birthTime) {
     return null;
@@ -85,5 +88,6 @@ export function toDivinationPrefillRecord(
     birthPlaceMeta: readBirthPlaceMeta(row.input_params.birthPlaceMeta),
     isLeapMonth: row.input_params.isLeapMonth === true,
     createdAt: row.created_at,
+    source: sampleKey === TRUMP_SAMPLE_DIVINATION_KEY ? "sample" : "history",
   };
 }

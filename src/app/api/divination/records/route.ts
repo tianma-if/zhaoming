@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSessionFromHeaders } from "@/lib/auth/session";
-import { listDivinationSummaries } from "@/lib/data";
+import { ensureTrumpSampleDivinationForUser, listDivinationSummaries } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import type { Json } from "@/types/database";
 
@@ -60,6 +60,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await ensureTrumpSampleDivinationForUser(user);
+
     const records = (await listDivinationSummaries(user.id)).map((item) => {
       const type = resolveDivinationTypeFromRecord(item);
 
@@ -67,6 +69,7 @@ export async function GET(request: Request) {
         id: item.id,
         type,
         typeLabel: resolveRecordTypeLabel(item, type),
+        subjectName: item.subject_name ?? "",
         question: item.question,
         status: item.status,
         created_at: item.created_at,

@@ -16,9 +16,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpRight, RotateCcw, Search } from "lucide-react";
-import { DataTable } from "@/components/ui/table/data-table";
-import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
-import { DataTableViewOptions } from "@/components/ui/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,12 +25,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DataTable } from "@/components/ui/table/data-table";
+import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { DataTableViewOptions } from "@/components/ui/table/data-table-view-options";
 import { formatDateTime } from "@/lib/utils";
 
 export interface DivinationRecordTableRow {
   id: string;
   type: string;
   typeLabel: string;
+  subjectName: string;
   question: string;
   status: string;
   created_at: string;
@@ -41,6 +42,7 @@ export interface DivinationRecordTableRow {
 
 const columnLabels: Record<string, string> = {
   typeLabel: "类型",
+  subjectName: "测算人姓名",
   question: "问题",
   created_at: "创建时间",
 };
@@ -50,9 +52,7 @@ interface DivinationRecordsTableProps {
 }
 
 export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "created_at", desc: true },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: "created_at", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -67,6 +67,11 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
         header: ({ column }) => <DataTableColumnHeader column={column} title="类型" />,
         cell: ({ row }) => <span className="font-medium">{row.original.typeLabel}</span>,
         filterFn: (row, _id, value) => row.original.type === value,
+      },
+      {
+        accessorKey: "subjectName",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="测算人姓名" />,
+        cell: ({ row }) => <span>{row.original.subjectName || "未填写"}</span>,
       },
       {
         accessorKey: "question",

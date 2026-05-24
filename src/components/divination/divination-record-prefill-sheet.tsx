@@ -3,6 +3,10 @@
 import { ChevronRight, History } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
+import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
+import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
+import { formatDateTime } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,9 +16,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { DivinationPrefillRecord } from "@/lib/divination/prefill";
-import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
-import { formatDateTime } from "@/lib/utils";
 
 function getDivinationTypeLabel(type: string) {
   if (type === "bazi") return "八字";
@@ -56,7 +57,7 @@ export function DivinationRecordPrefillSheet({
       <SheetContent side="right" className="w-full sm:max-w-lg">
         <SheetHeader className="border-b border-border px-6 py-6">
           <SheetTitle>选择历史记录</SheetTitle>
-          <SheetDescription>选择一条已有记录，快速填充当前排盘表单。</SheetDescription>
+          <SheetDescription>选择一条已有记录，快速填入当前排盘表单。</SheetDescription>
         </SheetHeader>
 
         <div className="space-y-3 overflow-y-auto px-6 py-6">
@@ -93,6 +94,11 @@ export function DivinationRecordPrefillSheet({
                   <span className="font-medium text-foreground">
                     {record.subjectName || "未命名记录"}
                   </span>
+                  {record.source === "sample" ? (
+                    <Badge variant="secondary" className="rounded-full px-2 py-0 text-[11px]">
+                      测试
+                    </Badge>
+                  ) : null}
                   <span className="text-xs text-muted-foreground">
                     {getDivinationTypeLabel(record.divinationType)}
                   </span>
@@ -104,7 +110,9 @@ export function DivinationRecordPrefillSheet({
                   {record.birthPlace || "未填写出生地"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  创建时间：{formatDateTime(record.createdAt)}
+                  {record.source === "sample"
+                    ? "产品内置测试记录"
+                    : `创建时间：${formatDateTime(record.createdAt)}`}
                 </p>
               </div>
               <ChevronRight className="size-4 text-muted-foreground" />

@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  DashboardEmptyState,
-} from "@/components/layout/dashboard-shell";
+import { DashboardEmptyState } from "@/components/layout/dashboard-shell";
 import {
   DivinationRecordsTable,
   type DivinationRecordTableRow,
@@ -73,11 +71,7 @@ export function DivinationRecordsPanel() {
       <DashboardEmptyState
         title="测算记录加载失败"
         description={state.error}
-        action={
-          <Button onClick={() => window.location.reload()}>
-            重新加载
-          </Button>
-        }
+        action={<Button onClick={() => window.location.reload()}>重新加载</Button>}
       />
     );
   }
@@ -86,7 +80,7 @@ export function DivinationRecordsPanel() {
     return (
       <DashboardEmptyState
         title="还没有测算记录"
-        description="先创建一条命盘或占卜记录，后面所有 AI 解读、比较和复看，都会从这里进入。"
+        description="先创建一条命盘或占卜记录，后面的 AI 解读、比较和回看，都会从这里进入。"
         action={
           <Button asChild>
             <Link href="/divinations/new">立即新建</Link>
@@ -110,8 +104,8 @@ function DivinationRecordsSkeleton() {
         <Skeleton className="h-10 w-20" />
       </div>
       <div className="overflow-hidden rounded-lg border">
-        <div className="grid grid-cols-[0.8fr_2fr_1.4fr_0.6fr] border-b px-2 py-3">
-          {["类型", "问题", "创建时间", ""].map((item) => (
+        <div className="grid grid-cols-[0.8fr_1fr_2fr_1.4fr_0.6fr] border-b px-2 py-3">
+          {["类型", "测算人姓名", "问题", "创建时间", ""].map((item) => (
             <span key={item} className="text-sm font-medium">
               {item}
             </span>
@@ -120,9 +114,10 @@ function DivinationRecordsSkeleton() {
         {Array.from({ length: 5 }).map((_, index) => (
           <div
             key={index}
-            className="grid grid-cols-[0.8fr_2fr_1.4fr_0.6fr] items-center border-b px-2 py-4 last:border-b-0"
+            className="grid grid-cols-[0.8fr_1fr_2fr_1.4fr_0.6fr] items-center border-b px-2 py-4 last:border-b-0"
           >
             <Skeleton className="h-5 w-12" />
+            <Skeleton className="h-5 w-24" />
             <Skeleton className="h-5 w-48 max-w-full" />
             <Skeleton className="h-5 w-36" />
             <Skeleton className="ml-auto h-5 w-12" />

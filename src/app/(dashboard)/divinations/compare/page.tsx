@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { BAZI_DEMO_MODEL_OPTIONS } from "@/lib/ai/model-comparison";
 import { requireUser } from "@/lib/auth/session";
-import { listDivinations } from "@/lib/data";
+import { ensureTrumpSampleDivinationForUser, listDivinations } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
 
@@ -24,6 +24,7 @@ export default async function DivinationComparePage({
 }) {
   const { divinationId } = await searchParams;
   const user = await requireUser();
+  await ensureTrumpSampleDivinationForUser(user);
   const records = await listDivinations(user.id);
   const baziRecords = records
     .filter((item) => resolveDivinationTypeFromRecord(item) === "bazi")

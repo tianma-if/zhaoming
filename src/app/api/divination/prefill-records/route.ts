@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { listRecentDivinations } from "@/lib/data";
+import { ensureTrumpSampleDivinationForUser, listRecentDivinations } from "@/lib/data";
 import { toDivinationPrefillRecord } from "@/lib/divination/prefill";
 
 export async function GET(request: Request) {
@@ -13,6 +13,8 @@ export async function GET(request: Request) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await ensureTrumpSampleDivinationForUser(user);
 
     const records = (await listRecentDivinations(user.id, 8))
       .map(toDivinationPrefillRecord)
