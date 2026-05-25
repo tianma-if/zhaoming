@@ -2,10 +2,9 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { oneTap } from "better-auth/plugins";
 import { Pool } from "pg";
-import { getAppBaseUrl, getEnv, getGoogleOAuthConfig } from "@/lib/env";
+import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
 const env = getEnv();
-const googleOAuthConfig = getGoogleOAuthConfig();
 
 function getAuthDatabaseUrl() {
   const rawUrl =
@@ -49,11 +48,11 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [oneTap(), nextCookies()],
-  socialProviders: googleOAuthConfig
+  socialProviders: hasGoogleOAuthEnv()
     ? {
         google: {
-          clientId: googleOAuthConfig.clientId,
-          clientSecret: googleOAuthConfig.clientSecret,
+          clientId: env.GOOGLE_CLIENT_ID!,
+          clientSecret: env.GOOGLE_CLIENT_SECRET!,
           prompt: "select_account",
         },
       }
