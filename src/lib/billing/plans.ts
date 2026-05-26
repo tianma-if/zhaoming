@@ -1,0 +1,86 @@
+import { getEnv } from "@/lib/env";
+
+export type CreditPackId =
+  | "single-report"
+  | "starter-pack"
+  | "popular-pack"
+  | "deep-dive-pack";
+
+export interface CreditPack {
+  id: CreditPackId;
+  name: string;
+  priceLabel: string;
+  creditsLabel: string;
+  unitPriceLabel: string;
+  description: string;
+  credits: number;
+  amount: number;
+  currency: "cny";
+  recommended?: boolean;
+}
+
+export const creditPacks: CreditPack[] = [
+  {
+    id: "single-report",
+    name: "单次解读",
+    priceLabel: "¥1.9",
+    creditsLabel: "1 次",
+    unitPriceLabel: "¥1.9 / 次",
+    description: "临时生成 1 份完整 AI 命理分析报告。",
+    credits: 1,
+    amount: 190,
+    currency: "cny",
+  },
+  {
+    id: "starter-pack",
+    name: "灵感体验包",
+    priceLabel: "¥6.9",
+    creditsLabel: "5 次",
+    unitPriceLabel: "¥1.38 / 次",
+    description: "适合先小范围体验不同命盘。",
+    credits: 5,
+    amount: 690,
+    currency: "cny",
+  },
+  {
+    id: "popular-pack",
+    name: "常用解读包",
+    priceLabel: "¥15.9",
+    creditsLabel: "15 次",
+    unitPriceLabel: "¥1.06 / 次",
+    description: "适合自己和亲友常用解读。",
+    credits: 15,
+    amount: 1590,
+    currency: "cny",
+    recommended: true,
+  },
+  {
+    id: "deep-dive-pack",
+    name: "深度探索包",
+    priceLabel: "¥29.9",
+    creditsLabel: "40 次",
+    unitPriceLabel: "¥0.75 / 次",
+    description: "适合批量保存、对比和持续研究。",
+    credits: 40,
+    amount: 2990,
+    currency: "cny",
+  },
+];
+
+const stripePriceEnvKeyByPlanId: Record<CreditPackId, keyof ReturnType<typeof getEnv>> = {
+  "single-report": "STRIPE_PRICE_SINGLE_REPORT",
+  "starter-pack": "STRIPE_PRICE_STARTER_PACK",
+  "popular-pack": "STRIPE_PRICE_POPULAR_PACK",
+  "deep-dive-pack": "STRIPE_PRICE_DEEP_DIVE_PACK",
+};
+
+export function getCreditPack(planId: string) {
+  return creditPacks.find((pack) => pack.id === planId) ?? null;
+}
+
+export function getStripePriceIdForPack(planId: CreditPackId) {
+  const env = getEnv();
+  const priceId = env[stripePriceEnvKeyByPlanId[planId]];
+
+  return typeof priceId === "string" ? priceId : null;
+}

@@ -45,6 +45,13 @@ const envSchema = z.object({
   }, z.string().url().optional()),
   AI_API_KEY: optionalNonEmptyString(),
   AUTOMATION_API_KEY: optionalNonEmptyString(),
+  STRIPE_SECRET_KEY: optionalNonEmptyString(),
+  STRIPE_WEBHOOK_SECRET: optionalNonEmptyString(),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: optionalNonEmptyString(),
+  STRIPE_PRICE_SINGLE_REPORT: optionalNonEmptyString(),
+  STRIPE_PRICE_STARTER_PACK: optionalNonEmptyString(),
+  STRIPE_PRICE_POPULAR_PACK: optionalNonEmptyString(),
+  STRIPE_PRICE_DEEP_DIVE_PACK: optionalNonEmptyString(),
 });
 
 type AppEnv = z.infer<typeof envSchema>;
@@ -113,4 +120,25 @@ export function hasAiProviderEnv() {
   }
 
   return Boolean(env.AI_MODEL);
+}
+
+export function hasStripeSecretEnv() {
+  const env = readEnv();
+  return Boolean(env.STRIPE_SECRET_KEY);
+}
+
+export function hasStripeWebhookEnv() {
+  const env = readEnv();
+  return Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET);
+}
+
+export function hasStripeCheckoutEnv() {
+  const env = readEnv();
+
+  return Boolean(
+    env.STRIPE_PRICE_SINGLE_REPORT &&
+      env.STRIPE_PRICE_STARTER_PACK &&
+      env.STRIPE_PRICE_POPULAR_PACK &&
+      env.STRIPE_PRICE_DEEP_DIVE_PACK,
+  );
 }

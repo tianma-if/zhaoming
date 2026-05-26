@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, Check, Sparkles, WandSparkles } from "lucide-react";
+import { CheckoutPlanButton } from "@/components/billing/checkout-plan-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,45 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { creditPacks } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils";
-
-const creditPacks = [
-  {
-    name: "单次解读",
-    price: "¥1.9",
-    credits: "1 次",
-    unitPrice: "¥1.9/次",
-    description: "临时生成一份完整 AI 分析报告。",
-  },
-  {
-    name: "灵感体验包",
-    price: "¥6.9",
-    credits: "5 次",
-    unitPrice: "¥1.38/次",
-    description: "适合先小范围体验不同命盘。",
-  },
-  {
-    name: "常用解读包",
-    price: "¥15.9",
-    credits: "15 次",
-    unitPrice: "¥1.06/次",
-    description: "适合自己和亲友常用解读。",
-    recommended: true,
-  },
-  {
-    name: "深度探索包",
-    price: "¥29.9",
-    credits: "40 次",
-    unitPrice: "¥0.75/次",
-    description: "适合批量保存、对比和持续研究。",
-  },
-];
 
 const includedFeatures = [
   "新用户赠送 1 份 AI 分析报告",
   "1 次 = 生成 1 份完整 AI 报告",
   "排盘与基础命盘信息免费查看",
-  "报告次数长期保留，后续可接入支付后自动入账",
+  "支付完成后，报告次数会自动入账到当前账户",
 ];
 
 export function SubscriptionPlansDialog() {
@@ -61,7 +31,7 @@ export function SubscriptionPlansDialog() {
           className="h-10 justify-start rounded-md bg-background shadow-none group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
         >
           <Sparkles className="size-4" />
-          <span className="group-data-[collapsible=icon]:hidden">解锁全部功能</span>
+          <span className="group-data-[collapsible=icon]:hidden">解锁完整 AI 报告</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -70,9 +40,9 @@ export function SubscriptionPlansDialog() {
             <WandSparkles className="size-3.5" />
             AI 报告次数包
           </Badge>
-          <DialogTitle>解锁完整 AI 命理分析报告</DialogTitle>
+          <DialogTitle>选择套餐后跳转到 Stripe 支付页</DialogTitle>
           <DialogDescription>
-            注册赠送 1 次免费 AI 解读。用完后可按次购买，也可以选择次数包获得更低单次价格。
+            注册赠送 1 次免费 AI 解读。用完后可继续按次购买，支付完成后次数会自动加到当前账户。
           </DialogDescription>
         </DialogHeader>
 
@@ -91,7 +61,7 @@ export function SubscriptionPlansDialog() {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {creditPacks.map((pack) => (
             <div
-              key={pack.name}
+              key={pack.id}
               className={cn(
                 "relative flex min-h-[18rem] flex-col rounded-[1.25rem] border bg-card p-5 text-card-foreground shadow-[0_18px_44px_-34px_rgba(22,20,17,0.3)]",
                 pack.recommended
@@ -114,15 +84,19 @@ export function SubscriptionPlansDialog() {
                 </div>
                 <div>
                   <div className="flex items-end gap-2">
-                    <span className="text-3xl font-semibold tracking-tight">{pack.price}</span>
-                    <span className="pb-1 text-sm text-muted-foreground">/ {pack.credits}</span>
+                    <span className="text-3xl font-semibold tracking-tight">{pack.priceLabel}</span>
+                    <span className="pb-1 text-sm text-muted-foreground">
+                      / {pack.creditsLabel}
+                    </span>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{pack.unitPrice}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{pack.unitPriceLabel}</p>
                 </div>
               </div>
-              <Button className="mt-auto w-full rounded-md" size="sm">
-                选择套餐
-              </Button>
+              <CheckoutPlanButton
+                planId={pack.id}
+                className="mt-auto"
+                buttonClassName="w-full rounded-md"
+              />
             </div>
           ))}
         </div>

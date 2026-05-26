@@ -1,5 +1,7 @@
 import type { User } from "better-auth";
-import { query } from "@/lib/db";
+import type { PoolClient } from "pg";
+import { query, withTransaction } from "@/lib/db";
+import type { CreditPackId } from "@/lib/billing/plans";
 import { buildBaziChart } from "@/lib/divination/adapters/bazi";
 import {
   TRUMP_SAMPLE_BAZI_INPUT,
@@ -11,6 +13,7 @@ import type { Database } from "@/types/database";
 type AppUserRow = Database["public"]["Tables"]["users"]["Row"];
 type DivinationRow = Database["public"]["Tables"]["divinations"]["Row"];
 type PostRow = Database["public"]["Tables"]["posts"]["Row"];
+type StripeCheckoutSessionRow = Database["public"]["Tables"]["stripe_checkout_sessions"]["Row"];
 
 export type DivinationSummaryRow = Pick<
   DivinationRow,
@@ -344,4 +347,164 @@ export async function upsertAutomationPost(input: {
   );
 
   return result.rows[0];
+}
+
+export async function upsertStripeCheckoutSession(input: {
+  sessionId: string;
+  userId: string;
+  planId: CreditPackId;
+  credits: number;
+  amountTotal: number;
+  currency: string;
+  stripeCustomerId: string | null;
+  stripePaymentIntentId?: string | null;
+  stripeStatus: string;
+  paymentStatus: string;
+}) {
+  await query(
+    `
+      insert into public.stripe_checkout_sessions (
+        session_id,
+        user_id,
+        stripe_customer_id,
+        stripe_payment_intent_id,
+        plan_id,
+        credits,
+        amount_total,
+        currency,
+        stripe_status,
+        payment_status
+      )
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      on conflict (session_id) do update
+      set
+        stripe_customer_id = coalesce(excluded.stripe_customer_id, public.stripe_checkout_sessions.stripe_customer_id),
+        stripe_payment_intent_id = coalesce(excluded.stripe_payment_intent_id, public.stripe_checkout_sessions.stripe_payment_intent_id),
+        plan_id = excluded.plan_id,
+        credits = excluded.credits,
+        amount_total = excluded.amount_total,
+        currency = excluded.currency,
+        stripe_status = excluded.stripe_status,
+        payment_status = excluded.payment_status,
+        updated_at = timezone('utc', now())
+    `,
+    [
+      input.sessionId,
+      input.userId,
+      input.stripeCustomerId,
+      input.stripePaymentIntentId ?? null,
+      input.planId,
+      input.credits,
+      input.amountTotal,
+      input.currency,
+      input.stripeStatus,
+      input.paymentStatus,
+    ],
+  );
+}
+
+async function getStripeCheckoutSessionForUpdate(client: PoolClient, sessionId: string) {
+  const result = await client.query<StripeCheckoutSessionRow>(
+    `
+      select *
+      from public.stripe_checkout_sessions
+      where session_id = $1
+      for update
+    `,
+    [sessionId],
+  );
+
+  return result.rows[0] ?? null;
+}
+
+export async function fulfillStripeCheckoutSession(input: {
+  sessionId: string;
+  userId: string;
+  stripeCustomerId: string | null;
+  stripePaymentIntentId?: string | null;
+  planId: CreditPackId;
+  credits: number;
+  amountTotal: number;
+  currency: string;
+  stripeStatus: string;
+  paymentStatus: string;
+}) {
+  return withTransaction(async (client) => {
+    await client.query(
+      `
+        insert into public.stripe_checkout_sessions (
+          session_id,
+          user_id,
+          stripe_customer_id,
+          stripe_payment_intent_id,
+          plan_id,
+          credits,
+          amount_total,
+          currency,
+          stripe_status,
+          payment_status
+        )
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        on conflict (session_id) do nothing
+      `,
+      [
+        input.sessionId,
+        input.userId,
+        input.stripeCustomerId,
+        input.stripePaymentIntentId ?? null,
+        input.planId,
+        input.credits,
+        input.amountTotal,
+        input.currency,
+        input.stripeStatus,
+        input.paymentStatus,
+      ],
+    );
+
+    const checkoutSession = await getStripeCheckoutSessionForUpdate(client, input.sessionId);
+
+    if (!checkoutSession) {
+      throw new Error("Stripe checkout session record was not found.");
+    }
+
+    if (!checkoutSession.fulfilled_at) {
+      await client.query(
+        `
+          update public.users
+          set
+            credits = credits + $2,
+            stripe_customer_id = coalesce($3, stripe_customer_id),
+            updated_at = timezone('utc', now())
+          where id = $1
+        `,
+        [input.userId, checkoutSession.credits, input.stripeCustomerId],
+      );
+    }
+
+    await client.query(
+      `
+        update public.stripe_checkout_sessions
+        set
+          stripe_customer_id = coalesce($2, stripe_customer_id),
+          stripe_payment_intent_id = coalesce($3, stripe_payment_intent_id),
+          stripe_status = $4,
+          payment_status = $5,
+          fulfilled_at = coalesce(fulfilled_at, timezone('utc', now())),
+          updated_at = timezone('utc', now())
+        where session_id = $1
+      `,
+      [
+        input.sessionId,
+        input.stripeCustomerId,
+        input.stripePaymentIntentId ?? null,
+        input.stripeStatus,
+        input.paymentStatus,
+      ],
+    );
+
+    return {
+      fulfilled: !checkoutSession.fulfilled_at,
+      creditsGranted: checkoutSession.fulfilled_at ? 0 : checkoutSession.credits,
+    };
+  });
 }

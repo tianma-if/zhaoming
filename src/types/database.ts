@@ -78,6 +78,33 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["posts"]["Row"]>;
       };
+      stripe_checkout_sessions: {
+        Row: {
+          id: string;
+          session_id: string;
+          user_id: string;
+          stripe_customer_id: string | null;
+          stripe_payment_intent_id: string | null;
+          plan_id: string;
+          credits: number;
+          amount_total: number;
+          currency: string;
+          stripe_status: string;
+          payment_status: string;
+          fulfilled_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["stripe_checkout_sessions"]["Row"]> & {
+          session_id: string;
+          user_id: string;
+          plan_id: string;
+          credits: number;
+          amount_total: number;
+          currency: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["stripe_checkout_sessions"]["Row"]>;
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
