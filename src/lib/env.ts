@@ -137,7 +137,6 @@ export function hasStripeCheckoutEnv() {
 
   return Boolean(
     env.STRIPE_PRICE_SINGLE_REPORT &&
-      env.STRIPE_PRICE_STARTER_PACK &&
       env.STRIPE_PRICE_POPULAR_PACK &&
       env.STRIPE_PRICE_DEEP_DIVE_PACK,
   );

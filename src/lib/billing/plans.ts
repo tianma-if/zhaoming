@@ -2,7 +2,6 @@ import { getEnv } from "@/lib/env";
 
 export type CreditPackId =
   | "single-report"
-  | "starter-pack"
   | "popular-pack"
   | "deep-dive-pack";
 
@@ -32,17 +31,6 @@ export const creditPacks: CreditPack[] = [
     currency: "cny",
   },
   {
-    id: "starter-pack",
-    name: "灵感体验包",
-    priceLabel: "¥6.9",
-    creditsLabel: "5 次",
-    unitPriceLabel: "¥1.38 / 次",
-    description: "适合先小范围体验不同命盘。",
-    credits: 5,
-    amount: 690,
-    currency: "cny",
-  },
-  {
     id: "popular-pack",
     name: "常用解读包",
     priceLabel: "¥15.9",
@@ -69,7 +57,6 @@ export const creditPacks: CreditPack[] = [
 
 const stripePriceEnvKeyByPlanId: Record<CreditPackId, keyof ReturnType<typeof getEnv>> = {
   "single-report": "STRIPE_PRICE_SINGLE_REPORT",
-  "starter-pack": "STRIPE_PRICE_STARTER_PACK",
   "popular-pack": "STRIPE_PRICE_POPULAR_PACK",
   "deep-dive-pack": "STRIPE_PRICE_DEEP_DIVE_PACK",
 };
