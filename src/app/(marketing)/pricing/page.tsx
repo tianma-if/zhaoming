@@ -1,10 +1,8 @@
-import { CheckoutPlanButton } from "@/components/billing/checkout-plan-button";
+import { CreditPackGrid } from "@/components/billing/credit-pack-grid";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { creditPacks } from "@/lib/billing/plans";
-import { cn } from "@/lib/utils";
 
 export default async function PricingPage() {
   return (
@@ -39,41 +37,7 @@ export default async function PricingPage() {
             </div>
           </Card>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {creditPacks.map((pack) => (
-              <Card
-                key={pack.id}
-                className={cn(
-                  "rounded-[2rem] border p-6 shadow-[0_26px_80px_-58px_rgba(22,20,17,0.45)]",
-                  pack.recommended
-                    ? "border-foreground bg-card"
-                    : "border-border/70 bg-background/95",
-                )}
-              >
-                {pack.recommended ? (
-                  <Badge className="mb-4 w-fit rounded-full px-3 py-1">推荐</Badge>
-                ) : null}
-                <CardTitle className="text-2xl">{pack.name}</CardTitle>
-                <CardDescription className="mt-3 text-sm leading-7">
-                  {pack.description}
-                </CardDescription>
-                <div className="mt-6">
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-semibold tracking-tight">{pack.priceLabel}</span>
-                    <span className="pb-1 text-sm text-muted-foreground">
-                      / {pack.creditsLabel}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-xs text-muted-foreground">{pack.unitPriceLabel}</p>
-                </div>
-                <CheckoutPlanButton
-                  planId={pack.id}
-                  className="mt-8"
-                  buttonClassName="h-11 w-full rounded-xl"
-                />
-              </Card>
-            ))}
-          </div>
+          <CreditPackGrid />
         </div>
       </section>
       <SiteFooter />
