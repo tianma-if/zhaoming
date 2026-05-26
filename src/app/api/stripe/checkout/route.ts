@@ -93,7 +93,7 @@ export async function POST(request: Request) {
         userId: user.id,
       },
       payment_method_types: ["card"],
-      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${baseUrl}/divinations?purchase=success&credits=${pack.credits}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/checkout/cancel?from=${encodeURIComponent(pack.id)}`,
     });
 
