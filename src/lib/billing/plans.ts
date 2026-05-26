@@ -22,12 +22,12 @@ export const creditPacks: CreditPack[] = [
   {
     id: "single-report",
     name: "单次解读",
-    priceLabel: "¥1.9",
+    priceLabel: "¥4.9",
     creditsLabel: "1 次",
-    unitPriceLabel: "¥1.9 / 次",
+    unitPriceLabel: "¥4.9 / 次",
     description: "临时生成 1 份完整 AI 命理分析报告。",
     credits: 1,
-    amount: 190,
+    amount: 490,
     currency: "cny",
   },
   {
