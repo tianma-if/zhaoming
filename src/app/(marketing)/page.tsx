@@ -127,7 +127,7 @@ export default async function HomePage() {
           照命
         </h1>
         <p className="mt-5 text-2xl text-[#7d7d7d] md:text-[2rem]">
-          解构命运的底层代码
+          AI 解构命运的底层代码
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:gap-8">
