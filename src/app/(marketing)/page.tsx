@@ -86,6 +86,7 @@ const systemGroups: SystemGroup[] = [
       {
         title: "三式",
         alias: "奇门遁甲、太乙神数、大六壬",
+        href: "/divinations/sanshi",
         body: "更高阶的数术体系，适合后续扩展为进阶决策与时空判断模块。",
       },
     ],
