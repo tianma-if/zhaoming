@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getCreditPack } from "@/lib/billing/plans";
-import { fulfillStripeCheckoutSession } from "@/lib/data";
+import { fulfillBillingCheckoutSession } from "@/lib/data";
 import { getEnv, hasStripeWebhookEnv } from "@/lib/env";
 import { getStripe } from "@/lib/stripe";
 
@@ -56,17 +56,18 @@ export async function POST(request: Request) {
         );
       }
 
-      await fulfillStripeCheckoutSession({
+      await fulfillBillingCheckoutSession({
+        provider: "stripe",
         sessionId: session.id,
         userId,
-        stripeCustomerId:
+        providerCustomerId:
           typeof session.customer === "string" ? session.customer : session.customer?.id ?? null,
-        stripePaymentIntentId: getPaymentIntentId(session.payment_intent),
+        providerPaymentReferenceId: getPaymentIntentId(session.payment_intent),
         planId: pack.id,
         credits,
         amountTotal: session.amount_total ?? pack.amount,
         currency: session.currency ?? pack.currency,
-        stripeStatus: session.status ?? "complete",
+        providerStatus: session.status ?? "complete",
         paymentStatus: session.payment_status ?? "paid",
       });
     }

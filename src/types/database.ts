@@ -18,6 +18,7 @@ export interface Database {
           auth_provider: string;
           locale: string | null;
           timezone: string | null;
+          billing_customer_id: string | null;
           stripe_customer_id: string | null;
           subscription_status: string;
           credits: number;
@@ -104,6 +105,35 @@ export interface Database {
           currency: string;
         };
         Update: Partial<Database["public"]["Tables"]["stripe_checkout_sessions"]["Row"]>;
+      };
+      billing_checkout_sessions: {
+        Row: {
+          id: string;
+          provider: string;
+          session_id: string;
+          user_id: string;
+          provider_customer_id: string | null;
+          provider_payment_reference_id: string | null;
+          plan_id: string;
+          credits: number;
+          amount_total: number;
+          currency: string;
+          provider_status: string;
+          payment_status: string;
+          fulfilled_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["billing_checkout_sessions"]["Row"]> & {
+          provider: string;
+          session_id: string;
+          user_id: string;
+          plan_id: string;
+          credits: number;
+          amount_total: number;
+          currency: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["billing_checkout_sessions"]["Row"]>;
       };
     };
     Views: Record<string, never>;

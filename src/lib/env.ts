@@ -45,6 +45,7 @@ const envSchema = z.object({
   }, z.string().url().optional()),
   AI_API_KEY: optionalNonEmptyString(),
   AUTOMATION_API_KEY: optionalNonEmptyString(),
+  BILLING_PROVIDER: z.enum(["stripe", "paddle"]).optional(),
   STRIPE_SECRET_KEY: optionalNonEmptyString(),
   STRIPE_WEBHOOK_SECRET: optionalNonEmptyString(),
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: optionalNonEmptyString(),
@@ -52,6 +53,13 @@ const envSchema = z.object({
   STRIPE_PRICE_STARTER_PACK: optionalNonEmptyString(),
   STRIPE_PRICE_POPULAR_PACK: optionalNonEmptyString(),
   STRIPE_PRICE_DEEP_DIVE_PACK: optionalNonEmptyString(),
+  PADDLE_API_KEY: optionalNonEmptyString(),
+  PADDLE_WEBHOOK_SECRET: optionalNonEmptyString(),
+  NEXT_PUBLIC_PADDLE_CLIENT_TOKEN: optionalNonEmptyString(),
+  PADDLE_ENVIRONMENT: z.enum(["sandbox", "production"]).optional(),
+  PADDLE_PRICE_SINGLE_REPORT: optionalNonEmptyString(),
+  PADDLE_PRICE_POPULAR_PACK: optionalNonEmptyString(),
+  PADDLE_PRICE_DEEP_DIVE_PACK: optionalNonEmptyString(),
 });
 
 type AppEnv = z.infer<typeof envSchema>;
@@ -140,4 +148,53 @@ export function hasStripeCheckoutEnv() {
       env.STRIPE_PRICE_POPULAR_PACK &&
       env.STRIPE_PRICE_DEEP_DIVE_PACK,
   );
+}
+
+export function getBillingProvider() {
+  const env = readEnv();
+
+  if (env.BILLING_PROVIDER) {
+    return env.BILLING_PROVIDER;
+  }
+
+  if (env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN) {
+    return "paddle" as const;
+  }
+
+  return "stripe" as const;
+}
+
+export function getPaddleEnvironment() {
+  const env = readEnv();
+  return env.PADDLE_ENVIRONMENT ?? "sandbox";
+}
+
+export function getPaddleApiBaseUrl() {
+  return getPaddleEnvironment() === "production"
+    ? "https://api.paddle.com"
+    : "https://sandbox-api.paddle.com";
+}
+
+export function hasPaddleCheckoutEnv() {
+  const env = readEnv();
+
+  return Boolean(
+    env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN &&
+      env.PADDLE_PRICE_SINGLE_REPORT &&
+      env.PADDLE_PRICE_POPULAR_PACK &&
+      env.PADDLE_PRICE_DEEP_DIVE_PACK,
+  );
+}
+
+export function hasPaddleWebhookEnv() {
+  const env = readEnv();
+  return Boolean(env.PADDLE_WEBHOOK_SECRET);
+}
+
+export function hasBillingCheckoutEnv() {
+  return getBillingProvider() === "paddle" ? hasPaddleCheckoutEnv() : hasStripeCheckoutEnv();
+}
+
+export function hasBillingWebhookEnv() {
+  return getBillingProvider() === "paddle" ? hasPaddleWebhookEnv() : hasStripeWebhookEnv();
 }

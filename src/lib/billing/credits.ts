@@ -17,11 +17,11 @@ export function canConsumeCredits(profile: UserProfile | null) {
 
   return {
     allowed: true,
-    reason: "Credits enforcement placeholder; wire Stripe and hard limits later.",
+    reason: "Credits enforcement placeholder; wire billing provider and hard limits later.",
   };
 }
 
 export async function reserveDivinationCredits() {
-  // TODO: connect Stripe + credits deduction workflow here.
+  // TODO: connect billing provider fulfillment + credits deduction workflow here.
   return { reserved: false };
 }

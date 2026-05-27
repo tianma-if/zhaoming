@@ -17,10 +17,10 @@
 
 - Google OAuth 登录入口已接入 `Better Auth`
 - 主数据库使用 `Neon Postgres`
-- 用户业务档案表 `public.users` 已预留 `stripe_customer_id`、`subscription_status`、`credits`
+- 用户业务档案表 `public.users` 已预留账单客户标识、订阅状态与 `credits`
 - 测算记录表 `public.divinations` 已支持保存输入参数、排盘 JSON、AI 输出
 - 博客表 `public.posts` 与 `/api/automation/publish-blog` 已预留自动化 SEO 入口
-- `/api/webhooks/stripe` 已预留 `Stripe Webhook` 路由
+- 已预留支付 Webhook 路由，并支持后续切换不同账单提供商
 - 八字排盘与基础工作台 UI 已接入
 - 紫微斗数 `4 x 4` 中空环形网格 UI 已接入
 - AI 解盘支持流式输出
@@ -274,6 +274,6 @@ AI_API_KEY=your_openrouter_key
 
 - 补上 `Better Auth` 的正式 schema/migrate 流程，避免只依赖手写 SQL
 - 基于现有 `Better Auth + Google OAuth` 登录链路，完成生产回调配置核对与一次完整登录验收
-- 把积分扣减与 Stripe 订阅状态真正落库
+- 把积分扣减与账单状态真正落库，并收敛为统一 billing 流程
 - 为博客自动化发布落地 `Markdown + 受控组件嵌入` 方案：正文继续以 Markdown 为主，仅白名单开放盘面层组件嵌入，优先服务 SEO 稳定收录与批量发文
 - 在现有三式、六爻、梅花与称骨基础上，继续补强盘面展示细节、预填充体验与 AI 解读模板

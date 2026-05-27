@@ -38,7 +38,7 @@ export default async function DivinationsPage({
         <Card className="flex items-start gap-4 rounded-[1.5rem] border-emerald-200 bg-emerald-50/80 p-5 text-emerald-950 shadow-none">
           <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-emerald-600" />
           <div className="space-y-1">
-            <p className="text-sm font-semibold">支付成功，{creditedAmount} 次 AI 报告已到账</p>
+            <p className="text-sm font-semibold">支付成功，{creditedAmount} 次 AI 报告已到账。</p>
             <p className="text-sm text-emerald-800/80">
               你可以直接继续发起新的测算，或在记录列表里回看之前的结果。
             </p>
