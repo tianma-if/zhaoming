@@ -5,6 +5,38 @@ import { Pool } from "pg";
 import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
 const env = getEnv();
+const ZHAOMING_COOKIE_DOMAIN = ".zhaoming.app";
+const authCookieDomain = getCookieDomain();
+
+function getAuthOrigins() {
+  const baseUrl = getAppBaseUrl() ?? "http://localhost:5555";
+  const origins = new Set([baseUrl]);
+
+  origins.add("https://zhaoming.app");
+  origins.add("https://www.zhaoming.app");
+
+  return Array.from(origins);
+}
+
+function getCookieDomain() {
+  const baseUrl = getAppBaseUrl();
+
+  if (!baseUrl) {
+    return undefined;
+  }
+
+  try {
+    const { hostname } = new URL(baseUrl);
+
+    if (hostname === "zhaoming.app" || hostname === "www.zhaoming.app") {
+      return ZHAOMING_COOKIE_DOMAIN;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
 
 function getAuthDatabaseUrl() {
   const rawUrl =
@@ -26,11 +58,20 @@ const database = new Pool({
 export const auth = betterAuth({
   appName: "照命",
   baseURL: getAppBaseUrl() ?? "http://localhost:5555",
+  trustedOrigins: getAuthOrigins(),
   secret:
     env.BETTER_AUTH_SECRET ??
     "development-placeholder-secret-change-me-123456",
   database,
   advanced: {
+    ...(authCookieDomain
+      ? {
+          crossSubDomainCookies: {
+            enabled: true,
+            domain: authCookieDomain,
+          },
+        }
+      : {}),
     database: {
       generateId: "uuid",
     },
