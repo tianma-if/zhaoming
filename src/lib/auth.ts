@@ -24,7 +24,7 @@ const database = new Pool({
 });
 
 export const auth = betterAuth({
-  appName: "知微",
+  appName: "照命",
   baseURL: getAppBaseUrl() ?? "http://localhost:5555",
   secret:
     env.BETTER_AUTH_SECRET ??

@@ -52,7 +52,7 @@ export default async function LoginPage({
             <div className="space-y-3 pr-12">
               <p className="text-xs tracking-[0.36em] text-[#9c9287]">AUTH</p>
               <CardTitle className="font-sans text-4xl font-semibold tracking-[-0.03em] text-[#151515]">
-                欢迎使用知微
+                欢迎使用照命
               </CardTitle>
               <CardDescription className="max-w-lg text-base leading-8 text-[#7f756b]">
                 登录或注册账号后，即可继续查看命盘、保存测算记录，并逐步接入后续付费与积分体系。

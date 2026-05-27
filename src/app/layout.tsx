@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist_Mono, Noto_Sans_SC } from "next/font/google";
+import { getAppBaseUrl } from "@/lib/env";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -20,8 +21,9 @@ const sans = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getAppBaseUrl() ?? "https://zhaoming.app"),
   title: {
-    default: "知微 - AI命理分析系统",
+    default: "照命 - AI命理分析系统",
     template: "%s - AI命理分析系统",
   },
   description: "将传统命理排盘与现代大模型解读结合的极简 AI SaaS 平台。",

@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   try {
     const response = await fetch(upstream, {
       headers: {
-        "User-Agent": "zhiwei/0.1 location-search",
+        "User-Agent": "zhaoming/0.1 location-search",
       },
       next: { revalidate: 3600 },
     });

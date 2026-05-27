@@ -12,7 +12,7 @@ export function getAiModel(modelId?: string) {
       isOpenRouter && appBaseUrl
         ? {
             "HTTP-Referer": appBaseUrl,
-            "X-OpenRouter-Title": "zhiwei",
+            "X-OpenRouter-Title": "zhaoming",
           }
         : undefined;
 

@@ -141,10 +141,10 @@ export function AppSidebar() {
       <SidebarHeader className="h-16 justify-center border-b border-sidebar-border/90 px-3 md:h-14">
         <Link href="/" className="flex min-w-0 items-center gap-3 rounded-md">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-foreground text-base font-semibold text-background">
-            知
+            照
           </span>
           <span className="grid min-w-0 gap-0.5 group-data-[collapsible=icon]:hidden">
-            <span className="truncate text-lg font-semibold leading-none">知微</span>
+            <span className="truncate text-lg font-semibold leading-none">照命</span>
             <span className="truncate text-xs text-sidebar-foreground/60">AI 命理工作台</span>
           </span>
         </Link>

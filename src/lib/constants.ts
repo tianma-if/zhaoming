@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "知微",
+  name: "照命",
   description: "传统命理排盘与现代大模型解读的极简交汇点。",
   nav: [
     { href: "/", label: "首页" },

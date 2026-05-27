@@ -123,10 +123,10 @@ export default async function HomePage() {
 
       <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-16 pt-10 text-center md:px-10 md:pb-24 md:pt-20">
         <h1 className="font-display text-[4.3rem] leading-[0.95] tracking-[0.01em] text-foreground md:text-[6.6rem]">
-          知微
+          照命
         </h1>
         <p className="mt-5 text-2xl text-[#7d7d7d] md:text-[2rem]">
-          知微见著，重构传统命理的理性坐标。
+          照见命盘，理解选择。
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:gap-8">

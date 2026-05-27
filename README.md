@@ -1,6 +1,6 @@
-# 知微
+# 照命
 
-`知微` 是一个基于 `Next.js App Router` 构建的 AI 传统命理 SaaS 原型，当前聚焦于“现代化命理工作台”这一产品方向。
+`照命` 是一个基于 `Next.js App Router` 构建的 AI 传统命理 SaaS 原型，当前聚焦于“现代化命理工作台”这一产品方向。
 
 它的目标不是复刻传统算命站，而是用更克制的视觉语言、更清晰的交互结构和 AI 辅助解读能力，把八字、紫微斗数等传统命理能力整理成可持续扩展的数字产品。
 
@@ -8,7 +8,7 @@
 
 ## 在线地址
 
-- 生产域名：[https://zhiwei.tianma-if.uk](https://zhiwei.tianma-if.uk)
+- 生产域名：[https://zhaoming.app](https://zhaoming.app)
 - 部署平台：`Vercel`
 
 ## 当前能力
@@ -263,7 +263,7 @@ AI_API_KEY=your_openrouter_key
 
 当前已对接的 Neon 项目：
 
-- Project: `zhiwei`
+- Project: `zhiwei`（可在 Vercel 后台按需改名为 `zhaoming`）
 - Project ID: `late-water-70564475`
 - Branch: `production`
 - Database: `neondb`

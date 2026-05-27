@@ -10,7 +10,7 @@ export async function SiteHeader() {
   return (
     <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 md:px-10">
       <Link href="/" className="font-display text-3xl tracking-[0.18em]">
-        知微
+        照命
       </Link>
 
       <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">

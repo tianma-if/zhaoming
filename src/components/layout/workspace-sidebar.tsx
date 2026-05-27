@@ -104,11 +104,11 @@ export function WorkspaceSidebar({
       <div className="space-y-8">
         <div className="flex items-center gap-4 px-2 pt-2">
           <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-black text-lg text-white">
-            知
+            照
           </span>
           <div className="space-y-1">
             <Link href="/" className="block text-3xl font-semibold tracking-[-0.02em]">
-              知微
+              照命
             </Link>
             <p className="text-xs tracking-[0.22em] text-muted-foreground">Workspace</p>
           </div>

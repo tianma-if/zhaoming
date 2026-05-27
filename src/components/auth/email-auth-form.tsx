@@ -37,7 +37,7 @@ const defaultValues: EmailAuthValues = {
 };
 
 function getNameFromEmail(email: string) {
-  return email.split("@")[0]?.trim() || "知微用户";
+  return email.split("@")[0]?.trim() || "照命用户";
 }
 
 function getErrorMessage(error: unknown) {

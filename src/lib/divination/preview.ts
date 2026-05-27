@@ -1,6 +1,6 @@
 import type { Database } from "@/types/database";
 
-export const DIVINATION_PREVIEW_STORAGE_KEY = "zhiwei:divination-preview";
+export const DIVINATION_PREVIEW_STORAGE_KEY = "zhaoming:divination-preview";
 
 type DivinationRow = Database["public"]["Tables"]["divinations"]["Row"];
 

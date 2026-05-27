@@ -1,15 +1,17 @@
 import type { MetadataRoute } from "next";
 import { getPublishedPosts } from "@/lib/blog/posts";
+import { getAppBaseUrl } from "@/lib/env";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPublishedPosts();
+  const baseUrl = getAppBaseUrl() ?? "https://zhaoming.app";
 
   return [
-    { url: "https://example.com/" },
-    { url: "https://example.com/pricing" },
-    { url: "https://example.com/blog" },
+    { url: `${baseUrl}/` },
+    { url: `${baseUrl}/pricing` },
+    { url: `${baseUrl}/blog` },
     ...posts.map((post) => ({
-      url: `https://example.com/blog/${post.slug}`,
+      url: `${baseUrl}/blog/${post.slug}`,
       lastModified: post.updated_at,
     })),
   ];

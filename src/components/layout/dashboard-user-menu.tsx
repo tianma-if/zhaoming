@@ -22,7 +22,7 @@ export function DashboardUserMenu() {
   const [isPending, setIsPending] = useState(false);
   const { data: session, isPending: isSessionPending } = authClient.useSession();
   const user = session?.user;
-  const email = user?.email ?? (isSessionPending ? "loading@zhiwei.local" : "guest@zhiwei.local");
+  const email = user?.email ?? (isSessionPending ? "loading@zhaoming.local" : "guest@zhaoming.local");
   const displayName = user?.name || (user ? email : "游客模式");
   const initials = displayName.slice(0, 1).toUpperCase();
 
