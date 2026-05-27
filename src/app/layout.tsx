@@ -21,7 +21,7 @@ const sans = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getAppBaseUrl() ?? "https://zhaoming.app"),
+  metadataBase: new URL(getAppBaseUrl() ?? "https://www.zhaoming.app"),
   title: {
     default: "照命 - AI命理分析系统",
     template: "%s - AI命理分析系统",

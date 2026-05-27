@@ -8,7 +8,7 @@
 
 ## 在线地址
 
-- 生产域名：[https://zhaoming.app](https://zhaoming.app)
+- 生产域名：[https://www.zhaoming.app](https://www.zhaoming.app)
 - 部署平台：`Vercel`
 
 ## 当前能力

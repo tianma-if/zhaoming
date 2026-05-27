@@ -4,7 +4,7 @@ import { getAppBaseUrl } from "@/lib/env";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPublishedPosts();
-  const baseUrl = getAppBaseUrl() ?? "https://zhaoming.app";
+  const baseUrl = getAppBaseUrl() ?? "https://www.zhaoming.app";
 
   return [
     { url: `${baseUrl}/` },
