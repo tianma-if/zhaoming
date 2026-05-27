@@ -137,16 +137,6 @@ pnpm build
 - 本地默认地址为 `http://localhost:5555`
 - 鉴权相关环境变量如果误拉成生产域名，开发环境会优先回退到本地地址，避免 Google OAuth 出现 `Invalid origin`
 
-## UI 与组件约定
-
-当前项目的基础 UI 组件已按 `shadcn/ui` 方式落地到仓库源码中，而不是依赖一个运行时 UI 包。
-
-- 组件源码位于 `src/components/ui`
-- 组件配置文件为 `components.json`
-- 底层 primitive 以 `Radix UI` 为主
-- 页面层视觉允许保留项目自己的卡片圆角、边框与 hover 动画，不强制套用默认展示风格
-- 实现新 UI 时优先复用已有组件，而不是重新造轮子
-
 ## 目录结构
 
 ```text
@@ -275,5 +265,6 @@ AI_API_KEY=your_openrouter_key
 - 补上 `Better Auth` 的正式 schema/migrate 流程，避免只依赖手写 SQL
 - 基于现有 `Better Auth + Google OAuth` 登录链路，完成生产回调配置核对与一次完整登录验收
 - 把积分扣减与账单状态真正落库，并收敛为统一 billing 流程
+- 优先接入 `Paddle` 验证订阅、积分与报告付费链路；后续当交易规模、税务与合规需求更加明确后，再考虑通过香港公司主体接入 `Stripe` 等更完整的国际化收款方案
 - 为博客自动化发布落地 `Markdown + 受控组件嵌入` 方案：正文继续以 Markdown 为主，仅白名单开放盘面层组件嵌入，优先服务 SEO 稳定收录与批量发文
 - 在现有三式、六爻、梅花与称骨基础上，继续补强盘面展示细节、预填充体验与 AI 解读模板
