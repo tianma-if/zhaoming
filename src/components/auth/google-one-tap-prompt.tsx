@@ -24,9 +24,10 @@ export function GoogleOneTapPrompt({
     (window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1" ||
       window.location.hostname === "::1");
+  const shouldEnableOneTap = enabled && !isLocalhost;
 
   const oneTapAuthClient = useMemo(() => {
-    if (!clientId) {
+    if (!clientId || !shouldEnableOneTap) {
       return null;
     }
 
@@ -38,16 +39,16 @@ export function GoogleOneTapPrompt({
           cancelOnTapOutside: true,
           context: "signin",
           promptOptions: {
-            fedCM: !isLocalhost,
+            fedCM: true,
             maxAttempts: 1,
           },
         }),
       ],
     });
-  }, [clientId, isLocalhost]);
+  }, [clientId, shouldEnableOneTap]);
 
   useEffect(() => {
-    if (!enabled || !oneTapAuthClient || promptedRef.current) {
+    if (!shouldEnableOneTap || !oneTapAuthClient || promptedRef.current) {
       return;
     }
 
@@ -70,7 +71,7 @@ export function GoogleOneTapPrompt({
       .catch(() => {
         finishAuthTransition();
       });
-  }, [callbackURL, clientId, enabled, isLocalhost, oneTapAuthClient]);
+  }, [callbackURL, oneTapAuthClient, shouldEnableOneTap]);
 
   return <AuthTransitionOverlay />;
 }

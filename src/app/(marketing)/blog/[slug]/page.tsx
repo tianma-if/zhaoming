@@ -36,7 +36,7 @@ export default async function BlogPostPage({
               {post.meta_description}
             </p>
           </div>
-          <MarkdownRenderer content={post.content} />
+          <MarkdownRenderer content={post.content} enableEmbeds />
         </Card>
       </section>
       <SiteFooter />
