@@ -1,5 +1,5 @@
 import type { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
@@ -29,9 +29,8 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
 
   return (
     <Card className="space-y-4 rounded-[1.6rem] border border-border bg-white">
-      <div className="space-y-1.5">
+      <div>
         <CardTitle className="text-2xl tracking-[0.04em]">十神分析</CardTitle>
-        <CardDescription className="text-xs leading-5">八字中的主要十神关系</CardDescription>
       </div>
 
       <Separator />

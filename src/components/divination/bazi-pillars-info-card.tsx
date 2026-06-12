@@ -1,5 +1,5 @@
 import type { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { CopyContentButton } from "./copy-content-button";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
@@ -32,11 +32,8 @@ export function BaziPillarsInfoCard({
   return (
     <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
+        <div>
           <CardTitle className="text-2xl tracking-[0.04em]">八字详解</CardTitle>
-          <CardDescription>
-            八字的每一柱都由天干和地支组成，每一柱都有其特定的五行属性。
-          </CardDescription>
         </div>
         <CopyContentButton label="复制八字" text={`${baziText}\n\n${copyText}`} />
       </div>
