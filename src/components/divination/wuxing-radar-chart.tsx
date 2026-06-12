@@ -46,12 +46,12 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
   const expandedPoints = toPoints(valuePoints);
 
   return (
-    <div className="space-y-3 rounded-[1.1rem] border border-border bg-muted/30 px-3 py-4">
-      <div className="flex flex-wrap justify-center gap-2">
+    <div className="space-y-2 rounded-[1.1rem] border border-border bg-muted/30 px-2.5 py-3">
+      <div className="flex flex-wrap justify-center gap-1.5">
         {data.map((item) => (
           <div
             key={item.element}
-            className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-transform duration-300 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-transform duration-300 hover:-translate-y-0.5"
             style={{
               backgroundColor: getWuxingPalette(item.element).bg,
               borderColor: getWuxingPalette(item.element).border,
@@ -68,7 +68,7 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
         ))}
       </div>
 
-      <div className="mx-auto aspect-square w-full max-w-[24rem]">
+      <div className="mx-auto aspect-square w-full max-w-[12rem]">
         <svg aria-label="五行雷达图" className="h-full w-full" role="img" viewBox="0 0 320 320">
           {rings.map((radius, index) => (
             <polygon
