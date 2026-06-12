@@ -30,20 +30,24 @@ export function BaziPillarsInfoCard({
   const copyText = formatPillarsCopy(pillars);
 
   return (
-    <Card className="space-y-5 rounded-[1.6rem] border border-border bg-white">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <Card className="space-y-3 rounded-[1.6rem] border border-border bg-white">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <CardTitle className="text-2xl tracking-[0.04em]">八字详解</CardTitle>
+          <CardTitle className="text-[1.7rem] tracking-[0.04em]">八字详解</CardTitle>
         </div>
-        <CopyContentButton label="复制八字" text={`${baziText}\n\n${copyText}`} />
+        <CopyContentButton
+          className="h-8 rounded-md px-2.5 text-xs"
+          label="复制八字"
+          text={`${baziText}\n\n${copyText}`}
+        />
       </div>
 
-      <div className="grid gap-6 text-center [grid-template-columns:repeat(auto-fit,minmax(min(100%,8.5rem),1fr))]">
+      <div className="grid gap-4 text-center [grid-template-columns:repeat(auto-fit,minmax(min(100%,7rem),1fr))]">
         {pillars.map((pillar) => (
-          <article key={pillar.key} className="space-y-3">
-            <p className="text-sm text-muted-foreground">{pillar.label}</p>
-            <p className="font-display text-3xl">{pillar.ganZhi}</p>
-            <dl className="space-y-1 text-sm">
+          <article key={pillar.key} className="space-y-1.5">
+            <p className="text-xs text-muted-foreground">{pillar.label}</p>
+            <p className="font-display text-[2rem] leading-none">{pillar.ganZhi}</p>
+            <dl className="space-y-0.5 text-xs leading-5">
               <div className="flex justify-center gap-1.5">
                 <dt className="text-muted-foreground">天干五行：</dt>
                 <dd className="font-medium">{pillar.elements[0]}</dd>

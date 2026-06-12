@@ -77,7 +77,7 @@ export function WuxingRadarChart({
         </div>
       </div>
 
-      <div className="mx-auto aspect-square w-full max-w-[15rem]">
+      <div className="mx-auto aspect-square w-full max-w-[19rem]">
         <svg aria-label="五行雷达图" className="h-full w-full" role="img" viewBox="0 0 320 320">
           {rings.map((radius, index) => (
             <polygon
