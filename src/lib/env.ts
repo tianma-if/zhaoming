@@ -110,6 +110,26 @@ export function hasDatabaseEnv() {
   return Boolean(env.DATABASE_URL);
 }
 
+export function getDatabaseUrl() {
+  const env = readEnv();
+  const rawUrl =
+    env.DATABASE_URL ?? "postgres://postgres:postgres@127.0.0.1:5432/postgres";
+
+  try {
+    const url = new URL(rawUrl);
+    const sslmode = url.searchParams.get("sslmode");
+
+    if (sslmode === "prefer" || sslmode === "require" || sslmode === "verify-ca") {
+      // Preserve current pg behavior while silencing the upcoming compatibility warning.
+      url.searchParams.set("sslmode", "verify-full");
+    }
+
+    return url.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
 export function hasAuthEnv() {
   const env = readEnv();
   return Boolean(env.BETTER_AUTH_SECRET && getAppBaseUrl());

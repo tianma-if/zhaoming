@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { oneTap } from "better-auth/plugins";
 import { Pool } from "pg";
-import { getAppBaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
+import { getAppBaseUrl, getDatabaseUrl, getEnv, hasGoogleOAuthEnv } from "@/lib/env";
 
 const env = getEnv();
 const ZHAOMING_COOKIE_DOMAIN = ".zhaoming.app";
@@ -39,8 +39,7 @@ function getCookieDomain() {
 }
 
 function getAuthDatabaseUrl() {
-  const rawUrl =
-    env.DATABASE_URL ?? "postgres://postgres:postgres@127.0.0.1:5432/postgres";
+  const rawUrl = getDatabaseUrl();
 
   try {
     const url = new URL(rawUrl);

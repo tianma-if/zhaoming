@@ -1,15 +1,12 @@
 import { Pool, type PoolClient, type QueryResultRow } from "pg";
-import { getEnv } from "@/lib/env";
+import { getDatabaseUrl } from "@/lib/env";
 
 let pool: Pool | null = null;
 
 function getPool() {
   if (!pool) {
-    const env = getEnv();
-
     pool = new Pool({
-      connectionString:
-        env.DATABASE_URL ?? "postgres://postgres:postgres@127.0.0.1:5432/postgres",
+      connectionString: getDatabaseUrl(),
     });
   }
 
