@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { wuxingPalette } from "@/lib/constants";
 
 const defaultPalette = {
@@ -33,7 +34,13 @@ function toCollapsedPoints(total: number) {
   return Array.from({ length: total }, () => "160,160").join(" ");
 }
 
-export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
+export function WuxingRadarChart({
+  data,
+  summary,
+}: {
+  data: WuxingRadarDatum[];
+  summary?: ReactNode;
+}) {
   const maxCount = Math.max(...data.map((item) => item.count), 1);
   const domainMax = Math.max(maxCount, 5);
   const dominantPalette = getWuxingPalette(data[0]?.element ?? "");
@@ -46,29 +53,31 @@ export function WuxingRadarChart({ data }: { data: WuxingRadarDatum[] }) {
   const expandedPoints = toPoints(valuePoints);
 
   return (
-    <div className="space-y-2 rounded-[1.1rem] border border-border bg-muted/30 px-2.5 py-3">
-      <div className="flex flex-wrap justify-center gap-1.5">
-        {data.map((item) => (
-          <div
-            key={item.element}
-            className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-transform duration-300 hover:-translate-y-0.5"
-            style={{
-              backgroundColor: getWuxingPalette(item.element).bg,
-              borderColor: getWuxingPalette(item.element).border,
-              color: getWuxingPalette(item.element).text,
-            }}
-          >
+    <div className="w-full space-y-3">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] leading-5 text-muted-foreground">
+        {summary ? <div className="shrink-0 whitespace-nowrap">{summary}</div> : null}
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          {data.map((item) => (
             <span
-              className="size-1.5 rounded-full"
-              style={{ backgroundColor: getWuxingPalette(item.element).accent }}
-            />
-            <span>{item.element}</span>
-            <span className="text-foreground/65">{item.count}</span>
-          </div>
-        ))}
+              key={item.element}
+              className="inline-flex items-center gap-1 text-[10px] font-medium"
+              style={{
+                color: getWuxingPalette(item.element).text,
+              }}
+            >
+              <span
+                className="size-1.5 rounded-full"
+                style={{ backgroundColor: getWuxingPalette(item.element).accent }}
+              />
+              <span>{item.element}</span>
+              <span className="text-foreground/65">{item.count}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
-      <div className="mx-auto aspect-square w-full max-w-[12rem]">
+      <div className="mx-auto aspect-square w-full max-w-[15rem]">
         <svg aria-label="五行雷达图" className="h-full w-full" role="img" viewBox="0 0 320 320">
           {rings.map((radius, index) => (
             <polygon
