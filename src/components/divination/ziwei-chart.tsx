@@ -511,7 +511,10 @@ export function ZiweiChartView({
     <div className="space-y-5" style={ziweiChartTheme}>
       <Card className="overflow-hidden rounded-[1.8rem] border border-[color:color-mix(in_srgb,var(--ziwei-border)_58%,white)] bg-[var(--ziwei-surface-soft)] p-3 shadow-[0_18px_50px_-42px_var(--ziwei-grid-shadow)] md:p-4">
         <div className="overflow-x-auto">
-          <div className="overflow-hidden rounded-[1.5rem] border border-[var(--ziwei-border)] bg-[var(--ziwei-border)] p-px shadow-[0_20px_48px_-40px_var(--ziwei-grid-shadow)]">
+          <div
+            className="origin-top-left overflow-hidden rounded-[1.5rem] border border-[var(--ziwei-border)] bg-[var(--ziwei-border)] p-px shadow-[0_20px_48px_-40px_var(--ziwei-grid-shadow)]"
+            style={{ zoom: 0.84 }}
+          >
             <div className="grid min-w-[920px] grid-cols-4 gap-px bg-[var(--ziwei-border)]">
               {cells.map((cell) => (
                 <div
