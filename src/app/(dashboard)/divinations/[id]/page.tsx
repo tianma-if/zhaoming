@@ -67,10 +67,7 @@ export default async function DivinationDetailPage({
     divinationType === "sanshi" ? (data.chart_json as unknown as SanshiChart) : null;
 
   return (
-    <DashboardPage
-      width={divinationType === "ziwei" ? "wide" : "default"}
-      className={divinationType === "ziwei" ? "max-w-6xl" : undefined}
-    >
+    <DashboardPage>
       <DashboardPageHeader
         eyebrow={<Badge>Reading View</Badge>}
         title={
