@@ -139,9 +139,6 @@ export function SanshiForm() {
               <div className="flex items-center justify-between gap-3">
                 <div className="space-y-1">
                   <CardTitle className="text-2xl">起局信息</CardTitle>
-                  <CardDescription>
-                    先选流派、问题主题与起局时间，系统会生成一份适合产品内阅读的三式简化摘要。
-                  </CardDescription>
                 </div>
                 <Button
                   type="button"
