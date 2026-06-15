@@ -14,6 +14,8 @@ import type {
   TaiyiPalace,
 } from "@/types/divination";
 
+const verticalClass = "[writing-mode:vertical-rl] [text-orientation:mixed]";
+
 function MetaList({
   items,
   columns = "md:grid-cols-2 xl:grid-cols-4",
@@ -177,6 +179,77 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
         <p>九星: {palace.star ?? "无"}</p>
         <p>八门: {palace.door ?? "中宫无门"}</p>
         <p>八神: {palace.deity ?? "无"}</p>
+      </div>
+    </article>
+  );
+}
+
+function QimenPalaceSquare({ palace }: { palace: QimenPalace }) {
+  const accent = palace.isDutyDoor || palace.isChiefStar || palace.isChiefDeity;
+  const details = [
+    { label: "地", value: palace.earthStem },
+    { label: "天", value: palace.heavenStem ?? "中寄" },
+    { label: "星", value: palace.star ?? "无" },
+    { label: "门", value: palace.door ?? "中宫无门" },
+    { label: "神", value: palace.deity ?? "无" },
+  ];
+
+  return (
+    <article
+      className={cn(
+        "aspect-square overflow-hidden rounded-[1rem] border p-2.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
+        getQimenCellTone(palace),
+      )}
+    >
+      <div className="grid h-full grid-cols-[auto_1fr] gap-2">
+        <div className="flex flex-col">
+          <p
+            className={cn(
+              "text-[9px] tracking-[0.16em]",
+              accent ? "text-white/70" : "text-muted-foreground",
+            )}
+          >
+            {palace.direction}
+          </p>
+            <h3
+              className={cn(
+                verticalClass,
+                "mt-1.5 font-display text-[1.6rem] leading-none tracking-[0.03em]",
+              )}
+            >
+              {palace.palace}
+          </h3>
+        </div>
+
+        <div className="flex min-w-0 flex-col">
+          <div className="flex min-h-5 flex-wrap justify-end gap-1">
+            {palace.isChiefDeity ? (
+              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值符</Badge>
+            ) : null}
+            {palace.isChiefStar ? (
+              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值星</Badge>
+            ) : null}
+            {palace.isDutyDoor ? (
+              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值使</Badge>
+            ) : null}
+          </div>
+
+          <div
+            className={cn(
+              "mt-2 grid flex-1 content-start grid-cols-2 gap-x-1.5 gap-y-1 text-[10.5px] leading-4",
+              accent ? "text-white/88" : "text-foreground",
+            )}
+          >
+            {details.map((item) => (
+              <div key={`${palace.index}-${item.label}`} className={cn(item.label === "门" ? "col-span-2" : "")}>
+                <span className={cn("mr-1 text-[9px]", accent ? "text-white/68" : "text-muted-foreground")}>
+                  {item.label}
+                </span>
+                <span className="font-medium">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -593,7 +666,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       {showOverviewSection ? (
         <DashboardSection
           className="space-y-5"
-          title={`${chart.meta.systemLabel}概览`}
           action={<CopyContentButton label="复制解局摘要" text={copyText} />}
         >
           <OverviewGrid
@@ -633,17 +705,22 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       ) : null}
 
       {chart.qimen ? (
-        <DashboardSection
-          className="space-y-5"
-          title="奇门盘面"
-          action={<CopyContentButton label="复制盘面概要" text={qimenCopyText} />}
-        >
-          <div className="grid gap-3 md:grid-cols-3">
-            {chart.qimen.palaces.map((palace) => (
-              <QimenPalaceCell key={palace.index} palace={palace} />
-            ))}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold tracking-[0.02em] text-foreground">
+              奇门盘面
+            </h2>
+            <CopyContentButton label="复制盘面概要" text={qimenCopyText} />
           </div>
-        </DashboardSection>
+
+          <div className="overflow-x-auto">
+            <div className="mx-auto grid w-[600px] min-w-[600px] grid-cols-3 gap-3">
+              {chart.qimen.palaces.map((palace) => (
+                <QimenPalaceSquare key={palace.index} palace={palace} />
+              ))}
+            </div>
+          </div>
+        </section>
       ) : null}
 
       {chart.taiyi ? (
