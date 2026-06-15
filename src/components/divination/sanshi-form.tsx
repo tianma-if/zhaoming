@@ -25,17 +25,17 @@ const systemOptions = [
   {
     value: "qimen",
     title: "奇门遁甲",
-    description: "偏向时机与行动窗口，适合看这一步该不该推、怎么推。",
+    description: "【地式 · 奇门遁甲】定地利与主客博弈。擅捕捉时空交锋的行动窗口，研判当前局势该不该推、如何运筹。",
   },
   {
     value: "taiyi",
     title: "太乙神数",
-    description: "偏向整体趋势与大局判断，适合先看方向是否站得住。",
+    description: "【天式 · 太乙神数】观天时与大局周期。擅洞悉宏观气运的更迭演变，研判长远方向是否站得住脚。",
   },
   {
     value: "liuren",
     title: "大六壬",
-    description: "偏向人与事的互动关系，适合看沟通、合作、谈判与进退。",
+    description: "【人式 · 大六壬】测人事与因缘流转。擅理清错综复杂的人际利益互动，研判日常事态的吉凶进退。",
   },
 ] as const;
 
