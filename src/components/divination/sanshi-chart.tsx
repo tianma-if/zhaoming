@@ -567,7 +567,6 @@ function formatSanshiCopyText(chart: SanshiChart) {
   return [
     `问题：${chart.meta.question}`,
     `流派：${chart.meta.systemLabel}`,
-    `主题：${chart.meta.topicLabel}`,
     `起局时间：${chart.meta.divinationDateTime}`,
     `干支：${chart.meta.ganZhi}`,
     `旬 / 旬空：${chart.meta.xun} / ${chart.meta.xunKong}`,
@@ -673,7 +672,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               {
                 label: "流派",
                 value: chart.meta.systemLabel,
-                detail: chart.meta.topicLabel,
               },
               {
                 label: "起局时间",
@@ -746,7 +744,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               {
                 label: "问题",
                 value: chart.meta.question,
-                detail: `${chart.meta.topicLabel} · ${chart.meta.systemLabel}`,
+                detail: chart.meta.systemLabel,
               },
             ]}
           />

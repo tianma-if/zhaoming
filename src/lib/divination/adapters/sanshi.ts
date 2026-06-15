@@ -278,10 +278,6 @@ function getSignals(
       value: SYSTEM_LABELS[input.system],
     },
     {
-      label: "当前主题",
-      value: TOPIC_LABELS[input.topic],
-    },
-    {
       label: "时支与旬空",
       value: `${time.getGanZhi()} / ${time.getXunKong()}`,
     },

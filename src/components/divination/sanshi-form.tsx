@@ -20,13 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const systemOptions = [
   {
@@ -44,17 +37,6 @@ const systemOptions = [
     title: "大六壬",
     description: "偏向人与事的互动关系，适合看沟通、合作、谈判与进退。",
   },
-] as const;
-
-const topicOptions = [
-  { value: "career", label: "事业推进" },
-  { value: "wealth", label: "财务合作" },
-  { value: "relationship", label: "关系情感" },
-  { value: "study", label: "学习考试" },
-  { value: "travel", label: "出行迁动" },
-  { value: "lawsuit", label: "谈判纠纷" },
-  { value: "health", label: "健康调理" },
-  { value: "general", label: "综合判断" },
 ] as const;
 
 const taiyiCountOptions = [
@@ -94,7 +76,6 @@ function createInitialValues(): SanshiInputForm {
     question: "",
     divinationDate: format(now, "yyyy-MM-dd"),
     divinationTime: format(now, "HH:mm"),
-    topic: "general",
     notes: "",
   };
 }
@@ -247,69 +228,6 @@ export function SanshiForm() {
               ) : null}
 
               <div className="grid gap-5 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="subjectName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>求测人</FormLabel>
-                      <FormControl>
-                        <Input placeholder="例如：张三" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>性别</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="选择性别" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="male">男</SelectItem>
-                          <SelectItem value="female">女</SelectItem>
-                          <SelectItem value="other">其他</SelectItem>
-                          <SelectItem value="unknown">不说明</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="topic"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>问题主题</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="选择主题" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {topicOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <div className="grid gap-5 sm:grid-cols-2">
                   <FormField
                     control={form.control}
