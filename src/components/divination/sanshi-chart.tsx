@@ -618,6 +618,15 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
                 value: signal.value,
                 detail: signal.hint,
               })),
+              ...(chart.qimen
+                ? [
+                    {
+                      label: "盘面信息",
+                      value: `${chart.qimen.dunLabel}${chart.qimen.ju}局 · 值符${chart.qimen.chiefDeity} · 值使${chart.qimen.dutyDoor}`,
+                      detail: `${chart.qimen.dayGanZhi} · ${chart.qimen.timeGanZhi} · 时空 ${chart.qimen.hourVoid}`,
+                    },
+                  ]
+                : []),
             ]}
           />
         </DashboardSection>
@@ -629,22 +638,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
           title="奇门盘面"
           action={<CopyContentButton label="复制盘面概要" text={qimenCopyText} />}
         >
-          <MetaList
-            columns="xl:grid-cols-[1.2fr_1fr]"
-            items={[
-              {
-                label: "盘面信息",
-                value: `${chart.qimen.dunLabel}${chart.qimen.ju}局 · 值符${chart.qimen.chiefDeity} · 值使${chart.qimen.dutyDoor}`,
-                detail: `${chart.qimen.dayGanZhi} · ${chart.qimen.timeGanZhi} · 时空 ${chart.qimen.hourVoid}`,
-              },
-              {
-                label: "问题",
-                value: chart.meta.question,
-                detail: `${chart.meta.topicLabel} · ${chart.meta.systemLabel}`,
-              },
-            ]}
-          />
-
           <div className="grid gap-3 md:grid-cols-3">
             {chart.qimen.palaces.map((palace) => (
               <QimenPalaceCell key={palace.index} palace={palace} />
