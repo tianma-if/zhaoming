@@ -48,29 +48,21 @@ function MetaList({
   );
 }
 
-function CompactDetailList({
+function OverviewGrid({
   items,
 }: {
   items: Array<{ label: string; value: string; detail?: string }>;
 }) {
   return (
-    <article className="rounded-[1.15rem] border border-border/70 bg-white px-5 py-4 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]">
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <div key={`${item.label}-${item.value}`} className={cn(index > 0 ? "border-t border-border/70 pt-3" : "")}>
-            <div className="flex flex-col gap-1.5 md:flex-row md:items-start md:gap-4">
-              <p className="shrink-0 text-xs uppercase tracking-[0.2em] text-muted-foreground md:w-28">
-                {item.label}
-              </p>
-              <div className="min-w-0 space-y-1">
-                <p className="text-sm font-medium leading-7 text-foreground">{item.value}</p>
-                {item.detail ? <p className="text-xs leading-6 text-muted-foreground">{item.detail}</p> : null}
-              </div>
-            </div>
+    <div className="grid gap-x-5 gap-y-4 pt-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {items.map((item) => (
+          <div key={`${item.label}-${item.value}`} className="min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{item.label}</p>
+            <p className="mt-1.5 text-sm font-semibold leading-6 tracking-normal text-foreground">{item.value}</p>
+            {item.detail ? <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{item.detail}</p> : null}
           </div>
         ))}
-      </div>
-    </article>
+    </div>
   );
 }
 
@@ -602,11 +594,9 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         <DashboardSection
           className="space-y-5"
           title={`${chart.meta.systemLabel}概览`}
-          description="三式统一入口下展示的是便于阅读的简化结果。奇门、太乙与大六壬都会额外展示各自盘层，用来辅助判断时机、行动与风险边界。"
           action={<CopyContentButton label="复制解局摘要" text={copyText} />}
         >
-          <MetaList
-            columns="md:grid-cols-2 xl:grid-cols-3"
+          <OverviewGrid
             items={[
               {
                 label: "流派",
@@ -623,15 +613,12 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
                 value: chart.meta.question,
                 detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
               },
+              ...chart.signals.map((signal) => ({
+                label: signal.label,
+                value: signal.value,
+                detail: signal.hint,
+              })),
             ]}
-          />
-
-          <CompactDetailList
-            items={chart.signals.map((signal) => ({
-              label: signal.label,
-              value: signal.value,
-              detail: signal.hint,
-            }))}
           />
         </DashboardSection>
       ) : null}
@@ -657,19 +644,6 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               },
             ]}
           />
-
-          {chart.qimen.summary.length ? (
-            <div className="grid gap-3">
-              {chart.qimen.summary.map((item, index) => (
-                <article
-                  key={`qimen-summary-${index}`}
-                  className="rounded-[1.15rem] border border-border/70 bg-muted/10 px-4 py-3.5 text-sm leading-7 text-foreground/90"
-                >
-                  {item}
-                </article>
-              ))}
-            </div>
-          ) : null}
 
           <div className="grid gap-3 md:grid-cols-3">
             {chart.qimen.palaces.map((palace) => (
