@@ -255,69 +255,82 @@ function QimenPalaceSquare({ palace }: { palace: QimenPalace }) {
   );
 }
 
-function TaiyiGodSectorCompact({ sector }: { sector: TaiyiGodSector }) {
+function TaiyiGodSectorCompact({ sector, className }: { sector: TaiyiGodSector; className?: string }) {
   const accent = sector.markers.includes("太乙");
 
   return (
     <article
       className={cn(
-        "rounded-xl border px-3 py-2.5 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]",
+        "aspect-square rounded-xl border p-3 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]",
         getTaiyiGodTone(sector),
+        className,
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className={cn("text-[10px] uppercase tracking-[0.18em]", accent ? "text-white/70" : "text-muted-foreground")}>
-            {sector.branch}
-          </p>
-          <h4 className="text-sm font-semibold">{sector.palace}</h4>
+      <div className="flex h-full flex-col">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className={cn("text-[10px] tracking-[0.16em]", accent ? "text-white/70" : "text-muted-foreground")}>
+              {sector.branch}
+            </p>
+            <h4 className={cn(verticalClass, "mt-1.5 text-sm font-semibold leading-none")}>{sector.palace}</h4>
+          </div>
+          {sector.markers.length ? (
+            <Badge className={cn("shrink-0 rounded px-1.5 py-0.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>
+              {sector.markers[0]}
+            </Badge>
+          ) : null}
         </div>
-        {sector.markers.length ? (
-          <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>
-            {sector.markers[0]}
-          </Badge>
-        ) : null}
+
+        <div className="mt-auto pt-2">
+          <p className={cn("text-xs font-medium leading-5", accent ? "text-white" : "text-foreground")}>
+            {sector.god}
+          </p>
+        </div>
       </div>
-      <p className={cn("mt-1 text-xs font-medium", accent ? "text-white" : "text-foreground")}>
-        {sector.god}
-      </p>
     </article>
   );
 }
 
-function TaiyiPalaceCompact({ palace }: { palace: TaiyiPalace }) {
+function TaiyiPalaceCompact({ palace, className }: { palace: TaiyiPalace; className?: string }) {
   const accent = palace.markers.includes("太乙");
 
   return (
     <article
       className={cn(
-        "min-h-[116px] rounded-xl border px-3 py-2.5 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]",
+        "aspect-square rounded-xl border p-3 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.24)]",
         getTaiyiCellTone(palace),
+        className,
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className={cn("text-[10px] uppercase tracking-[0.18em]", accent ? "text-white/70" : "text-muted-foreground")}>
-            {palace.direction}
-          </p>
-          <h4 className="text-sm font-semibold">{palace.palace}</h4>
+      <div className="flex h-full flex-col">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className={cn("text-[10px] tracking-[0.16em]", accent ? "text-white/70" : "text-muted-foreground")}>
+              {palace.direction}
+            </p>
+            <h4 className={cn(verticalClass, "mt-1.5 text-sm font-semibold leading-none")}>{palace.palace}</h4>
+          </div>
+          <Badge
+            className={cn(
+              "shrink-0 rounded px-1.5 py-0.5 text-[10px]",
+              accent ? "border-white/20 bg-white/15 text-white" : "",
+              palace.stage === "旺" && !accent ? "border-emerald-200 bg-emerald-100 text-emerald-900" : "",
+              palace.stage === "守" && !accent ? "border-amber-200 bg-amber-100 text-amber-900" : "",
+            )}
+          >
+            {palace.stage}
+          </Badge>
         </div>
-        <Badge
-          className={cn(
-            accent ? "border-white/20 bg-white/15 text-white" : "",
-            palace.stage === "旺" && !accent ? "border-emerald-200 bg-emerald-100 text-emerald-900" : "",
-            palace.stage === "守" && !accent ? "border-amber-200 bg-amber-100 text-amber-900" : "",
-          )}
-        >
-          {palace.stage}
-        </Badge>
+
+        <div className="mt-auto space-y-1 pt-2">
+          <p className={cn("text-xs font-medium leading-5", accent ? "text-white" : "text-foreground")}>
+            {palace.trigraph}宫
+          </p>
+          <p className={cn("text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
+            {palace.markers.join("、") || "无落点"}
+          </p>
+        </div>
       </div>
-      <p className={cn("mt-2 text-xs font-medium", accent ? "text-white" : "text-foreground")}>
-        {palace.trigraph}宫
-      </p>
-      <p className={cn("mt-1 text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
-        {palace.markers.join("、") || "无落点"}
-      </p>
     </article>
   );
 }
@@ -382,6 +395,24 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
   if (!chart.taiyi) return null;
 
   const branchMap = new Map(chart.taiyi.godSectors.map((sector) => [sector.branch, sector]));
+  const desktopRing = [
+    { branch: "乾", className: "col-start-1 row-start-1" },
+    { branch: "亥", className: "col-start-2 row-start-1" },
+    { branch: "子", className: "col-start-3 row-start-1" },
+    { branch: "丑", className: "col-start-4 row-start-1" },
+    { branch: "艮", className: "col-start-5 row-start-1" },
+    { branch: "戌", className: "col-start-1 row-start-2" },
+    { branch: "寅", className: "col-start-5 row-start-2" },
+    { branch: "酉", className: "col-start-1 row-start-3" },
+    { branch: "卯", className: "col-start-5 row-start-3" },
+    { branch: "申", className: "col-start-1 row-start-4" },
+    { branch: "辰", className: "col-start-5 row-start-4" },
+    { branch: "坤", className: "col-start-1 row-start-5" },
+    { branch: "未", className: "col-start-2 row-start-5" },
+    { branch: "午", className: "col-start-3 row-start-5" },
+    { branch: "巳", className: "col-start-4 row-start-5" },
+    { branch: "巽", className: "col-start-5 row-start-5" },
+  ];
   const ring = [
     { branch: "乾", style: { left: "8%", top: "8%" } },
     { branch: "亥", style: { left: "29%", top: "8%" } },
@@ -412,16 +443,21 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
       </div>
 
       <div className="grid gap-2 md:hidden">
-        {ring.map(({ branch }) => {
-          const sector = branchMap.get(branch);
-          return sector ? <TaiyiGodSectorCompact key={`mobile-ring-${branch}`} sector={sector} /> : null;
-        })}
+        <div className="grid grid-cols-2 gap-2">
+          {ring.map(({ branch }) => {
+            const sector = branchMap.get(branch);
+            return sector ? (
+              <TaiyiGodSectorCompact
+                key={`mobile-ring-${branch}`}
+                sector={sector}
+                className="border-border/40 saturate-[0.82] brightness-[0.985] shadow-none"
+              />
+            ) : null;
+          })}
+        </div>
 
-        <div className="rounded-[1.35rem] border border-border/70 bg-white/75 p-3">
-          <div className="mb-3 flex items-center justify-end gap-3">
-            <Badge>{chart.taiyi.trend}</Badge>
-          </div>
-          <div className="grid gap-2 md:grid-cols-3">
+        <div className="rounded-[1.35rem] border border-border/80 bg-white/92 p-2 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.18)]">
+          <div className="grid grid-cols-3 gap-2">
             {innerPalaces.map((palace) => (
               <TaiyiPalaceCompact key={`mobile-inner-${palace.index}`} palace={palace} />
             ))}
@@ -429,28 +465,41 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
         </div>
       </div>
 
-      <div className="relative hidden min-h-[820px] md:block">
-        {ring.map(({ branch, style }) => {
-          const sector = branchMap.get(branch);
-          return sector ? (
+      <div className="hidden md:block">
+        <div className="overflow-x-auto">
+          <div className="mx-auto" style={{ width: "min(100%, 58rem)", minWidth: "46rem" }}>
             <div
-              key={`ring-${branch}`}
-              className="absolute w-[18%] min-w-[136px] -translate-x-1/2 -translate-y-1/2"
-              style={style}
+              className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-border/70 p-px"
+              style={{ aspectRatio: "1 / 1" }}
             >
-              <TaiyiGodSectorCompact sector={sector} />
-            </div>
-          ) : null;
-        })}
+              <div className="grid h-full w-full grid-cols-5 grid-rows-5 gap-px bg-border/55">
+                {desktopRing.map(({ branch, className }) => {
+                  const sector = branchMap.get(branch);
+                  return sector ? (
+                    <TaiyiGodSectorCompact
+                      key={`ring-${branch}`}
+                      sector={sector}
+                      className={cn(
+                        "aspect-auto h-full w-full rounded-none border-0 saturate-[0.82] brightness-[0.985] shadow-none",
+                        className,
+                      )}
+                    />
+                  ) : null;
+                })}
 
-        <div className="absolute inset-x-[20%] inset-y-[20%] rounded-[1.35rem] border border-border/70 bg-white/75 p-4">
-          <div className="mb-3 flex items-center justify-end gap-3">
-            <Badge>{chart.taiyi.trend}</Badge>
-          </div>
-          <div className="grid gap-2 md:grid-cols-3">
-            {innerPalaces.map((palace) => (
-              <TaiyiPalaceCompact key={`inner-${palace.index}`} palace={palace} />
-            ))}
+                <div className="col-start-2 row-start-2 col-span-3 row-span-3 bg-white/96 p-[2px] ring-1 ring-border/70">
+                  <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-px bg-border/65">
+                    {innerPalaces.map((palace) => (
+                      <TaiyiPalaceCompact
+                        key={`inner-${palace.index}`}
+                        palace={palace}
+                        className="aspect-auto h-full w-full rounded-none border-0 shadow-none"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
