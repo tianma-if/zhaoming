@@ -2,15 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { Compass, Shield, Sparkles, TimerReset } from "lucide-react";
+import { TimerReset } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { saveDivinationPreview, type DivinationCreateResponse } from "@/lib/divination/preview";
 import { sanshiInputSchema, type SanshiInputForm } from "@/lib/divination/schemas";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -44,24 +43,6 @@ const taiyiCountOptions = [
   { value: "month", label: "月计", description: "偏看阶段节奏与月内推进。" },
   { value: "day", label: "日计", description: "偏看近日局势与短线判断。" },
   { value: "hour", label: "时计", description: "偏看当下窗口与即时动作。" },
-] as const;
-
-const principles = [
-  {
-    title: "统一入口",
-    description: "先用一个表单承接三条流派，减少用户在术数选择上的犹豫成本。",
-    icon: Compass,
-  },
-  {
-    title: "策略导向",
-    description: "优先回答这件事的时机、动作与边界，而不是空泛谈运势。",
-    icon: Sparkles,
-  },
-  {
-    title: "诚实边界",
-    description: "当前版本先给简化局面摘要，不假装完整替代专业排盘。",
-    icon: Shield,
-  },
 ] as const;
 
 function createInitialValues(): SanshiInputForm {
@@ -286,39 +267,6 @@ export function SanshiForm() {
           </Card>
         </form>
       </Form>
-
-      <section className="space-y-8">
-        <div className="space-y-4 text-center">
-          <Badge>概念导读</Badge>
-          <div className="space-y-3">
-            <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是三式占卜？</CardTitle>
-            <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-              三式通常指奇门遁甲、太乙神数与大六壬。它们都更擅长处理“这件事现在怎么看、下一步怎么走、该防什么”这类时机与策略问题。
-            </CardDescription>
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {principles.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <article
-                key={item.title}
-                className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                  <Icon className="size-5" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
-                  <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
     </div>
   );
 }
