@@ -16,6 +16,83 @@ import type {
 
 const verticalClass = "[writing-mode:vertical-rl] [text-orientation:mixed]";
 
+type MarkerSealLabel =
+  | "值符"
+  | "值使"
+  | "值星"
+  | "太乙"
+  | "文昌"
+  | "计神"
+  | "始击"
+  | "主算"
+  | "客算"
+  | "定算";
+
+function MarkerSeal({
+  label,
+  inverse = false,
+  compact = false,
+  className,
+}: {
+  label: MarkerSealLabel;
+  inverse?: boolean;
+  compact?: boolean;
+  className?: string;
+}) {
+  const config: Record<
+    MarkerSealLabel,
+    {
+      frame: string;
+      tone: string;
+      glyph: "dot" | "square" | "diamond" | "bar";
+    }
+  > = {
+    值符: { frame: "rounded-[0.42rem]", tone: "text-stone-800", glyph: "square" },
+    值使: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "bar" },
+    值星: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "diamond" },
+    太乙: { frame: "rounded-full", tone: "text-[#8f2d23]", glyph: "dot" },
+    文昌: { frame: "rounded-full", tone: "text-emerald-800", glyph: "diamond" },
+    计神: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "bar" },
+    始击: { frame: "rounded-[0.42rem]", tone: "text-emerald-800", glyph: "square" },
+    主算: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "square" },
+    客算: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "dot" },
+    定算: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "diamond" },
+  };
+  const item = config[label];
+
+  return (
+    <Badge
+      className={cn(
+        "inline-flex items-center gap-1 border px-1.5 font-medium tracking-[0.08em] shadow-none",
+        compact ? "h-5 rounded-[0.45rem] py-0 text-[10px]" : "h-5.5 rounded-[0.5rem] py-0 text-[10px]",
+        inverse ? "border-white/18 bg-white/12 text-white" : "border-stone-300/70 bg-white/92 text-stone-700",
+        !inverse && item.tone,
+        className,
+      )}
+    >
+      <span
+        className={cn(
+          "flex items-center justify-center border",
+          compact ? "h-3 w-3" : "h-3.5 w-3.5",
+          item.frame,
+          inverse ? "border-current/30 bg-white/8" : "border-current/20 bg-current/5",
+        )}
+      >
+        <span
+          className={cn(
+            "block bg-current",
+            item.glyph === "dot" && "h-1.5 w-1.5 rounded-full",
+            item.glyph === "square" && "h-1.5 w-1.5 rounded-[2px]",
+            item.glyph === "diamond" && "h-1.5 w-1.5 rotate-45 rounded-[1px]",
+            item.glyph === "bar" && "h-1.5 w-[6px] rounded-full",
+          )}
+        />
+      </span>
+      <span>{label}</span>
+    </Badge>
+  );
+}
+
 function MetaList({
   items,
   columns = "md:grid-cols-2 xl:grid-cols-4",
@@ -157,19 +234,9 @@ function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
           </h3>
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-1">
-          {palace.isChiefDeity ? (
-            <Badge className="border-white/20 bg-white/15 text-white">值符</Badge>
-          ) : null}
-          {palace.isChiefStar ? (
-            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>
-              值星
-            </Badge>
-          ) : null}
-          {palace.isDutyDoor ? (
-            <Badge className={accent ? "border-white/20 bg-white/15 text-white" : ""}>
-              值使
-            </Badge>
-          ) : null}
+          {palace.isChiefDeity ? <MarkerSeal label="值符" inverse={accent} /> : null}
+          {palace.isChiefStar ? <MarkerSeal label="值星" inverse={accent} /> : null}
+          {palace.isDutyDoor ? <MarkerSeal label="值使" inverse={accent} /> : null}
         </div>
       </div>
 
@@ -223,15 +290,9 @@ function QimenPalaceSquare({ palace }: { palace: QimenPalace }) {
 
         <div className="flex min-w-0 flex-col">
           <div className="flex min-h-5 flex-wrap justify-end gap-1">
-            {palace.isChiefDeity ? (
-              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值符</Badge>
-            ) : null}
-            {palace.isChiefStar ? (
-              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值星</Badge>
-            ) : null}
-            {palace.isDutyDoor ? (
-              <Badge className={cn("h-5 rounded px-1.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>值使</Badge>
-            ) : null}
+            {palace.isChiefDeity ? <MarkerSeal label="值符" inverse={accent} compact /> : null}
+            {palace.isChiefStar ? <MarkerSeal label="值星" inverse={accent} compact /> : null}
+            {palace.isDutyDoor ? <MarkerSeal label="值使" inverse={accent} compact /> : null}
           </div>
 
           <div
@@ -287,9 +348,11 @@ function TaiyiGodSectorCompact({
             </h4>
           </div>
           {sector.markers.length ? (
-            <Badge className={cn("shrink-0 rounded px-1.5 py-0.5 text-[10px]", accent ? "border-white/20 bg-white/15 text-white" : "")}>
-              {sector.markers[0]}
-            </Badge>
+            <MarkerSeal
+              label={sector.markers[0] as MarkerSealLabel}
+              inverse={accent}
+              compact={density === "compact"}
+            />
           ) : null}
         </div>
 
@@ -330,13 +393,18 @@ function TaiyiPalaceCompact({
             <p className={cn("text-[10px] tracking-[0.16em]", accent ? "text-white/70" : "text-muted-foreground")}>
               {palace.direction}
             </p>
-            <h4 className={cn(verticalClass, density === "focus" ? "mt-1.5 text-[17px] font-semibold leading-none" : "mt-1.5 text-sm font-semibold leading-none")}>
+            <h4
+              className={cn(
+                verticalClass,
+                density === "focus" ? "mt-1.5 text-[17px] font-semibold leading-none" : "mt-1.5 text-sm font-semibold leading-none",
+              )}
+            >
               {palace.palace}
             </h4>
           </div>
           <Badge
             className={cn(
-              "shrink-0 rounded px-1.5 py-0.5 text-[10px]",
+              "shrink-0 rounded-[0.45rem] px-1.5 py-0.5 text-[10px] tracking-[0.08em] shadow-none",
               accent ? "border-white/20 bg-white/15 text-white" : "",
               palace.stage === "旺" && !accent ? "border-emerald-200 bg-emerald-100 text-emerald-900" : "",
               palace.stage === "守" && !accent ? "border-amber-200 bg-amber-100 text-amber-900" : "",
@@ -347,12 +415,35 @@ function TaiyiPalaceCompact({
         </div>
 
         <div className={cn("mt-auto space-y-1.5", density === "focus" ? "pt-3" : "pt-2")}>
-          <p className={cn(density === "focus" ? "text-[14px] font-semibold leading-5" : "text-xs font-medium leading-5", accent ? "text-white" : "text-foreground")}>
+          <p
+            className={cn(
+              density === "focus" ? "text-[14px] font-semibold leading-5" : "text-xs font-medium leading-5",
+              accent ? "text-white" : "text-foreground",
+            )}
+          >
             {palace.trigraph}宫
           </p>
-          <p className={cn(density === "focus" ? "text-[13px] leading-6" : "text-xs leading-5", accent ? "text-white/80" : "text-muted-foreground")}>
-            {palace.markers.join("、") || "无落点"}
-          </p>
+          {palace.markers.length ? (
+            <div className="flex flex-wrap gap-1">
+              {palace.markers.map((marker) => (
+                <MarkerSeal
+                  key={`${palace.index}-${marker}`}
+                  label={marker as MarkerSealLabel}
+                  inverse={accent}
+                  compact
+                />
+              ))}
+            </div>
+          ) : (
+            <p
+              className={cn(
+                density === "focus" ? "text-[13px] leading-6" : "text-xs leading-5",
+                accent ? "text-white/80" : "text-muted-foreground",
+              )}
+            >
+              无落点
+            </p>
+          )}
         </div>
       </div>
     </article>
