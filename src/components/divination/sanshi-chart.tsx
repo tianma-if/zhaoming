@@ -47,16 +47,16 @@ function MarkerSeal({
       glyph: "dot" | "square" | "diamond" | "bar";
     }
   > = {
-    值符: { frame: "rounded-[0.42rem]", tone: "text-stone-800", glyph: "square" },
-    值使: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "bar" },
-    值星: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "diamond" },
-    太乙: { frame: "rounded-full", tone: "text-[#8f2d23]", glyph: "dot" },
-    文昌: { frame: "rounded-full", tone: "text-emerald-800", glyph: "diamond" },
-    计神: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "bar" },
-    始击: { frame: "rounded-[0.42rem]", tone: "text-emerald-800", glyph: "square" },
-    主算: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "square" },
-    客算: { frame: "rounded-[0.42rem]", tone: "text-stone-700", glyph: "dot" },
-    定算: { frame: "rounded-[0.42rem]", tone: "text-amber-800", glyph: "diamond" },
+    值符: { frame: "rounded-[0.42rem]", tone: "text-zinc-900", glyph: "square" },
+    值使: { frame: "rounded-[0.42rem]", tone: "text-zinc-800", glyph: "bar" },
+    值星: { frame: "rounded-[0.42rem]", tone: "text-zinc-800", glyph: "diamond" },
+    太乙: { frame: "rounded-full", tone: "text-[#7f332c]", glyph: "dot" },
+    文昌: { frame: "rounded-full", tone: "text-[#7f332c]", glyph: "diamond" },
+    计神: { frame: "rounded-[0.42rem]", tone: "text-[#6b614e]", glyph: "bar" },
+    始击: { frame: "rounded-[0.42rem]", tone: "text-[#6b614e]", glyph: "square" },
+    主算: { frame: "rounded-[0.42rem]", tone: "text-[#6b614e]", glyph: "square" },
+    客算: { frame: "rounded-[0.42rem]", tone: "text-zinc-800", glyph: "dot" },
+    定算: { frame: "rounded-[0.42rem]", tone: "text-[#6b614e]", glyph: "diamond" },
   };
   const item = config[label];
 
@@ -65,7 +65,7 @@ function MarkerSeal({
       className={cn(
         "inline-flex items-center gap-1 border px-1.5 font-medium tracking-[0.08em] shadow-none",
         compact ? "h-5 rounded-[0.45rem] py-0 text-[10px]" : "h-5.5 rounded-[0.5rem] py-0 text-[10px]",
-        inverse ? "border-white/18 bg-white/12 text-white" : "border-stone-300/70 bg-white/92 text-stone-700",
+        inverse ? "border-white/18 bg-white/10 text-white" : "border-zinc-200/80 bg-white text-zinc-800",
         !inverse && item.tone,
         className,
       )}
@@ -75,7 +75,7 @@ function MarkerSeal({
           "flex items-center justify-center border",
           compact ? "h-3 w-3" : "h-3.5 w-3.5",
           item.frame,
-          inverse ? "border-current/30 bg-white/8" : "border-current/20 bg-current/5",
+          inverse ? "border-current/28 bg-white/8" : "border-current/18 bg-current/[0.08]",
         )}
       >
         <span
@@ -167,11 +167,11 @@ function getTaiyiCellTone(palace: TaiyiPalace) {
   }
 
   if (palace.stage === "旺") {
-    return "border-emerald-200 bg-emerald-50";
+    return "border-border/70 bg-white";
   }
 
   if (palace.stage === "守") {
-    return "border-amber-200 bg-amber-50";
+    return "border-border/70 bg-white";
   }
 
   return "border-border/70 bg-white";
@@ -183,11 +183,11 @@ function getTaiyiGodTone(sector: TaiyiGodSector) {
   }
 
   if (sector.markers.some((item) => item === "文昌" || item === "始击")) {
-    return "border-emerald-200 bg-emerald-50";
+    return "border-border/70 bg-white";
   }
 
   if (sector.markers.some((item) => item === "客算" || item === "定算")) {
-    return "border-amber-200 bg-amber-50";
+    return "border-border/70 bg-white";
   }
 
   return "border-border/70 bg-white";
@@ -406,8 +406,8 @@ function TaiyiPalaceCompact({
             className={cn(
               "shrink-0 rounded-[0.45rem] px-1.5 py-0.5 text-[10px] tracking-[0.08em] shadow-none",
               accent ? "border-white/20 bg-white/15 text-white" : "",
-              palace.stage === "旺" && !accent ? "border-emerald-200 bg-emerald-100 text-emerald-900" : "",
-              palace.stage === "守" && !accent ? "border-amber-200 bg-amber-100 text-amber-900" : "",
+              palace.stage === "旺" && !accent ? "border-zinc-200 bg-zinc-100 text-zinc-700" : "",
+              palace.stage === "守" && !accent ? "border-zinc-200 bg-zinc-100 text-zinc-700" : "",
             )}
           >
             {palace.stage}
@@ -584,13 +584,13 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
                 key={`mobile-ring-${branch}`}
                 sector={sector}
                 density="compact"
-                className="border-border/40 saturate-[0.82] brightness-[0.985] shadow-none"
+                className="border-border/45 shadow-none"
               />
             ) : null;
           })}
         </div>
 
-        <div className="rounded-[1.35rem] border border-border/80 bg-white/92 p-2 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.18)]">
+        <div className="rounded-[1.35rem] border border-border/75 bg-white p-2 shadow-[0_12px_28px_-26px_rgba(22,20,17,0.1)]">
           <div className="grid grid-cols-3 gap-2">
             {innerPalaces.map((palace) => (
               <TaiyiPalaceCompact key={`mobile-inner-${palace.index}`} palace={palace} density="focus" />
@@ -603,7 +603,7 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
         <div className="overflow-x-auto">
           <div className="mx-auto" style={{ width: "min(100%, 58rem)", minWidth: "46rem" }}>
             <div
-              className="overflow-hidden rounded-[1.35rem] border border-border/70 bg-white/90 p-3"
+              className="overflow-hidden rounded-[1.35rem] border border-border/75 bg-white p-3"
               style={{ aspectRatio: "1 / 1" }}
             >
               <div className="relative h-full w-full">
@@ -616,17 +616,17 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
                       <TaiyiGodSectorCompact
                         sector={sector}
                         density="compact"
-                        className="aspect-auto h-full w-full rounded-[0.9rem] border-border/45 saturate-[0.82] brightness-[0.985] shadow-none"
+                        className="aspect-auto h-full w-full rounded-[0.9rem] border-border/45 shadow-none"
                       />
                     </div>
                   ) : null;
                 })}
 
                 <div
-                  className="absolute bg-white/96 p-[8px] ring-1 ring-border/65"
+                  className="absolute bg-white p-[8px] ring-1 ring-border/55"
                   style={{ left: "18.5%", top: "18.5%", width: "63%", height: "63%" }}
                 >
-                  <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-px bg-border/65">
+                  <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-px bg-border/55">
                     {innerPalaces.map((palace) => (
                       <TaiyiPalaceCompact
                         key={`inner-${palace.index}`}
