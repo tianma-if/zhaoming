@@ -166,28 +166,12 @@ function getTaiyiCellTone(palace: TaiyiPalace) {
     return "border-black/20 bg-black text-white";
   }
 
-  if (palace.stage === "旺") {
-    return "border-border/70 bg-white";
-  }
-
-  if (palace.stage === "守") {
-    return "border-border/70 bg-white";
-  }
-
   return "border-border/70 bg-white";
 }
 
 function getTaiyiGodTone(sector: TaiyiGodSector) {
   if (sector.markers.includes("太乙")) {
     return "border-black/20 bg-black text-white";
-  }
-
-  if (sector.markers.some((item) => item === "文昌" || item === "始击")) {
-    return "border-border/70 bg-white";
-  }
-
-  if (sector.markers.some((item) => item === "客算" || item === "定算")) {
-    return "border-border/70 bg-white";
   }
 
   return "border-border/70 bg-white";
