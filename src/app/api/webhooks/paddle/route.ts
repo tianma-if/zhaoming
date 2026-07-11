@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCreditPack } from "@/lib/billing/plans";
 import { verifyPaddleWebhookSignature } from "@/lib/billing/paddle";
 import { fulfillBillingCheckoutSession } from "@/lib/data";
-import { getEnv, hasPaddleWebhookEnv } from "@/lib/env";
+import { getEnv, hasPaddleWebhookEnv, isBillingEnabled } from "@/lib/env";
 
 interface PaddleTransactionCompletedEvent {
   event_id?: string;
@@ -27,6 +27,10 @@ interface PaddleTransactionCompletedEvent {
 
 export async function POST(request: Request) {
   try {
+    if (!isBillingEnabled()) {
+      return NextResponse.json({ error: "支付功能当前未启用。" }, { status: 503 });
+    }
+
     if (!hasPaddleWebhookEnv()) {
       return NextResponse.json({ error: "Paddle webhook is not configured." }, { status: 503 });
     }

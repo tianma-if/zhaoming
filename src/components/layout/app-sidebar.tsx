@@ -8,7 +8,6 @@ import {
   getActiveDashboardHref,
   type DashboardNavItem,
 } from "@/config/dashboard-nav";
-import { SubscriptionPlansDialog } from "@/components/billing/subscription-plans-dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Sidebar,
@@ -164,7 +163,6 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className={cn("border-t border-sidebar-border/90 p-2")}>
-        <SubscriptionPlansDialog />
         <DashboardUserMenu />
       </SidebarFooter>
       <SidebarRail />

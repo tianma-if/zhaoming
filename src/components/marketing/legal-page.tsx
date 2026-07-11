@@ -66,12 +66,6 @@ export function LegalPage({
             </CardHeader>
             <CardContent className="flex flex-wrap gap-3 text-sm font-medium">
               <Link
-                href="/pricing"
-                className="rounded-full border border-[#ded8d1] px-4 py-2 text-[#111111] transition hover:border-[#111111]"
-              >
-                Pricing
-              </Link>
-              <Link
                 href="/terms-of-service"
                 className="rounded-full border border-[#ded8d1] px-4 py-2 text-[#111111] transition hover:border-[#111111]"
               >

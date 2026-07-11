@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { createBillingCheckoutIntent, normalizeReturnPath } from "@/lib/billing/checkout";
+import { isBillingEnabled } from "@/lib/env";
 
 const requestSchema = z.object({
   planId: z.string().min(1),
@@ -10,6 +11,10 @@ const requestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    if (!isBillingEnabled()) {
+      return NextResponse.json({ error: "支付功能当前未启用。" }, { status: 503 });
+    }
+
     const session = await auth.api.getSession({
       headers: request.headers,
     });

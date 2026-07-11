@@ -63,7 +63,7 @@ export function CheckoutPlanButton({
           },
           body: JSON.stringify({
             planId,
-            returnPath: pathname ?? "/pricing",
+            returnPath: pathname ?? "/divinations",
           }),
         });
 

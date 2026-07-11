@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getCreditPack } from "@/lib/billing/plans";
 import { fulfillBillingCheckoutSession } from "@/lib/data";
-import { getEnv, hasStripeWebhookEnv } from "@/lib/env";
+import { getEnv, hasStripeWebhookEnv, isBillingEnabled } from "@/lib/env";
 import { getStripe } from "@/lib/stripe";
 
 function getPaymentIntentId(paymentIntent: string | Stripe.PaymentIntent | null) {
@@ -15,6 +15,10 @@ function getPaymentIntentId(paymentIntent: string | Stripe.PaymentIntent | null)
 
 export async function POST(request: Request) {
   try {
+    if (!isBillingEnabled()) {
+      return NextResponse.json({ error: "支付功能当前未启用。" }, { status: 503 });
+    }
+
     if (!hasStripeWebhookEnv()) {
       return NextResponse.json({ error: "Stripe webhook is not configured." }, { status: 503 });
     }

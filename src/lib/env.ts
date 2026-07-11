@@ -45,6 +45,7 @@ const envSchema = z.object({
   }, z.string().url().optional()),
   AI_API_KEY: optionalNonEmptyString(),
   AUTOMATION_API_KEY: optionalNonEmptyString(),
+  BILLING_ENABLED: z.enum(["true", "false"]).optional(),
   BILLING_PROVIDER: z.enum(["stripe", "paddle"]).optional(),
   STRIPE_SECRET_KEY: optionalNonEmptyString(),
   STRIPE_WEBHOOK_SECRET: optionalNonEmptyString(),
@@ -213,6 +214,10 @@ export function hasPaddleWebhookEnv() {
 
 export function hasBillingCheckoutEnv() {
   return getBillingProvider() === "paddle" ? hasPaddleCheckoutEnv() : hasStripeCheckoutEnv();
+}
+
+export function isBillingEnabled() {
+  return readEnv().BILLING_ENABLED === "true";
 }
 
 export function hasBillingWebhookEnv() {

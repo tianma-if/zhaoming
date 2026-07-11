@@ -42,7 +42,7 @@ function getCheckoutSuccessUrl(credits: number) {
 
 export function normalizeReturnPath(returnPath?: string) {
   if (!returnPath?.startsWith("/") || returnPath.startsWith("//")) {
-    return "/pricing";
+    return "/divinations";
   }
 
   return returnPath;

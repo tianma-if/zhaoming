@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CreditCard, LogOut, Sparkles, UserRound } from "lucide-react";
+import { LogOut, Sparkles, UserRound } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -87,10 +87,6 @@ export function DashboardUserMenu() {
               <DropdownMenuItem disabled={isSessionPending} onSelect={() => router.push("/profile")}>
                 <UserRound className="size-4" />
                 个人资料
-              </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                <CreditCard className="size-4" />
-                订阅与积分
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

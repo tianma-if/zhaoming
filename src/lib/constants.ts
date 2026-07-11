@@ -3,7 +3,6 @@ export const siteConfig = {
   description: "传统命理排盘与现代大模型解读的极简交汇点。",
   nav: [
     { href: "/", label: "首页" },
-    { href: "/pricing", label: "定价" },
     { href: "/blog", label: "博客" },
     { href: "/divinations", label: "工作台" },
   ],
