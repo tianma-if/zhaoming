@@ -118,24 +118,6 @@ db/
   migrations/
 ```
 
-## 数据库与鉴权
-
-系统认证相关表由 `Better Auth` 维护（开发与部署环境中推荐配置数据库 `search_path=neon_auth,public` 以隔离认证与业务表数据）。
-
-- **Google OAuth 回调路径**：
-  - 本地开发白名单：`http://localhost:5555/api/auth/callback/google`
-  - 生产环境白名单：`https://your-domain.com/api/auth/callback/google`
-
-## AI Provider
-
-项目内置支持 `gateway`（AI网关模式）与 `openai-compatible`（OpenAI兼容模式）两种接入方式。
-
-- **源码实现入口**：
-  - [src/lib/ai/provider.ts](./src/lib/ai/provider.ts)
-  - 预设 Prompt 模板：[src/lib/ai/divination-prompts](./src/lib/ai/divination-prompts)
-  - Prompt 组装逻辑：[src/lib/ai/divination-prompt-input.ts](./src/lib/ai/divination-prompt-input.ts)
-
-如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回默认的占位提示文本，而非直接抛错。
 
 ## 未来路线 (Roadmap)
 
