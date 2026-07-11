@@ -130,7 +130,7 @@ export async function POST(request: Request) {
     if (!hasAiProviderEnv()) {
       if (mode === "short") {
         return textResponse(
-          "当前 AI 环境变量未完整配置，暂时无法生成短判词。请优先使用 `corepack pnpm dev:vercel` 启动本地环境，或补齐 `.env.local` 里的 `AI_PROVIDER`、`AI_MODEL`、`AI_BASE_URL` 和 `AI_API_KEY`。",
+          "当前 AI 环境变量未完整配置，暂时无法生成短判词。请优先使用 `bun run dev:vercel` 启动本地环境，或补齐 `.env.local` 里的 `AI_PROVIDER`、`AI_MODEL`、`AI_BASE_URL` 和 `AI_API_KEY`。",
         );
       }
 

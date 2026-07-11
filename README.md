@@ -58,16 +58,16 @@
 
 ### 包管理器
 
-项目统一使用 `pnpm`：
+项目统一使用 `Bun`：
 
-- 锁文件为 `pnpm-lock.yaml`
-- 安装、开发、构建、Lint 均使用 `pnpm`
+- 锁文件为 `bun.lock`
+- 安装、开发、构建、Lint 均使用 `bun`
 - 默认不再使用 `npm`
 
-如果本机还没启用 `pnpm`，建议先执行：
+如果本机还没安装 Bun，请先参考 [Bun 官方安装说明](https://bun.sh/docs/installation) 完成安装。
 
 ```bash
-corepack enable
+curl -fsSL https://bun.sh/install | bash
 ```
 
 ### 环境变量
@@ -112,13 +112,13 @@ AUTOMATION_API_KEY=
 安装依赖：
 
 ```bash
-pnpm install
+bun install
 ```
 
 启动开发服务器：
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 打开：
@@ -128,8 +128,8 @@ pnpm dev
 常用检查命令：
 
 ```bash
-pnpm lint
-pnpm build
+bun run lint
+bun run build
 ```
 
 补充说明：

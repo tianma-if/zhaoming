@@ -2,10 +2,10 @@
   "name": "zhaoming",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "bun@1.3.14",
   "scripts": {
     "dev": "next dev -p 5555",
-    "dev:vercel": "npx vercel env run --environment=production -- next dev -p 5555",
+    "dev:vercel": "bunx vercel env run --environment=production -- next dev -p 5555",
     "build": "next build",
     "start": "next start -p 5555",
     "lint": "eslint"
@@ -45,7 +45,7 @@
     "react-hook-form": "^7.76.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "stripe": "^22.1.1",
+    "stripe": "22.1.1",
     "tailwind-merge": "^3.6.0",
     "tz-lookup": "^6.1.25",
     "zod": "^4.4.3"
