@@ -119,21 +119,9 @@ db/
 ```
 
 
-## 未来路线 (Roadmap)
-
-- 🔄 **数据库管理重构**：引入 Drizzle/Prisma 等 ORM 统一管理 Better Auth 与业务表的 Schema 迁移，逐步淘汰纯手写 SQL。
-- 🧪 **算法补强与扩充**：在现有的三式、六爻、梅花、称骨基础上，继续丰富盘面细节展示逻辑。
-- 🤖 **解读模板升级**：优化 AI 解读 Prompt，支持定制不同流派分析判词。
-- 📝 **SEO 自动化博客**：进一步优化基于 Markdown 与白名单盘面组件嵌入的博客自动化发布机制，加速收录与流量沉淀。
-
-
 ## 鸣谢与致敬
 
 本项目在设计灵感与工程实现上参考或使用了以下优秀项目，在此致以诚挚的感谢：
 
 - **[FateMaster.AI](https://www.fatemaster.ai/)**：启发了本项目的产品定位与现代化交互设计理念。
 - **[next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter)**：本项目后台工作台布局及骨架结构基于此进行定制与二次开发。
-
-## 开源协议
-
-本项目基于 **GNU Affero General Public License v3.0 (AGPL-3.0)** 协议开源。详情请参阅 [LICENSE](./LICENSE) 文件。
