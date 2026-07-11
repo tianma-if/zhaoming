@@ -64,34 +64,7 @@ curl -fsSL https://bun.sh/install | bash
 cp .env.example .env.local
 ```
 
-需要填写的关键变量：
-
-```env
-DATABASE_URL=
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=http://localhost:5555
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-
-AI_PROVIDER=openai-compatible
-AI_MODEL=~google/gemini-flash-latest
-AI_BASE_URL=https://openrouter.ai/api/v1
-AI_API_KEY=
-
-AUTOMATION_API_KEY=
-```
-
-说明：
-
-- `DATABASE_URL`：`Neon Postgres` 连接串
-- `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串（本地开发可运行 `openssl rand -hex 32` 生成）
-- `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:5555`
-- `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
-- `AI_PROVIDER`：
-  - `gateway` 表示走 AI Gateway 风格的模型名
-  - `openai-compatible` 表示走 OpenRouter 或其他 OpenAI 兼容接口
-- `AI_BASE_URL`：如果使用 `openai-compatible`，OpenRouter 可填写 `https://openrouter.ai/api/v1`
-- `AUTOMATION_API_KEY`：保护 `/api/automation/publish-blog`
+根据 `.env.example` 文件中的注释说明，在 `.env.local` 中填写你的本地数据库、Better Auth 鉴权以及大模型等环境变量。
 
 ### 安装与启动
 
@@ -186,70 +159,22 @@ db/
 
 ## 数据库与鉴权
 
-认证相关表由 `Better Auth / Neon Auth` 使用：
+系统认证相关表由 `Better Auth` 维护（开发与部署环境中推荐配置数据库 `search_path=neon_auth,public` 以隔离认证与业务表数据）。
 
-- `neon_auth.user`
-- `neon_auth.session`
-- `neon_auth.account`
-- `neon_auth.verification`
-
-业务表位于 `public`：
-
-- `public.users`
-- `public.divinations`
-- `public.posts`
-
-初始化 SQL 迁移文件存放于 [db/migrations/](./db/migrations/) 目录。首个初始化脚本为：
-
-- [db/migrations/0001_init.sql](./db/migrations/0001_init.sql)
-
-当前代码使用的是：
-
-- 应用内 `Better Auth`
-- 数据库存储在 `Neon Postgres`
-- `search_path` 已对齐为 `neon_auth,public`
-
-也就是说：
-
-- Better Auth 的认证表优先走 `neon_auth`
-- 业务表继续放在 `public`
-- 业务代码通过 `public.users.id -> neon_auth.user.id` 关联
-
-Google OAuth 回调路径为：
-
-```text
-/api/auth/callback/google
-```
-
-本地 Google Console 需要把这个 URI 加到白名单：
-
-```text
-http://localhost:5555/api/auth/callback/google
-```
+- **Google OAuth 回调路径**：
+  - 本地开发白名单：`http://localhost:5555/api/auth/callback/google`
+  - 生产环境白名单：`https://your-domain.com/api/auth/callback/google`
 
 ## AI Provider
 
-项目支持两种模式：
+项目内置支持 `gateway`（AI网关模式）与 `openai-compatible`（OpenAI兼容模式）两种接入方式。
 
-1. `AI_PROVIDER=gateway`
-2. `AI_PROVIDER=openai-compatible`
+- **源码实现入口**：
+  - [src/lib/ai/provider.ts](./src/lib/ai/provider.ts)
+  - 预设 Prompt 模板：[src/lib/ai/divination-prompts](./src/lib/ai/divination-prompts)
+  - Prompt 组装逻辑：[src/lib/ai/divination-prompt-input.ts](./src/lib/ai/divination-prompt-input.ts)
 
-目前推荐接法是 `OpenRouter + OpenAI-compatible`：
-
-```env
-AI_PROVIDER=openai-compatible
-AI_MODEL=~google/gemini-flash-latest
-AI_BASE_URL=https://openrouter.ai/api/v1
-AI_API_KEY=your_openrouter_key
-```
-
-对应实现入口：
-
-- [src/lib/ai/provider.ts](./src/lib/ai/provider.ts)
-- 预设 Prompt 模板位于 [src/lib/ai/divination-prompts](./src/lib/ai/divination-prompts)
-- Prompt 输入组装位于 [src/lib/ai/divination-prompt-input.ts](./src/lib/ai/divination-prompt-input.ts)
-
-如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回占位文本，而不是直接报错。
+如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回默认的占位提示文本，而非直接抛错。
 
 ## 未来路线 (Roadmap)
 
