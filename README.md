@@ -302,6 +302,12 @@ AI_API_KEY=your_openrouter_key
 
 *注意：对于具有主仓库写入权限的协同开发者，为了保证主线分支干净，请遵循项目分支约束，直接在 `main` 分支上完成修改提交。*
 
+## 鸣谢与致敬
+
+本项目在产品创意与设计理念上受到了以下优秀项目的启发，在此表示由衷的感谢：
+
+- **[FateMaster.AI](https://www.fatemaster.ai/)**：一个极具创意且交互精致的 AI 东方命理分析系统。
+
 ## 开源协议
 
 本项目基于 **GNU Affero General Public License v3.0 (AGPL-3.0)** 协议开源。详情请参阅 [LICENSE](./LICENSE) 文件。
