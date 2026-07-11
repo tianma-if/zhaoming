@@ -89,11 +89,15 @@ export function DashboardUserMenu() {
                 个人资料
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={isPending || isSessionPending || !user} onSelect={handleSignOut}>
-              <LogOut className="size-4" />
-              {isPending ? "退出中..." : "退出登录"}
-            </DropdownMenuItem>
+            {process.env.NEXT_PUBLIC_AUTH_MODE !== "none" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem disabled={isPending || isSessionPending || !user} onSelect={handleSignOut}>
+                  <LogOut className="size-4" />
+                  {isPending ? "退出中..." : "退出登录"}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

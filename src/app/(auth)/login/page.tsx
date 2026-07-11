@@ -6,6 +6,7 @@ import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth/session";
+import { getAuthMode, hasGoogleOAuthEnv } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,8 @@ export default async function LoginPage({
     redirect(nextUrl);
   }
 
+  const isOauth = getAuthMode() === "oauth" && hasGoogleOAuthEnv();
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#27272a] px-6 py-10">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(161,161,170,0.2),_rgba(63,63,70,0.52)_42%,_rgba(39,39,42,0.78)_100%)]" />
@@ -55,17 +58,20 @@ export default async function LoginPage({
                 欢迎使用照命
               </CardTitle>
               <CardDescription className="max-w-lg text-base leading-8 text-[#7f756b]">
-                登录或注册账号后，即可继续查看命盘、保存测算记录，并逐步接入后续付费与积分体系。
+                登录或注册账号后，即可继续查看命盘、保存测算记录。
               </CardDescription>
             </div>
 
-            <GoogleSignInButton callbackURL={nextUrl} />
-
-            <div className="flex w-full items-center gap-4 text-sm text-[#9b9185]">
-              <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
-              <span className="shrink-0">或使用邮箱登录</span>
-              <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
-            </div>
+            {isOauth && (
+              <>
+                <GoogleSignInButton callbackURL={nextUrl} />
+                <div className="flex w-full items-center gap-4 text-sm text-[#9b9185]">
+                  <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
+                  <span className="shrink-0">或使用邮箱登录</span>
+                  <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
+                </div>
+              </>
+            )}
 
             <EmailAuthForm callbackURL={nextUrl} />
           </div>

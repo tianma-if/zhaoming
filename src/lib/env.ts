@@ -14,6 +14,7 @@ function optionalNonEmptyString() {
 }
 
 const envSchema = z.object({
+  NEXT_PUBLIC_AUTH_MODE: z.enum(["oauth", "credentials", "none"]).optional(),
   DATABASE_URL: optionalNonEmptyString(),
   BETTER_AUTH_SECRET: z.preprocess((value) => {
     if (typeof value !== "string") {
@@ -222,4 +223,15 @@ export function isBillingEnabled() {
 
 export function hasBillingWebhookEnv() {
   return getBillingProvider() === "paddle" ? hasPaddleWebhookEnv() : hasStripeWebhookEnv();
+}
+
+export function getAuthMode() {
+  const env = readEnv();
+  if (env.NEXT_PUBLIC_AUTH_MODE) {
+    return env.NEXT_PUBLIC_AUTH_MODE;
+  }
+  if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+    return "oauth" as const;
+  }
+  return "credentials" as const;
 }

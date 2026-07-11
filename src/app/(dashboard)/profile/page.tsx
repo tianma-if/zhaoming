@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  DashboardMetricCard,
   DashboardPage,
   DashboardPageHeader,
   DashboardSection,
@@ -8,6 +7,7 @@ import {
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { requireUser } from "@/lib/auth/session";
 import { getUserProfile } from "@/lib/data";
+import { getAuthMode } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "个人资料",
@@ -16,42 +16,29 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const user = await requireUser();
   const data = await getUserProfile(user.id);
-  const billingCustomerId = data?.billing_customer_id ?? data?.stripe_customer_id ?? null;
+  const authMode = getAuthMode();
+  const isNoneMode = authMode === "none";
 
   return (
     <DashboardPage>
       <DashboardPageHeader
         eyebrow="Account"
         title="账户资料"
-        description="这里已经预留了订阅状态、账单客户标识和 credits 字段，后续继续切换支付提供商时可以复用同一套后台页骨架。"
-        action={<SignOutButton variant="outline">退出当前账户</SignOutButton>}
+        description={isNoneMode ? "您当前处于免登录游客模式。" : "您的账户基本资料与配置信息。"}
+        action={!isNoneMode ? <SignOutButton variant="outline">退出当前账户</SignOutButton> : undefined}
       />
-      <div className="grid gap-4 md:grid-cols-3">
-        <DashboardMetricCard label="Credits" value={data?.credits ?? 0} />
-        <DashboardMetricCard label="Subscription" value={data?.subscription_status ?? "free"} />
-        <DashboardMetricCard
-          label="Billing"
-          value={billingCustomerId ? "已绑定" : "未绑定"}
-          detail={billingCustomerId ?? "等待正式接入账单系统"}
-        />
-      </div>
-      <DashboardSection title="账户详情" description="当前业务档案字段的实际落库情况。">
+      <DashboardSection
+        title={isNoneMode ? "游客模式" : "账户详情"}
+        description={isNoneMode ? "免登录模式下，所有操作均作为游客身份进行。" : "当前登录账户的基本业务档案。"}
+      >
         <dl className="grid gap-5 text-sm md:grid-cols-2">
           <div className="space-y-1">
             <dt className="text-muted-foreground">邮箱</dt>
-            <dd>{data?.email ?? user.email}</dd>
+            <dd>{isNoneMode ? "guest@zhaoming.local (免登录)" : (data?.email ?? user.email)}</dd>
           </div>
           <div className="space-y-1">
-            <dt className="text-muted-foreground">订阅状态</dt>
-            <dd>{data?.subscription_status ?? "free"}</dd>
-          </div>
-          <div className="space-y-1">
-            <dt className="text-muted-foreground">credits</dt>
-            <dd>{data?.credits ?? 0}</dd>
-          </div>
-          <div className="space-y-1">
-            <dt className="text-muted-foreground">billing_customer_id</dt>
-            <dd>{billingCustomerId ?? "未绑定"}</dd>
+            <dt className="text-muted-foreground">账户 ID</dt>
+            <dd className="font-mono text-xs">{user.id}</dd>
           </div>
         </dl>
       </DashboardSection>
