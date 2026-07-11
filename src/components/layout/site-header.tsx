@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAuthSession } from "@/lib/auth/session";
 import { siteConfig } from "@/lib/constants";
+import { GitHubLink } from "@/components/layout/github-link";
 import { SiteHeaderAuthButton } from "@/components/layout/site-header-auth-button";
 
 export async function SiteHeader() {
@@ -8,7 +9,7 @@ export async function SiteHeader() {
   const user = session?.user ?? null;
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 md:px-10">
+    <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 md:px-10">
       <Link href="/" className="font-display text-3xl tracking-[0.18em]">
         照命
       </Link>
@@ -22,6 +23,7 @@ export async function SiteHeader() {
       </nav>
 
       <div className="flex items-center gap-3">
+        <GitHubLink />
         <SiteHeaderAuthButton isAuthenticated={Boolean(user)} />
       </div>
     </header>

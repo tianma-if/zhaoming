@@ -1,6 +1,7 @@
 export const siteConfig = {
   name: "照命",
   description: "传统命理排盘与现代大模型解读的极简交汇点。",
+  githubUrl: "https://github.com/tianma-if/zhaoming",
   nav: [
     { href: "/", label: "首页" },
     { href: "/blog", label: "博客" },

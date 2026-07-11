@@ -1,9 +1,6 @@
 import Link from "next/link";
 import {
-  Brain,
   ChevronRight,
-  Lightbulb,
-  Sparkles,
   Target,
 } from "lucide-react";
 import { GoogleOneTapPrompt } from "@/components/auth/google-one-tap-prompt";
@@ -25,27 +22,6 @@ type SystemGroup = {
   category: string;
   items: SystemItem[];
 };
-
-const philosophy = [
-  {
-    title: "AI 语义建模",
-    body:
-      "告别晦涩的口诀，将复杂的干支宫位转化为多维的数据洞察。",
-    icon: Brain,
-  },
-  {
-    title: "客观逻辑叙事",
-    body:
-      "剥离主观臆断与玄学滤镜，用算力还原数理推演的本质。",
-    icon: Lightbulb,
-  },
-  {
-    title: "决策辅助主权",
-    body:
-      "每一个变量都清晰可见，把人生的解释权重新归还给你自己。",
-    icon: Sparkles,
-  },
-];
 
 const systemGroups: SystemGroup[] = [
   {
@@ -122,80 +98,48 @@ export default async function HomePage() {
         enabled={!user}
       />
 
-      <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-16 pt-10 text-center md:px-10 md:pb-24 md:pt-20">
-        <h1 className="font-display text-[4.3rem] leading-[0.95] tracking-[0.01em] text-foreground md:text-[6.6rem]">
+      <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 pb-4 pt-6 text-center md:px-10 md:pb-6 md:pt-8">
+        <h1 className="font-display text-[3.4rem] leading-[0.95] tracking-[0.01em] text-foreground md:text-[5.3rem]">
           照命
         </h1>
-        <p className="mt-5 text-2xl text-[#7d7d7d] md:text-[2rem]">
+        <p className="mt-4 text-xl text-[#7d7d7d] md:text-[1.6rem]">
           AI 解构命运的底层代码
         </p>
 
-        <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:gap-8">
+        <div className="mt-8 flex flex-col items-center gap-5 md:flex-row md:gap-6">
           <div className="space-y-3 text-left">
             <Link href="/divinations/new">
               <Button
-                size="lg"
-                className="h-14 min-w-60 rounded-2xl bg-[#111111] px-7 text-lg text-white hover:bg-[#111111]/95"
+                size="default"
+                className="h-12 min-w-52 rounded-2xl bg-[#111111] px-6 text-base text-white hover:bg-[#111111]/95"
               >
                 八字分析
-                <ChevronRight className="ml-2 size-5" />
+                <ChevronRight className="ml-1.5 size-4" />
               </Button>
             </Link>
-            <p className="pl-3 text-base text-[#8a8a8a]">命盘结构解读</p>
+            <p className="pl-2 text-sm text-[#8a8a8a]">命盘结构解读</p>
           </div>
 
-          <div className="hidden h-12 w-px bg-[#e6e6e6] md:block" />
+          <div className="hidden h-10 w-px bg-[#e6e6e6] md:block" />
 
           <div className="space-y-3 text-left">
             <Link href="/divinations/ziwei">
               <Button
-                size="lg"
+                size="default"
                 variant="outline"
-                className="h-14 min-w-60 rounded-2xl border-[#bfbfbf] bg-white px-7 text-lg text-[#111111] hover:bg-[#fafafa]"
+                className="h-12 min-w-52 rounded-2xl border-[#bfbfbf] bg-white px-6 text-base text-[#111111] hover:bg-[#fafafa]"
               >
                 紫微斗数
-                <ChevronRight className="ml-2 size-5" />
+                <ChevronRight className="ml-1.5 size-4" />
               </Button>
             </Link>
-            <p className="pl-3 text-base text-[#8a8a8a]">命宫格局阅读</p>
+            <p className="pl-2 text-sm text-[#8a8a8a]">命宫格局阅读</p>
           </div>
         </div>
 
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 pb-12 pt-4 md:px-10 md:pb-16 md:pt-8">
-        <div className="space-y-3 text-center">
-          <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
-            核心理念
-          </h2>
-          <p className="text-lg text-[#8a8a8a]">用更清晰的变量与逻辑，重新理解传统命理</p>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {philosophy.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <Card
-                key={item.title}
-                className={`rounded-[1.8rem] border-[#f0f0f0] bg-white p-7 shadow-none ${interactiveCardClassName}`}
-              >
-                <div className="flex size-14 items-center justify-center rounded-full bg-[#f5f5f5] text-[#111111] transition-colors duration-300 group-hover:bg-[#111111] group-hover:text-white">
-                  <Icon className="size-6" />
-                </div>
-                <CardTitle className="mt-7 font-sans text-[2rem] leading-[1.35] tracking-[-0.02em] text-[#111111]">
-                  {item.title}
-                </CardTitle>
-                <CardDescription className="mt-5 text-lg leading-10 text-[#707070]">
-                  {item.body}
-                </CardDescription>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-6 py-12 md:px-10 md:py-16">
+      <section className="mx-auto w-full max-w-6xl px-6 py-4 md:px-10 md:py-6">
         <div className="space-y-3 text-center">
           <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
             分析系统
@@ -203,7 +147,7 @@ export default async function HomePage() {
           <p className="text-lg text-[#8a8a8a]">以命理、占卜、相术三条主线组织你的产品能力地图</p>
         </div>
 
-        <div className="mt-14 space-y-12">
+        <div className="mt-8 space-y-8">
           {systemGroups.map((group) => (
             <div key={group.category} className="space-y-6">
               <div className="flex items-center gap-5">

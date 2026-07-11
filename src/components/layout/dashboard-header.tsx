@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { DashboardBreadcrumbs } from "@/components/layout/dashboard-breadcrumbs";
+import { GitHubLink } from "@/components/layout/github-link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -15,12 +16,15 @@ export function DashboardHeader() {
           <DashboardBreadcrumbs />
         </div>
       </div>
-      <Button asChild className="h-9 rounded-md px-3 text-sm">
-        <Link href="/divinations/new">
-          <Plus className="size-4" />
-          <span className="hidden sm:inline">新建测算</span>
-        </Link>
-      </Button>
+      <div className="flex items-center gap-1">
+        <GitHubLink />
+        <Button asChild className="h-9 rounded-md px-3 text-sm">
+          <Link href="/divinations/new">
+            <Plus className="size-4" />
+            <span className="hidden sm:inline">新建测算</span>
+          </Link>
+        </Button>
+      </div>
     </header>
   );
 }
