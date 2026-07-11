@@ -1,5 +1,10 @@
 # 照命
 
+[![Next.js](https://img.shields.io/badge/Next.js-16.2.6-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.4-blue?logo=react)](https://react.dev/)
+[![Bun](https://img.shields.io/badge/Bun-%3E%3D1.3-orange?logo=bun)](https://bun.sh/)
+[![License](https://img.shields.io/badge/License-AGPL_3.0-blue.svg)](LICENSE)
+
 `照命` 是一个基于 `Next.js App Router` 构建的 AI 传统命理 SaaS 原型，当前聚焦于“现代化命理工作台”这一产品方向。
 
 它的目标不是复刻传统算命站，而是用更克制的视觉语言、更清晰的交互结构和 AI 辅助解读能力，把八字、紫微斗数等传统命理能力整理成可持续扩展的数字产品。
@@ -98,7 +103,7 @@ AUTOMATION_API_KEY=
 说明：
 
 - `DATABASE_URL`：`Neon Postgres` 连接串
-- `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串
+- `BETTER_AUTH_SECRET`：至少 32 位高强度随机字符串（本地开发可运行 `openssl rand -hex 32` 生成）
 - `BETTER_AUTH_URL`：当前应用地址，本地默认 `http://localhost:5555`
 - `GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET`：Google OAuth 凭据
 - `AI_PROVIDER`：
@@ -114,6 +119,24 @@ AUTOMATION_API_KEY=
 ```bash
 bun install
 ```
+
+### 数据库初始化与迁移
+
+项目使用原始 `pg` 驱动执行 SQL 交互，表结构中业务表（`public.users`）外键关联了 `neon_auth.user`。因此，数据库的初始化和迁移需要遵循以下顺序：
+
+1. **初始化 Better Auth 认证表**：
+   - **Neon 托管用户**：直接在 Neon 后台开启 `Neon Auth` 即可，其会自动托管在 `neon_auth` 架构下。
+   - **普通/本地 PostgreSQL**：可以通过 `better-auth` 命令行生成并迁移认证表：
+     ```bash
+     bunx better-auth migrate
+     ```
+2. **执行业务迁移 SQL**：
+   在数据库中，按照文件名编号顺序依次执行 [db/migrations/](./db/migrations/) 目录下的全部 SQL 文件以初始化业务表（如 `users`、`divinations`、`posts` 等）：
+   - `0001_init.sql`
+   - `0002_add_chenggu_divination_type.sql`
+   - `0002_stripe_checkout_sessions.sql`
+   - `0003_add_sanshi_divination_type.sql`
+   - `0003_billing_provider_refactor.sql`
 
 启动开发服务器：
 
@@ -195,9 +218,9 @@ db/
 - `public.divinations`
 - `public.posts`
 
-初始化 SQL 基线在：
+初始化 SQL 迁移文件存放于 [db/migrations/](./db/migrations/) 目录。首个初始化脚本为：
 
-- [db/migrations/0001_init.sql](/D:/myLocalGithub/zhiwei/db/migrations/0001_init.sql)
+- [db/migrations/0001_init.sql](./db/migrations/0001_init.sql)
 
 当前代码使用的是：
 
@@ -241,9 +264,9 @@ AI_API_KEY=your_openrouter_key
 
 对应实现入口：
 
-- [src/lib/ai/provider.ts](/D:/myLocalGithub/zhiwei/src/lib/ai/provider.ts)
-- 预设 Prompt 模板位于 [src/lib/ai/divination-prompts](D:/myLocalGithub/zhiwei/src/lib/ai/divination-prompts)
-- Prompt 输入组装位于 [src/lib/ai/divination-prompt-input.ts](D:/myLocalGithub/zhiwei/src/lib/ai/divination-prompt-input.ts)
+- [src/lib/ai/provider.ts](./src/lib/ai/provider.ts)
+- 预设 Prompt 模板位于 [src/lib/ai/divination-prompts](./src/lib/ai/divination-prompts)
+- Prompt 输入组装位于 [src/lib/ai/divination-prompt-input.ts](./src/lib/ai/divination-prompt-input.ts)
 
 如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回占位文本，而不是直接报错。
 
@@ -268,3 +291,17 @@ AI_API_KEY=your_openrouter_key
 - 优先接入 `Paddle` 验证订阅、积分与报告付费链路；后续当交易规模、税务与合规需求更加明确后，再考虑通过香港公司主体接入 `Stripe` 等更完整的国际化收款方案
 - 为博客自动化发布落地 `Markdown + 受控组件嵌入` 方案：正文继续以 Markdown 为主，仅白名单开放盘面层组件嵌入，优先服务 SEO 稳定收录与批量发文
 - 在现有三式、六爻、梅花与称骨基础上，继续补强盘面展示细节、预填充体验与 AI 解读模板
+
+## 开源贡献
+
+欢迎提交 Issue 报告 Bug 或提出 Feature 建议。如果你想提交 Pull Request (PR) 贡献代码：
+
+1. **Fork** 本仓库到你的个人 GitHub 账号。
+2. 基于你 Fork 的仓库创建你的特性分支（例如 `feature/amazing-feature`）。
+3. 提交修改并推送至你的分支，然后发起一个针对本仓库 `main` 分支的 Pull Request。
+
+*注意：对于具有主仓库写入权限的协同开发者，为了保证主线分支干净，请遵循项目分支约束，直接在 `main` 分支上完成修改提交。*
+
+## 开源协议
+
+本项目基于 **GNU Affero General Public License v3.0 (AGPL-3.0)** 协议开源。详情请参阅 [LICENSE](./LICENSE) 文件。
