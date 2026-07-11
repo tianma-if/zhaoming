@@ -37,10 +37,6 @@
 - 紫微斗数 `4 x 4` 中空环形网格 UI 已接入
 - AI 解盘支持流式输出
 
-## 国际化预留
-
-未来需要支持繁体中文、英文、日文与韩文，因此在新增页面、组件、文案与数据结构时，需要预留多语言支持入口。
-
 ## 技术栈
 
 - `Next.js 16.2.6` + `App Router`
@@ -56,15 +52,6 @@
 - `OpenAI-compatible Provider`（当前默认用于接 `OpenRouter`）
 - `lunar-typescript`
 - `iztro`
-
-## 后台脚手架
-
-当前后台工作台以 [Kiranism/next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter) 作为后台脚手架母体来开发。
-
-- 优先复用其成熟的 `dashboard shell / sidebar / page container / data page` 一类后台骨架
-- 仅保留当前项目真正需要的组件与布局约定
-- 未整体照搬其业务模块、鉴权体系、SaaS 信息架构或演示页面
-- 命理业务页面、排盘流程、数据模型与产品视觉方向仍以本项目自身需求为主
 
 ## 本地开发
 
@@ -277,27 +264,12 @@ AI_API_KEY=your_openrouter_key
 
 如果没有配置 AI 相关环境变量，`/api/ai/divination` 会返回占位文本，而不是直接报错。
 
-## 部署与远端资源
+## 未来路线 (Roadmap)
 
-### Neon
-
-当前已对接的 Neon 项目：
-
-- Project: `zhiwei`（可在 Vercel 后台按需改名为 `zhaoming`）
-- Project ID: `late-water-70564475`
-- Branch: `production`
-- Database: `neondb`
-
-已确认该项目上 `Neon Auth` 处于 provision 状态。
-
-## 下一步计划
-
-- 补上 `Better Auth` 的正式 schema/migrate 流程，避免只依赖手写 SQL
-- 基于现有 `Better Auth + Google OAuth` 登录链路，完成生产回调配置核对与一次完整登录验收
-- 把积分扣减与账单状态真正落库，并收敛为统一 billing 流程
-- 优先接入 `Paddle` 验证订阅、积分与报告付费链路；后续当交易规模、税务与合规需求更加明确后，再考虑通过香港公司主体接入 `Stripe` 等更完整的国际化收款方案
-- 为博客自动化发布落地 `Markdown + 受控组件嵌入` 方案：正文继续以 Markdown 为主，仅白名单开放盘面层组件嵌入，优先服务 SEO 稳定收录与批量发文
-- 在现有三式、六爻、梅花与称骨基础上，继续补强盘面展示细节、预填充体验与 AI 解读模板
+- 🔄 **数据库管理重构**：引入 Drizzle/Prisma 等 ORM 统一管理 Better Auth 与业务表的 Schema 迁移，逐步淘汰纯手写 SQL。
+- 🧪 **算法补强与扩充**：在现有的三式、六爻、梅花、称骨基础上，继续丰富盘面细节展示逻辑。
+- 🤖 **解读模板升级**：优化 AI 解读 Prompt，支持定制不同流派分析判词。
+- 📝 **SEO 自动化博客**：进一步优化基于 Markdown 与白名单盘面组件嵌入的博客自动化发布机制，加速收录与流量沉淀。
 
 ## 开源贡献
 
@@ -311,9 +283,10 @@ AI_API_KEY=your_openrouter_key
 
 ## 鸣谢与致敬
 
-本项目在产品创意与设计理念上受到了以下优秀项目的启发，在此表示由衷的感谢：
+本项目在设计灵感与工程实现上参考或使用了以下优秀项目，在此致以诚挚的感谢：
 
-- **[FateMaster.AI](https://www.fatemaster.ai/)**：一个极具创意且交互精致的 AI 东方命理分析系统。
+- **[FateMaster.AI](https://www.fatemaster.ai/)**：启发了本项目的产品定位与现代化交互设计理念。
+- **[next-shadcn-dashboard-starter](https://github.com/Kiranism/next-shadcn-dashboard-starter)**：本项目后台工作台布局及骨架结构基于此进行定制与二次开发。
 
 ## 开源协议
 
