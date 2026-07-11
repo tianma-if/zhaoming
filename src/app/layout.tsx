@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist_Mono, Noto_Sans_SC } from "next/font/google";
 import { getAppBaseUrl } from "@/lib/env";
 import { getLocale } from "@/lib/i18n-server";
+import { hasLocalePreference } from "@/lib/i18n-preference";
 import { I18nProvider } from "@/components/i18n-provider";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const hasLocaleCookie = await hasLocalePreference();
 
   return (
     <html
@@ -51,7 +53,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-full bg-background text-foreground antialiased">
-        <I18nProvider locale={locale}>{children}</I18nProvider>
+        <I18nProvider locale={locale} isSystemDetected={!hasLocaleCookie}>{children}</I18nProvider>
       </body>
     </html>
   );
