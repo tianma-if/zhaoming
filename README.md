@@ -42,19 +42,7 @@
 
 ## 本地开发
 
-### 包管理器
-
-项目统一使用 `Bun`：
-
-- 锁文件为 `bun.lock`
-- 安装、开发、构建、Lint 均使用 `bun`
-- 默认不再使用 `npm`
-
-如果本机还没安装 Bun，请先参考 [Bun 官方安装说明](https://bun.sh/docs/installation) 完成安装。
-
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
+项目统一使用 `Bun` 作为包管理器。
 
 ### 环境变量
 
