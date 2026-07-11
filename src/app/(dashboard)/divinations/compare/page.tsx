@@ -12,6 +12,8 @@ import { requireUser } from "@/lib/auth/session";
 import { ensureTrumpSampleDivinationForUser, listDivinations } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "八字模型对比",
@@ -23,6 +25,7 @@ export default async function DivinationComparePage({
   searchParams: Promise<{ divinationId?: string }>;
 }) {
   const { divinationId } = await searchParams;
+  const locale = await getLocale();
   const user = await requireUser();
   await ensureTrumpSampleDivinationForUser(user);
   const records = await listDivinations(user.id);
@@ -39,11 +42,11 @@ export default async function DivinationComparePage({
     <DashboardPage width="full">
       <DashboardPageHeader
         eyebrow="Lab"
-        title="八字模型对比"
-        description="用同一条八字记录、同一套预置 prompt，同时比较 DeepSeek 与 Gemini 的实际输出差异。"
+        title={translate(locale, "page.bazi")}
+        description={translate(locale, "page.baziDescription")}
         action={
           <Button asChild className="rounded-xl px-4" variant="outline">
-            <Link href="/divinations">返回记录列表</Link>
+            <Link href="/divinations">{translate(locale, "page.backRecords")}</Link>
           </Button>
         }
       />
@@ -56,11 +59,11 @@ export default async function DivinationComparePage({
         />
       ) : (
         <DashboardEmptyState
-          title="还没有八字记录"
-          description="先创建一条八字命盘，再回到这里做多模型并排测试。"
+          title={translate(locale, "page.noBazi")}
+          description={translate(locale, "page.noBaziDescription")}
           action={
             <Button asChild>
-              <Link href="/divinations/new">去创建八字命盘</Link>
+              <Link href="/divinations/new">{translate(locale, "page.createBazi")}</Link>
             </Button>
           }
         />

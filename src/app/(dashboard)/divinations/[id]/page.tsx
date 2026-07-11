@@ -14,15 +14,8 @@ import { getDivinationById } from "@/lib/data";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
 import type { SanshiChart } from "@/types/divination";
-
-const divinationTitleMap = {
-  bazi: "八字算命",
-  ziwei: "紫微斗数",
-  chenggu: "袁天罡称骨",
-  liuyao: "六爻占卜",
-  meihua: "梅花易数",
-  sanshi: "三式占卜",
-} as const;
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 export async function generateMetadata({
   params,
@@ -31,18 +24,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const user = await requireUser();
+  const locale = await getLocale();
   const data = await getDivinationById(user.id, id);
 
   if (!data) {
     return {
-      title: "测算记录",
+      title: translate(locale, "dashboard.records"),
     };
   }
 
   const divinationType = resolveDivinationTypeFromRecord(data);
 
   return {
-    title: divinationTitleMap[divinationType as keyof typeof divinationTitleMap] ?? "测算记录",
+    title: translate(locale, divinationType === "bazi" ? "dashboard.bazi" : divinationType === "ziwei" ? "dashboard.ziwei" : divinationType === "liuyao" ? "dashboard.liuyao" : divinationType === "meihua" ? "dashboard.meihua" : divinationType === "sanshi" ? "dashboard.sanshi" : "dashboard.chenggu"),
   };
 }
 
@@ -56,6 +50,7 @@ export default async function DivinationDetailPage({
   const { id } = await params;
   const { ai } = await searchParams;
   const user = await requireUser();
+  const locale = await getLocale();
   const data = await getDivinationById(user.id, id);
 
   if (!data) {
@@ -69,30 +64,30 @@ export default async function DivinationDetailPage({
   return (
     <DashboardPage>
       <DashboardPageHeader
-        eyebrow={<Badge>Reading View</Badge>}
+        eyebrow={<Badge>{translate(locale, "detail.readingView")}</Badge>}
         title={
           divinationType === "bazi"
-            ? "八字解盘"
+            ? translate(locale, "detail.bazi")
             : divinationType === "ziwei"
-              ? "紫微斗数解盘"
+              ? translate(locale, "detail.ziwei")
               : divinationType === "liuyao"
-                ? "六爻解卦"
+                ? translate(locale, "detail.liuyao")
                 : divinationType === "meihua"
-                  ? "梅花易数解卦"
+                  ? translate(locale, "detail.meihua")
                   : divinationType === "sanshi"
-                    ? `三式解局-${sanshiChart?.meta.systemLabel ?? "三式"}`
-                    : "袁天罡称骨结果"
+                    ? `${translate(locale, "detail.sanshi")}-${sanshiChart?.meta.systemLabel ?? translate(locale, "dashboard.sanshi")}`
+                    : translate(locale, "detail.chenggu")
         }
         description={
           <span className="text-xs text-muted-foreground">
-            命盘生成时间：{formatDateTime(data.created_at)}
+            {translate(locale, "page.recordTime", { time: formatDateTime(data.created_at) })}
           </span>
         }
         action={
           <div className="flex flex-wrap items-center gap-3">
             {divinationType === "bazi" ? (
               <Button asChild className="rounded-xl px-4" variant="outline">
-                <Link href={`/divinations/compare?divinationId=${data.id}`}>模型对比 Demo</Link>
+                <Link href={`/divinations/compare?divinationId=${data.id}`}>{translate(locale, "detail.modelDemo")}</Link>
               </Button>
             ) : null}
             <DivinationAiReportButton

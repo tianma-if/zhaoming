@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useAuthTransitionPending } from "@/components/auth/auth-transition-state";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/components/i18n-provider";
 
 export function SiteHeaderAuthButton({ isAuthenticated }: { isAuthenticated: boolean }) {
   const pending = useAuthTransitionPending();
+  const { t } = useI18n();
 
   if (isAuthenticated) {
     return (
       <Link href="/divinations">
-        <Button>进入工作台</Button>
+        <Button>{t("nav.workspace")}</Button>
       </Link>
     );
   }
@@ -22,7 +24,7 @@ export function SiteHeaderAuthButton({ isAuthenticated }: { isAuthenticated: boo
       className={pending ? "pointer-events-none" : undefined}
     >
       <Button variant="outline" disabled={pending}>
-        {pending ? "登录中…" : "登录"}
+        {pending ? t("nav.loginPending") : t("nav.login")}
       </Button>
     </Link>
   );

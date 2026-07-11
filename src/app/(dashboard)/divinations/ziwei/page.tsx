@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
 import { DivinationForm, ZiweiConceptSection } from "@/components/divination/divination-form";
 import { DashboardPage, DashboardPageHeader } from "@/components/layout/dashboard-shell";
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "紫微斗数",
 };
 
-export default function NewZiweiDivinationPage() {
+export default async function NewZiweiDivinationPage() {
+  const locale = await getLocale();
   return (
     <DashboardPage width="narrow" className="space-y-10 pt-2">
       <DashboardPageHeader
         eyebrow="Divination"
-        title="紫微排盘"
-        description="输入出生信息，生成紫微斗数命盘，并进入后续解读页面。"
+        title={translate(locale, "dashboard.ziwei")}
+        description={translate(locale, "home.ziweiBody")}
       />
       <DivinationForm
         divinationType="ziwei"
-        submitLabel="排盘"
+        submitLabel={translate(locale, "form.submit")}
         conceptSection={<ZiweiConceptSection />}
       />
     </DashboardPage>

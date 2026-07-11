@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/components/i18n-provider";
 
 const systemOptions = [
   {
@@ -62,6 +63,7 @@ function createInitialValues(): SanshiInputForm {
 }
 
 export function SanshiForm() {
+  const { t } = useI18n();
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -94,7 +96,7 @@ export function SanshiForm() {
 
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        setSubmitError(payload?.error ?? "测算创建失败。");
+        setSubmitError(payload?.error ?? t("sanshi.failed"));
         return;
       }
 
@@ -119,7 +121,7 @@ export function SanshiForm() {
             <section className="space-y-5">
               <div className="flex items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <CardTitle className="text-2xl">起局信息</CardTitle>
+                  <CardTitle className="text-2xl">{t("sanshi.setup")}</CardTitle>
                 </div>
                 <Button
                   type="button"
@@ -128,7 +130,7 @@ export function SanshiForm() {
                   onClick={handleResetTime}
                 >
                   <TimerReset className="size-4" />
-                  使用当前时间
+                  {t("sanshi.now")}
                 </Button>
               </div>
 
@@ -145,7 +147,7 @@ export function SanshiForm() {
                     }`}
                   >
                     <div className="space-y-2">
-                      <p className="font-medium">{option.title}</p>
+                      <p className="font-medium">{t(`sanshi.${option.value}`)}</p>
                       <p
                         className={`text-sm leading-6 ${
                           currentSystem === option.value
@@ -153,7 +155,7 @@ export function SanshiForm() {
                             : "text-muted-foreground"
                         }`}
                       >
-                        {option.description}
+                        {t(`sanshi.${option.value}Hint`)}
                       </p>
                     </div>
                   </button>
@@ -166,7 +168,7 @@ export function SanshiForm() {
                   name="taiyiCountType"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>太乙计法</FormLabel>
+                      <FormLabel>{t("sanshi.taiyiMethod")}</FormLabel>
                       <div className="grid gap-3 md:grid-cols-4">
                         {taiyiCountOptions.map((option) => (
                           <button
@@ -185,7 +187,7 @@ export function SanshiForm() {
                             }`}
                           >
                             <div className="space-y-2">
-                              <p className="font-medium">{option.label}</p>
+                            <p className="font-medium">{t(`sanshi.${option.value}`)}</p>
                               <p
                                 className={`text-sm leading-6 ${
                                   field.value === option.value
@@ -193,7 +195,7 @@ export function SanshiForm() {
                                     : "text-muted-foreground"
                                 }`}
                               >
-                                {option.description}
+                                {t(`sanshi.${option.value}Hint`)}
                               </p>
                             </div>
                           </button>
@@ -212,7 +214,7 @@ export function SanshiForm() {
                     name="divinationDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>起局日期</FormLabel>
+                        <FormLabel>{t("sanshi.date")}</FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
                         </FormControl>
@@ -226,7 +228,7 @@ export function SanshiForm() {
                     name="divinationTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>起局时间</FormLabel>
+                        <FormLabel>{t("sanshi.time")}</FormLabel>
                         <FormControl>
                           <Input type="time" {...field} />
                         </FormControl>
@@ -242,10 +244,10 @@ export function SanshiForm() {
                 name="question"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>你想判断什么？</FormLabel>
+                    <FormLabel>{t("sanshi.question")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="例如：这次换岗是否适合主动争取？如果推进，应该先找谁沟通？"
+                        placeholder={t("sanshi.questionPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -262,7 +264,7 @@ export function SanshiForm() {
             ) : null}
 
             <Button className="h-11 w-full rounded-md" type="submit" disabled={isPending}>
-              {isPending ? "正在起局..." : "排盘"}
+              {isPending ? t("sanshi.submitting") : t("sanshi.submit")}
             </Button>
           </Card>
         </form>

@@ -13,6 +13,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useI18n } from "@/components/i18n-provider";
 
 export interface BirthPlaceSuggestion {
   id: string;
@@ -35,8 +36,10 @@ export function BirthPlaceInput({
   onChange,
   onSelectSuggestion,
   showLabel = true,
-  helperText = "支持模糊搜索城市、区县和海外地点，后续可用于更精确的时间换算。",
+  helperText,
 }: BirthPlaceInputProps) {
+  const { t } = useI18n();
+  const resolvedHelperText = helperText === undefined ? t("form.placeHint") : helperText;
   const [suggestions, setSuggestions] = useState<BirthPlaceSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -92,7 +95,7 @@ export function BirthPlaceInput({
 
   return (
     <div className="space-y-2 text-sm">
-      {showLabel ? <span className="text-muted-foreground">出生地点</span> : null}
+      {showLabel ? <span className="text-muted-foreground">{t("form.birthPlace")}</span> : null}
       <Popover
         open={isOpen}
         onOpenChange={(open) => {
@@ -118,7 +121,7 @@ export function BirthPlaceInput({
             className="h-13 w-full justify-between rounded-2xl px-5 text-base font-normal"
           >
             <span className={cn("truncate", !value && "text-muted-foreground")}>
-              {value || "搜索并选择出生地"}
+              {value || t("form.searchPlace")}
             </span>
             {isLoading ? (
               <LoaderCircle className="size-4 shrink-0 animate-spin opacity-60" />
@@ -142,10 +145,10 @@ export function BirthPlaceInput({
                   setIsLoading(true);
                 }
               }}
-              placeholder="输入城市、区县或国家地区"
+              placeholder={t("form.placePlaceholder")}
             />
             <CommandList>
-              <CommandEmpty>输入至少 2 个字开始搜索</CommandEmpty>
+              <CommandEmpty>{t("form.placeEmpty")}</CommandEmpty>
               <CommandGroup>
                 {suggestions.map((suggestion) => (
                   <CommandItem
@@ -169,7 +172,7 @@ export function BirthPlaceInput({
           </Command>
         </PopoverContent>
       </Popover>
-      {helperText ? <p className="text-xs leading-6 text-muted-foreground">{helperText}</p> : null}
+      {resolvedHelperText ? <p className="text-xs leading-6 text-muted-foreground">{resolvedHelperText}</p> : null}
     </div>
   );
 }

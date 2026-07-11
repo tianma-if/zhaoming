@@ -1,10 +1,13 @@
+"use client";
+
 import type { LiuyaoChart, LiuyaoLine } from "@/types/divination";
 import { LiuyaoYaoGlyph } from "@/components/divination/liuyao-yao-glyph";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { useI18n } from "@/components/i18n-provider";
 
-function formatMethod(method: LiuyaoChart["meta"]["method"]) {
-  return method === "coins" ? "随机数起卦" : "手动录入";
+function formatMethod(method: LiuyaoChart["meta"]["method"], t: (key: string) => string) {
+  return method === "coins" ? t("chart.randomCast") : t("chart.manualCastInput");
 }
 
 function getMovingLines(chart: LiuyaoChart) {
@@ -101,6 +104,7 @@ function MetaLine({ label, value }: { label: string; value: string }) {
 }
 
 export function LiuyaoChartView({ chart }: { chart: LiuyaoChart }) {
+  const { t } = useI18n();
   const movingLines = getMovingLines(chart);
 
   return (
@@ -108,28 +112,28 @@ export function LiuyaoChartView({ chart }: { chart: LiuyaoChart }) {
       <Card className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-none md:p-8">
         <div className="space-y-8">
           <div className="space-y-3">
-            <CardTitle className="text-4xl tracking-tight text-black">卦象分析结果</CardTitle>
+            <CardTitle className="text-4xl tracking-tight text-black">{t("chart.hexagramResult")}</CardTitle>
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-lg leading-8">
-              <MetaLine label="占卜日期和时间" value={chart.meta.divinationDateTime} />
-              <MetaLine label="起卦方式" value={formatMethod(chart.meta.method)} />
-              <MetaLine label="干支" value={chart.meta.ganZhi} />
+              <MetaLine label={t("chart.divinationDateTime")} value={chart.meta.divinationDateTime} />
+              <MetaLine label={t("chart.method")} value={formatMethod(chart.meta.method, t)} />
+            <MetaLine label={t("chart.ganZhi")} value={chart.meta.ganZhi} />
             </div>
           </div>
 
           <div className="rounded-[1.2rem] border border-black/8 bg-[#f7f7f6] px-6 py-7">
-            <p className="text-2xl font-semibold text-black">您的问题：</p>
+            <p className="text-2xl font-semibold text-black">{t("chart.yourQuestion")}</p>
             <p className="mt-5 text-xl leading-9 text-black/70">{chart.meta.question}</p>
           </div>
 
           <div className="grid gap-10 xl:grid-cols-2 xl:gap-16">
             <HexagramPanel
-              badge="本卦"
+              badge={t("chart.original")}
               name={chart.originalHexagram.name}
               subtitle={`${chart.originalHexagram.upperTrigram}上 ${chart.originalHexagram.lowerTrigram}下`}
               lines={chart.lines}
             />
             <HexagramPanel
-              badge="变卦"
+              badge={t("chart.changed")}
               name={chart.changedHexagram.name}
               subtitle={`${chart.changedHexagram.upperTrigram}上 ${chart.changedHexagram.lowerTrigram}下`}
               lines={chart.lines}
@@ -140,7 +144,7 @@ export function LiuyaoChartView({ chart }: { chart: LiuyaoChart }) {
           <div className="rounded-[1.2rem] border border-black/8 bg-[#f7f7f6] px-6 py-6">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-semibold text-black">• 变爻位置</span>
+                <span className="text-2xl font-semibold text-black">• {t("chart.changePosition")}</span>
               </div>
 
               {movingLines.length ? (
@@ -151,34 +155,34 @@ export function LiuyaoChartView({ chart }: { chart: LiuyaoChart }) {
                       variant="outline"
                       className="rounded-full border-black/10 bg-white px-4 py-2 text-base text-black"
                     >
-                      {line.label} 发生变化
+                      {line.label} {t("chart.lineChanged")}
                     </Badge>
                   ))}
                 </div>
               ) : (
-                <p className="text-lg text-black/60">本次起卦没有动爻，重点以本卦整体气象为主。</p>
+                <p className="text-lg text-black/60">{t("chart.noMoving")}</p>
               )}
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-2xl font-semibold text-black">卦象说明</h3>
+            <h3 className="text-2xl font-semibold text-black">{t("chart.hexagramDescription")}</h3>
             <div className="space-y-5 text-lg leading-9 text-black/72">
               <p>
-                本卦为 {chart.originalHexagram.name}，{chart.originalHexagram.description}
+                {t("chart.originalIs")}{chart.originalHexagram.name}，{chart.originalHexagram.description}
               </p>
               <p>
-                变卦为 {chart.changedHexagram.name}，{chart.changedHexagram.description}
+                {t("chart.changedIs")}{chart.changedHexagram.name}，{chart.changedHexagram.description}
               </p>
               <p>
-                当前系统已提供本卦、变卦与动爻位置的基础结构化结果；更完整的六亲、六神、世应等传统六爻字段后续再逐步补齐。
+                {t("chart.resultNote")}
               </p>
             </div>
           </div>
 
           {chart.meta.notes ? (
             <div className="space-y-4 border-t border-black/8 pt-6">
-              <h3 className="text-2xl font-semibold text-black">补充背景</h3>
+              <h3 className="text-2xl font-semibold text-black">{t("chart.additionalContext")}</h3>
               <CardDescription className="text-lg leading-9 text-black/68">
                 {chart.meta.notes}
               </CardDescription>

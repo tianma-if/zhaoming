@@ -9,6 +9,7 @@ import {
 } from "@/components/divination/divination-records-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useI18n } from "@/components/i18n-provider";
 
 type LoadState =
   | { status: "loading"; records: DivinationRecordTableRow[]; error: null }
@@ -16,6 +17,7 @@ type LoadState =
   | { status: "error"; records: DivinationRecordTableRow[]; error: string };
 
 export function DivinationRecordsPanel() {
+  const { t } = useI18n();
   const [state, setState] = useState<LoadState>({
     status: "loading",
     records: [],
@@ -36,7 +38,7 @@ export function DivinationRecordsPanel() {
         };
 
         if (!response.ok) {
-          throw new Error(payload.error ?? "测算记录加载失败。");
+          throw new Error(payload.error ?? t("page.recordsLoadFailed"));
         }
 
         setState({
@@ -52,7 +54,7 @@ export function DivinationRecordsPanel() {
         setState({
           status: "error",
           records: [],
-          error: error instanceof Error ? error.message : "测算记录加载失败。",
+          error: error instanceof Error ? error.message : t("page.recordsLoadFailed"),
         });
       }
     }
@@ -60,7 +62,7 @@ export function DivinationRecordsPanel() {
     void loadRecords();
 
     return () => controller.abort();
-  }, []);
+  }, [t]);
 
   if (state.status === "loading") {
     return <DivinationRecordsSkeleton />;
@@ -69,9 +71,9 @@ export function DivinationRecordsPanel() {
   if (state.status === "error") {
     return (
       <DashboardEmptyState
-        title="测算记录加载失败"
+        title={t("page.recordsLoadFailed")}
         description={state.error}
-        action={<Button onClick={() => window.location.reload()}>重新加载</Button>}
+        action={<Button onClick={() => window.location.reload()}>{t("page.reload")}</Button>}
       />
     );
   }
@@ -79,11 +81,11 @@ export function DivinationRecordsPanel() {
   if (!state.records.length) {
     return (
       <DashboardEmptyState
-        title="还没有测算记录"
-        description="先创建一条命盘或占卜记录，后面的 AI 解读、比较和回看，都会从这里进入。"
+        title={t("page.noRecords")}
+        description={t("page.noRecordsDescription")}
         action={
           <Button asChild>
-            <Link href="/divinations/new">立即新建</Link>
+            <Link href="/divinations/new">{t("page.newReading")}</Link>
           </Button>
         }
       />

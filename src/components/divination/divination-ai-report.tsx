@@ -5,6 +5,7 @@ import { WandSparkles } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AiReportCard } from "@/components/divination/ai-report-card";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/components/i18n-provider";
 
 const REQUEST_EVENT = "divination-ai-report:generate";
 const STATE_EVENT = "divination-ai-report:state";
@@ -26,6 +27,7 @@ export function DivinationAiReportButton({
   divinationId: string;
   initialHasContent: boolean;
 }) {
+  const { t } = useI18n();
   const [isLoading, setIsLoading] = useState(false);
   const [hasContent, setHasContent] = useState(initialHasContent);
 
@@ -67,7 +69,7 @@ export function DivinationAiReportButton({
       type="button"
     >
       <WandSparkles size={18} />
-      {isLoading ? "AI 解读生成中" : hasContent ? "重新生成 AI 解读" : "立即 AI 解读"}
+      {isLoading ? t("ai.generating") : hasContent ? t("ai.regenerate") : t("ai.generate")}
     </Button>
   );
 }
@@ -81,6 +83,7 @@ export function DivinationAiReportCard({
   initialMarkdown: string | null;
   autoStart?: boolean;
 }) {
+  const { t } = useI18n();
   const [requested, setRequested] = useState(Boolean(initialMarkdown));
   const autoStartedRef = useRef(false);
   const { complete, completion, error, isLoading } = useCompletion({
@@ -147,7 +150,7 @@ export function DivinationAiReportCard({
   return (
     <AiReportCard
       content={content}
-      errorMessage={error ? `AI 解读生成失败：${error.message || "请稍后再试。"}` : null}
+      errorMessage={error ? t("ai.failed", { message: error.message || t("auth.genericError") }) : null}
       id={`ai-report-${divinationId}`}
       isLoading={isLoading}
     />

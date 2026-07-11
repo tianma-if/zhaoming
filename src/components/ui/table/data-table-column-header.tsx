@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -24,6 +25,7 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const { t } = useI18n();
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -47,18 +49,18 @@ export function DataTableColumnHeader<TData, TValue>({
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUp className="size-4" />
-            升序
+            {t("table.ascending")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
             <ArrowDown className="size-4" />
-            降序
+            {t("table.descending")}
           </DropdownMenuItem>
           {column.getCanHide() ? (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
                 <EyeOff className="size-4" />
-                隐藏
+                {t("table.hide")}
               </DropdownMenuItem>
             </>
           ) : null}

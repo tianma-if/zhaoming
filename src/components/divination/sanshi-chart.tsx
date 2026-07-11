@@ -5,6 +5,7 @@ import { CopyContentButton } from "@/components/divination/copy-content-button";
 import { DashboardSection } from "@/components/layout/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 import type {
   LiurenPalace,
   LiurenTransmission,
@@ -193,48 +194,6 @@ function getLiurenCellTone(palace: LiurenPalace) {
   return "border-border/70 bg-white";
 }
 
-function QimenPalaceCell({ palace }: { palace: QimenPalace }) {
-  const accent = palace.isDutyDoor || palace.isChiefStar || palace.isChiefDeity;
-
-  return (
-    <article
-      className={cn(
-        "min-h-[168px] rounded-[1.15rem] border px-4 py-3.5 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]",
-        getQimenCellTone(palace),
-      )}
-    >
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="min-w-0 flex-1 pr-2">
-          <p
-            className={cn(
-              "text-xs uppercase tracking-[0.2em]",
-              accent ? "text-white/70" : "text-muted-foreground",
-            )}
-          >
-            {palace.direction}
-          </p>
-          <h3 className="mt-0.5 whitespace-nowrap font-display text-[1.85rem] leading-none tracking-[0.04em]">
-            {palace.palace}
-          </h3>
-        </div>
-        <div className="flex shrink-0 flex-wrap justify-end gap-1">
-          {palace.isChiefDeity ? <MarkerSeal label="值符" inverse={accent} /> : null}
-          {palace.isChiefStar ? <MarkerSeal label="值星" inverse={accent} /> : null}
-          {palace.isDutyDoor ? <MarkerSeal label="值使" inverse={accent} /> : null}
-        </div>
-      </div>
-
-      <div className={cn("mt-3 space-y-1.5 text-[15px]", accent ? "text-white/88" : "text-foreground")}>
-        <p>地盘: {palace.earthStem}</p>
-        <p>天盘: {palace.heavenStem ?? "中寄"}</p>
-        <p>九星: {palace.star ?? "无"}</p>
-        <p>八门: {palace.door ?? "中宫无门"}</p>
-        <p>八神: {palace.deity ?? "无"}</p>
-      </div>
-    </article>
-  );
-}
-
 function QimenPalaceSquare({ palace }: { palace: QimenPalace }) {
   const accent = palace.isDutyDoor || palace.isChiefStar || palace.isChiefDeity;
   const details = [
@@ -359,6 +318,7 @@ function TaiyiPalaceCompact({
   className?: string;
   density?: "default" | "focus";
 }) {
+  const { t } = useI18n();
   const accent = palace.markers.includes("太乙");
 
   return (
@@ -425,7 +385,7 @@ function TaiyiPalaceCompact({
                 accent ? "text-white/80" : "text-muted-foreground",
               )}
             >
-              无落点
+              {t("sanshi.unplaced")}
             </p>
           )}
         </div>
@@ -435,6 +395,7 @@ function TaiyiPalaceCompact({
 }
 
 function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
+  const { t } = useI18n();
   const accent = palace.markers.some((item) => item === "月将" || item === "初传" || item === "末传");
   const markerText = palace.markers.slice(0, 2).join("、");
 
@@ -470,8 +431,8 @@ function LiurenPalaceCell({ palace }: { palace: LiurenPalace }) {
           accent ? "border-white/10 text-white/88" : "border-border/60 text-foreground",
         )}
       >
-        <p>天盘 {palace.heavenBranch}</p>
-        <p>天将 {palace.heavenGeneral}</p>
+        <p>{t("sanshi.heavenBranch")} {palace.heavenBranch}</p>
+        <p>{t("sanshi.general")} {palace.heavenGeneral}</p>
       </div>
     </article>
   );
@@ -491,6 +452,7 @@ function LiurenTransmissionChip({ item }: { item: LiurenTransmission }) {
 }
 
 function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText: string }) {
+  const { t } = useI18n();
   if (!chart.taiyi) return null;
 
   const branchMap = new Map(chart.taiyi.godSectors.map((sector) => [sector.branch, sector]));
@@ -553,9 +515,9 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
   return (
     <div className="relative space-y-4 pb-20 md:pb-24">
       <div className="space-y-1">
-        <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">组合盘面</h3>
+        <h3 className="text-xl font-semibold tracking-[0.03em] text-foreground">{t("sanshi.combinedBoard")}</h3>
         <p className="text-sm leading-6 text-muted-foreground">
-          外围十六宫看神机与主客动势，内部九宫看落宫后的具体着力点。
+          {t("sanshi.taiyiDescription")}
         </p>
       </div>
 
@@ -628,13 +590,14 @@ function TaiyiCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText:
       </div>
 
       <div className="absolute right-4 top-0 z-10 md:right-5 md:top-1">
-        <CopyContentButton label="复制盘面概要" text={copyText} />
+        <CopyContentButton label={t("sanshi.copyBoard")} text={copyText} />
       </div>
     </div>
   );
 }
 
 function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText: string }) {
+  const { t } = useI18n();
   if (!chart.liuren) return null;
 
   const palaceMap = new Map(chart.liuren.palaces.map((item) => [item.branch, item]));
@@ -695,7 +658,7 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
 
           <article className="col-start-2 col-end-4 row-start-2 row-end-4 space-y-2.5 rounded-[1.9rem] border border-border/70 bg-white/92 p-3.5">
             <div className="text-center">
-              <h4 className="font-display text-[1.45rem] tracking-[0.05em] text-foreground">四课 · 三传</h4>
+              <h4 className="font-display text-[1.45rem] tracking-[0.05em] text-foreground">{t("sanshi.fourThree")}</h4>
             </div>
             <div className="grid gap-2 sm:grid-cols-3">
               {chart.liuren.transmissions.map((item) => (
@@ -721,7 +684,7 @@ function LiurenCombinedBoard({ chart, copyText }: { chart: SanshiChart; copyText
       </div>
 
       <div className="absolute bottom-4 right-4 z-10 md:bottom-5 md:right-5">
-        <CopyContentButton label="复制盘面概要" text={copyText} />
+        <CopyContentButton label={t("sanshi.copyBoard")} text={copyText} />
       </div>
     </div>
   );
@@ -825,6 +788,7 @@ function formatLiurenCopyText(chart: SanshiChart) {
 }
 
 export function SanshiChartView({ chart }: { chart: SanshiChart }) {
+  const { t } = useI18n();
   const copyText = useMemo(() => formatSanshiCopyText(chart), [chart]);
   const qimenCopyText = useMemo(() => formatQimenCopyText(chart), [chart]);
   const taiyiCopyText = useMemo(() => formatTaiyiCopyText(chart), [chart]);
@@ -837,23 +801,23 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       {showOverviewSection ? (
         <DashboardSection
           className="space-y-5"
-          action={<CopyContentButton label="复制解局摘要" text={copyText} />}
+          action={<CopyContentButton label={t("sanshi.copySummary")} text={copyText} />}
         >
           <OverviewGrid
             items={[
               {
-                label: "流派",
+                label: t("sanshi.overview"),
                 value: chart.meta.systemLabel,
               },
               {
-                label: "起局时间",
+                label: t("sanshi.chartTime"),
                 value: chart.meta.divinationDateTime,
                 detail: chart.meta.lunar,
               },
               {
-                label: "问题",
+                label: t("sanshi.questionShort"),
                 value: chart.meta.question,
-                detail: chart.meta.subjectName ? `求测人：${chart.meta.subjectName}` : undefined,
+                detail: chart.meta.subjectName ? `${t("sanshi.querent")}: ${chart.meta.subjectName}` : undefined,
               },
               ...chart.signals.map((signal) => ({
                 label: signal.label,
@@ -863,7 +827,7 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
               ...(chart.qimen
                 ? [
                     {
-                      label: "盘面信息",
+                      label: t("sanshi.boardInfo"),
                       value: `${chart.qimen.dunLabel}${chart.qimen.ju}局 · 值符${chart.qimen.chiefDeity} · 值使${chart.qimen.dutyDoor}`,
                       detail: `${chart.qimen.dayGanZhi} · ${chart.qimen.timeGanZhi} · 时空 ${chart.qimen.hourVoid}`,
                     },
@@ -878,9 +842,9 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
         <section className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-semibold tracking-[0.02em] text-foreground">
-              奇门盘面
+              {t("sanshi.qimenBoard")}
             </h2>
-            <CopyContentButton label="复制盘面概要" text={qimenCopyText} />
+            <CopyContentButton label={t("sanshi.copyBoard")} text={qimenCopyText} />
           </div>
 
           <div className="overflow-x-auto">
@@ -894,27 +858,27 @@ export function SanshiChartView({ chart }: { chart: SanshiChart }) {
       ) : null}
 
       {chart.taiyi ? (
-        <DashboardSection className="space-y-5" title={showTaiyiFocusedView ? undefined : "太乙盘面"}>
+        <DashboardSection className="space-y-5" title={showTaiyiFocusedView ? undefined : t("sanshi.taiyiBoard")}>
           <MetaList
             columns="md:grid-cols-2 xl:grid-cols-3"
             items={[
               {
-                label: "盘面信息",
+                label: t("sanshi.boardInfo"),
                 value: `${chart.taiyi.epoch}第${chart.taiyi.bureau}局`,
                 detail: `太乙${chart.taiyi.taiyiPalace} · 文昌${chart.taiyi.wenchangPalace} · 计神${chart.taiyi.jishenPalace} · 始击${chart.taiyi.shijiPalace}`,
               },
               {
-                label: "所用计法",
+                label: t("sanshi.countMethod"),
                 value: chart.taiyi.countTypeLabel,
                 detail: `${chart.taiyi.countSource} · ${chart.taiyi.countRuleSummary}`,
               },
               {
-                label: "主客定算",
+                label: t("sanshi.hostGuest"),
                 value: `${chart.taiyi.hostCount} / ${chart.taiyi.guestCount} / ${chart.taiyi.setCount}`,
                 detail: chart.taiyi.trend,
               },
               {
-                label: "问题",
+                label: t("sanshi.questionShort"),
                 value: chart.meta.question,
                 detail: chart.meta.systemLabel,
               },

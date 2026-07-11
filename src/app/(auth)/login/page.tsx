@@ -7,6 +7,8 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth/session";
 import { getAuthMode, hasGoogleOAuthEnv } from "@/lib/env";
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +35,7 @@ export default async function LoginPage({
   }
 
   const isOauth = getAuthMode() === "oauth" && hasGoogleOAuthEnv();
+  const locale = await getLocale();
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#27272a] px-6 py-10">
@@ -46,7 +49,7 @@ export default async function LoginPage({
           <Link
             href="/"
             className="absolute right-5 top-5 flex size-10 items-center justify-center rounded-full border border-[#ebe5dc] bg-white text-[#595148] transition hover:border-[#151515]/18 hover:text-[#151515]"
-            aria-label="返回首页"
+            aria-label={translate(locale, "auth.backHome")}
           >
             <X className="size-5" />
           </Link>
@@ -55,10 +58,10 @@ export default async function LoginPage({
             <div className="space-y-3 pr-12">
               <p className="text-xs tracking-[0.36em] text-[#9c9287]">AUTH</p>
               <CardTitle className="font-sans text-4xl font-semibold tracking-[-0.03em] text-[#151515]">
-                欢迎使用照命
+                {translate(locale, "auth.welcome")}
               </CardTitle>
               <CardDescription className="max-w-lg text-base leading-8 text-[#7f756b]">
-                登录或注册账号后，即可继续查看命盘、保存测算记录。
+                {translate(locale, "auth.description")}
               </CardDescription>
             </div>
 
@@ -67,7 +70,7 @@ export default async function LoginPage({
                 <GoogleSignInButton callbackURL={nextUrl} />
                 <div className="flex w-full items-center gap-4 text-sm text-[#9b9185]">
                   <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
-                  <span className="shrink-0">或使用邮箱登录</span>
+                  <span className="shrink-0">{translate(locale, "auth.orEmail")}</span>
                   <Separator className="min-w-0 flex-1 bg-[#e7e0d6]" />
                 </div>
               </>

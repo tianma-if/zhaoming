@@ -22,6 +22,7 @@ import {
 } from "@/lib/divination/preview";
 import { resolveDivinationTypeFromRecord } from "@/lib/divination/record-type";
 import { formatDateTime } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 const divinationTitleMap: Record<string, string> = {
   bazi: "八字解盘",
@@ -45,6 +46,7 @@ function getServerPreviewSnapshot() {
 }
 
 export function DivinationPreview({ googleClientId }: { googleClientId: string | null }) {
+  const { t } = useI18n();
   const router = useRouter();
   const { data: session, isPending: isSessionPending } = authClient.useSession();
   const isAuthTransitionPending = useAuthTransitionPending();
@@ -81,7 +83,7 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
         setSubmitError(
           payload && "error" in payload && payload.error
             ? payload.error
-            : "保存命盘失败，请稍后再试。",
+            : t("auth.genericError"),
         );
         return;
       }
@@ -96,11 +98,11 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
     return (
       <DashboardPage width="narrow">
         <DashboardEmptyState
-          title="还没有临时命盘"
-          description="先完成一次基础排盘，就可以在这里查看结果；AI 深度解读会在登录后继续。"
+          title={t("page.noPreview")}
+          description={t("page.noPreviewDescription")}
           action={
             <Button asChild>
-              <Link href="/divinations/new">去排盘</Link>
+              <Link href="/divinations/new">{t("page.goCast")}</Link>
             </Button>
           }
         />
@@ -119,10 +121,10 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
     >
       <DashboardPageHeader
         eyebrow={<Badge>Preview</Badge>}
-        title={divinationTitleMap[divinationType] ?? "基础排盘结果"}
+        title={divinationTitleMap[divinationType] ?? t("page.preview")}
         description={
           <span className="text-xs text-muted-foreground">
-            基础排盘已生成：{formatDateTime(preview.created_at)}
+            {t("page.previewCreated", { time: formatDateTime(preview.created_at) })}
           </span>
         }
         action={
@@ -135,7 +137,7 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
                 type="button"
               >
                 <Sparkles className="size-4" />
-                {isPending ? "正在保存..." : "保存并生成 AI 解读"}
+                {isPending ? t("page.saving") : t("page.saveAi")}
               </Button>
               {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
             </div>
@@ -147,7 +149,7 @@ export function DivinationPreview({ googleClientId }: { googleClientId: string |
             >
               <Link href="/login?callbackURL=/divinations/preview">
                 <LockKeyhole className="size-4" />
-                {isAuthTransitionPending ? "登录中…" : "登录生成 AI 解读"}
+                {isAuthTransitionPending ? t("nav.loginPending") : t("page.loginAi")}
               </Link>
             </Button>
           )

@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useI18n } from "@/components/i18n-provider";
 
 const trigrams = [
   { number: 1, name: "乾", nature: "天", code: "111" },
@@ -124,6 +125,7 @@ function MethodOption({
 }
 
 function MeihuaConceptSection() {
+  const { t } = useI18n();
   const items = [
     {
       title: "以象数入局",
@@ -142,11 +144,11 @@ function MeihuaConceptSection() {
   return (
     <section className="space-y-8">
       <div className="space-y-4 text-center">
-        <Badge>概念导读</Badge>
+        <Badge>{t("divination.concept")}</Badge>
         <div className="space-y-3">
-          <CardTitle className="text-4xl tracking-tight md:text-5xl">什么是梅花易数？</CardTitle>
+          <CardTitle className="text-4xl tracking-tight md:text-5xl">{t("divination.meihuaConcept")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            梅花易数偏重“触机而占”，通过象、数与时间建立卦象，再从本卦、互卦、变卦和体用关系中观察事情的状态与趋势。
+            {t("concept.meihua.intro")}
           </CardDescription>
         </div>
       </div>
@@ -154,8 +156,8 @@ function MeihuaConceptSection() {
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item) => (
           <article key={item.title} className="space-y-3 rounded-md border border-border bg-white p-5">
-            <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+            <h3 className="text-lg font-semibold text-foreground">{t(item.title === "以象数入局" ? "concept.meihua.imageTitle" : item.title === "本互变三层" ? "concept.meihua.layersTitle" : "concept.meihua.bodyTitle")}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{t(item.title === "以象数入局" ? "concept.meihua.image" : item.title === "本互变三层" ? "concept.meihua.layers" : "concept.meihua.body")}</p>
           </article>
         ))}
       </div>
@@ -164,6 +166,7 @@ function MeihuaConceptSection() {
 }
 
 export function MeihuaForm() {
+  const { t } = useI18n();
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -194,7 +197,7 @@ export function MeihuaForm() {
 
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        setSubmitError(payload?.error ?? "起卦失败。");
+        setSubmitError(payload?.error ?? t("divination.castFailed"));
         return;
       }
 
@@ -218,8 +221,8 @@ export function MeihuaForm() {
           <Card className="space-y-6 rounded-xl p-5 shadow-none">
             <section className="space-y-5">
               <div className="space-y-1">
-                <h3 className="text-xl font-semibold tracking-tight text-foreground">求测信息</h3>
-                <p className="text-xs text-muted-foreground">先写清楚所问之事，再选择起卦方式。</p>
+                <h3 className="text-xl font-semibold tracking-tight text-foreground">{t("divination.questionInfo")}</h3>
+                <p className="text-xs text-muted-foreground">{t("divination.questionInfoHint")}</p>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -228,9 +231,9 @@ export function MeihuaForm() {
                   name="subjectName"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>求测人 *</FormLabel>
+                      <FormLabel>{t("divination.person")} *</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="请输入姓名" className="h-9 rounded-md text-sm" />
+                        <Input {...field} placeholder={t("form.namePlaceholder")} className="h-9 rounded-md text-sm" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -241,18 +244,18 @@ export function MeihuaForm() {
                   name="gender"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>性别</FormLabel>
+                      <FormLabel>{t("form.gender")}</FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="h-9 rounded-md text-sm">
-                            <SelectValue placeholder="请选择性别" />
+                            <SelectValue placeholder={t("form.genderPlaceholder")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="male">男</SelectItem>
-                          <SelectItem value="female">女</SelectItem>
-                          <SelectItem value="other">其他</SelectItem>
-                          <SelectItem value="unknown">未知</SelectItem>
+                          <SelectItem value="male">{t("form.male")}</SelectItem>
+                          <SelectItem value="female">{t("form.female")}</SelectItem>
+                          <SelectItem value="other">{t("form.other")}</SelectItem>
+                          <SelectItem value="unknown">{t("form.unknown")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -266,11 +269,11 @@ export function MeihuaForm() {
                 name="question"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>所问之事 *</FormLabel>
+                    <FormLabel>{t("divination.question")} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="例如：这次合作是否适合继续推进？"
+                        placeholder={t("divination.questionPlaceholder")}
                         className="h-9 rounded-md text-sm"
                       />
                     </FormControl>
@@ -285,15 +288,15 @@ export function MeihuaForm() {
                 <MethodOption
                   active={method === "time"}
                   icon={<CalendarClock className="size-4" />}
-                  title="时间起卦"
-                  description="按当前或指定起卦时间取农历年月日时数。"
+                  title={t("divination.timeCast")}
+                  description={t("divination.timeCastHint")}
                   onClick={() => form.setValue("method", "time", { shouldDirty: true, shouldValidate: true })}
                 />
                 <MethodOption
                   active={method === "number"}
                   icon={<Hash className="size-4" />}
-                  title="数字起卦"
-                  description="手动输入上卦数、下卦数，可选动爻数。"
+                  title={t("divination.numberCast")}
+                  description={t("divination.numberCastHint")}
                   onClick={() => form.setValue("method", "number", { shouldDirty: true, shouldValidate: true })}
                 />
               </div>
@@ -304,7 +307,7 @@ export function MeihuaForm() {
                   name="divinationDate"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>起卦日期 *</FormLabel>
+                        <FormLabel>{t("divination.castDate")} *</FormLabel>
                       <FormControl>
                         <Input {...field} type="date" className="h-9 rounded-md text-sm" />
                       </FormControl>
@@ -317,7 +320,7 @@ export function MeihuaForm() {
                   name="divinationTime"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>起卦时间 *</FormLabel>
+                        <FormLabel>{t("divination.castTime")} *</FormLabel>
                       <FormControl>
                         <Input {...field} type="time" className="h-9 rounded-md text-sm" />
                       </FormControl>
@@ -334,7 +337,7 @@ export function MeihuaForm() {
                     name="upperNumber"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
-                        <FormLabel>上卦数字 *</FormLabel>
+                        <FormLabel>{t("divination.upperNumber")} *</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -356,7 +359,7 @@ export function MeihuaForm() {
                     name="lowerNumber"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
-                        <FormLabel>下卦数字 *</FormLabel>
+                        <FormLabel>{t("divination.lowerNumber")} *</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -378,7 +381,7 @@ export function MeihuaForm() {
                     name="movingNumber"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
-                        <FormLabel>动爻数字</FormLabel>
+                        <FormLabel>{t("divination.movingNumber")}</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -388,7 +391,7 @@ export function MeihuaForm() {
                             }
                             type="number"
                             min={1}
-                            placeholder="默认上+下"
+                            placeholder={t("divination.defaultSum")}
                             className="h-9 rounded-md text-sm"
                           />
                         </FormControl>
@@ -403,16 +406,16 @@ export function MeihuaForm() {
             {method === "number" ? (
               <section className="grid gap-3 rounded-md border border-black/10 bg-white p-4 md:grid-cols-3">
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">本卦</p>
+                  <p className="text-xs text-muted-foreground">{t("divination.originalHexagram")}</p>
                   <p className="text-lg font-semibold">{preview.original.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {preview.upper.name}上{preview.lower.name}下
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">变卦</p>
+                  <p className="text-xs text-muted-foreground">{t("divination.changedDirection")}</p>
                   <p className="text-lg font-semibold">{preview.changed.name}</p>
-                  <p className="text-xs text-muted-foreground">动爻：第 {preview.movingLine} 爻</p>
+                  <p className="text-xs text-muted-foreground">{t("divination.movingLine", { number: preview.movingLine })}</p>
                 </div>
                 <div className="flex items-center justify-start md:justify-end">
                   <Badge variant="outline" className="rounded-full px-3 py-1">
@@ -427,11 +430,11 @@ export function MeihuaForm() {
               name="notes"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel>补充背景</FormLabel>
+                  <FormLabel>{t("divination.background")}</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="可补充外应、场景、相关人物或你已经观察到的变化。"
+                      placeholder={t("divination.backgroundPlaceholder")}
                       className="min-h-24 rounded-md text-sm"
                     />
                   </FormControl>
@@ -444,7 +447,7 @@ export function MeihuaForm() {
               <div className="flex flex-wrap gap-3">
                 <Button className="h-11 flex-1 rounded-md" type="submit" disabled={isPending}>
                   <Sparkles className="size-4" />
-                  {isPending ? "正在起卦..." : "开始起卦"}
+                  {isPending ? t("divination.casting") : t("divination.startCast")}
                 </Button>
                 <Button
                   type="button"
@@ -453,7 +456,7 @@ export function MeihuaForm() {
                   onClick={() => form.reset(createInitialValues())}
                 >
                   <RefreshCcw className="size-4" />
-                  重置
+                  {t("records.reset")}
                 </Button>
               </div>
               {submitError ? <p className="text-center text-sm text-fire">{submitError}</p> : null}

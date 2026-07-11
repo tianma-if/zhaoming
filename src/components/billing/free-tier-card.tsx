@@ -1,12 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 export function FreeTierCard({
   compact = false,
 }: {
   compact?: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <Card
       className={cn(
@@ -22,14 +24,14 @@ export function FreeTierCard({
       >
         Free Access
       </Badge>
-      <CardTitle className={compact ? "text-lg" : "text-2xl"}>免费版</CardTitle>
+      <CardTitle className={compact ? "text-lg" : "text-2xl"}>{t("billing.free")}</CardTitle>
       <CardDescription className={cn("mt-3 text-sm", compact ? "leading-6" : "leading-7")}>
-        注册后可继续查看排盘结果、基础命盘信息与历史记录，适合先体验产品流程。
+        {t("billing.freeDescription")}
       </CardDescription>
       <div className={cn("mt-6 space-y-3 text-sm text-foreground/80", compact ? "leading-6" : "leading-7")}>
-        <p>新用户赠送 1 次 AI 报告。</p>
-        <p>基础排盘与历史记录继续免费开放。</p>
-        <p>完整 AI 解读仅在需要时按次购买。</p>
+        <p>{t("billing.freeReport")}</p>
+        <p>{t("billing.freeCharts")}</p>
+        <p>{t("billing.freeAi")}</p>
       </div>
     </Card>
   );

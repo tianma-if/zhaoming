@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
@@ -21,10 +22,12 @@ interface DataTableProps<TData> extends React.ComponentProps<"div"> {
 
 export function DataTable<TData>({
   table,
-  emptyMessage = "没有找到匹配结果。",
+  emptyMessage,
   children,
   className,
 }: DataTableProps<TData>) {
+  const { t } = useI18n();
+  const resolvedEmptyMessage = emptyMessage ?? t("table.empty");
   return (
     <div className={cn("flex flex-col", className)}>
       {children}
@@ -58,7 +61,7 @@ export function DataTable<TData>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={table.getAllColumns().length} className="h-28 text-center">
-                    {emptyMessage}
+                    {resolvedEmptyMessage}
                   </TableCell>
                 </TableRow>
               )}

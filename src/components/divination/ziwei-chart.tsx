@@ -19,6 +19,7 @@ import type {
   ZiweiPalace,
   ZiweiStarState,
 } from "@/types/divination";
+import { useI18n } from "@/components/i18n-provider";
 
 const ziweiChartTheme = {
   "--ziwei-surface": "#ffffff",
@@ -147,9 +148,9 @@ function buildMainColumns(
   }));
 }
 
-function renderVerticalColumns(columns: Array<{ name: string; sub?: string }>) {
+function renderVerticalColumns(columns: Array<{ name: string; sub?: string }>, emptyLabel: string) {
   if (!columns.length) {
-    return <div className="text-[10px] text-[var(--ziwei-text-soft)]">无主星</div>;
+    return <div className="text-[10px] text-[var(--ziwei-text-soft)]">{emptyLabel}</div>;
   }
 
   return (
@@ -193,6 +194,7 @@ function PalaceCell({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useI18n();
   const mainColumns = buildMainColumns(palace, mode, fortune);
   const minorLine =
     mode === "fortune"
@@ -235,10 +237,10 @@ function PalaceCell({
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1">
           <h3 className="text-[11px] font-semibold leading-none text-[var(--ziwei-text)] md:text-[12px]">
-            {palace.name}宫
+            {palace.name}{t("ziwei.palace")}
           </h3>
-          {palace.isBodyPalace ? <ScopeChip label="身" tone="sky" /> : null}
-          {palace.isOriginalPalace ? <ScopeChip label="来因" tone="amber" /> : null}
+          {palace.isBodyPalace ? <ScopeChip label={t("ziwei.body")} tone="sky" /> : null}
+          {palace.isOriginalPalace ? <ScopeChip label={t("ziwei.origin")} tone="amber" /> : null}
         </div>
         <div className="flex items-start gap-1">
           <span className={cn(verticalClass, "text-[10px] font-semibold leading-none text-[var(--ziwei-text)]")}>
@@ -252,7 +254,7 @@ function PalaceCell({
       </div>
 
       <div className="grid flex-1 grid-rows-[1fr_auto] gap-3">
-        <div className="min-h-0">{renderVerticalColumns(mainColumns)}</div>
+        <div className="min-h-0">{renderVerticalColumns(mainColumns, t("ziwei.noMainStar"))}</div>
 
         <div className="space-y-2 text-[10px] leading-4 text-[var(--ziwei-text-muted)]">
           {minorLine ? <p>{minorLine}</p> : null}
@@ -270,7 +272,7 @@ function PalaceCell({
       <div className="mt-3 grid grid-cols-[1fr_auto] gap-2 border-t border-[var(--ziwei-border)] pt-2 text-[10px] leading-4 text-[var(--ziwei-text-soft)]">
         <div className="space-y-0.5">
           {footerLeft ? <p>{footerLeft}</p> : null}
-          {minorLine ? <p>{mode === "fortune" ? "流限" : "辅曜"}</p> : null}
+          {minorLine ? <p>{mode === "fortune" ? t("ziwei.flowLimit") : t("ziwei.assistantStars")}</p> : null}
         </div>
         <div className="text-right">
           {footerRight ? <p>{footerRight}</p> : null}
@@ -287,28 +289,29 @@ function PalaceInteractionPanel({
   cell: ZiweiDisplayPalace;
   mode: ZiweiChartMode;
 }) {
+  const { t } = useI18n();
   const { palace, fortune } = cell;
 
   return (
     <Card className="rounded-[0.9rem] border border-[var(--ziwei-border)] bg-white px-4 py-3 shadow-none">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <h3 className="text-[15px] font-semibold text-[var(--ziwei-text)]">{palace.name}宫</h3>
-          {palace.isBodyPalace ? <ScopeChip label="身宫" tone="sky" /> : null}
-          {palace.isOriginalPalace ? <ScopeChip label="来因宫" tone="amber" /> : null}
+          <h3 className="text-[15px] font-semibold text-[var(--ziwei-text)]">{palace.name}{t("ziwei.palace")}</h3>
+          {palace.isBodyPalace ? <ScopeChip label={t("ziwei.body")} tone="sky" /> : null}
+          {palace.isOriginalPalace ? <ScopeChip label={t("ziwei.origin")} tone="amber" /> : null}
         </div>
 
         <div className="grid gap-x-5 gap-y-1.5 md:grid-cols-2">
           <div className="flex gap-2 text-[12px] leading-5">
-            <span className="shrink-0 font-medium text-[var(--ziwei-text-soft)]">主星</span>
+            <span className="shrink-0 font-medium text-[var(--ziwei-text-soft)]">{t("ziwei.mainStars")}</span>
             <p className="text-[var(--ziwei-text)]">
-              {palace.majorStars.length ? palace.majorStars.join(" · ") : "无主星"}
+              {palace.majorStars.length ? palace.majorStars.join(" · ") : t("ziwei.noMainStar")}
             </p>
           </div>
           <div className="flex gap-2 text-[12px] leading-5">
-            <span className="shrink-0 font-medium text-[var(--ziwei-text-soft)]">辅曜</span>
+            <span className="shrink-0 font-medium text-[var(--ziwei-text-soft)]">{t("ziwei.assistantStars")}</span>
             <p className="text-[var(--ziwei-text-muted)]">
-              {[...palace.minorStars, ...palace.adjectiveStars].join(" · ") || "暂无"}
+              {[...palace.minorStars, ...palace.adjectiveStars].join(" · ") || t("ziwei.none")}
             </p>
           </div>
         </div>
@@ -345,6 +348,7 @@ function CenterBoard({
   subjectName?: string | null;
   mode: ZiweiChartMode;
 }) {
+  const { t } = useI18n();
   const center = formatZiweiCenterSummary(chart, subjectName);
 
   return (
@@ -364,7 +368,7 @@ function CenterBoard({
 
       <div className="relative z-10 max-w-sm space-y-3">
         <h3 className="text-3xl font-semibold tracking-[0.08em] text-[var(--ziwei-text)]">
-          {center.title || "紫微命盘"}
+          {center.title || t("ziwei.centerTitle")}
         </h3>
         <div className="space-y-1 text-sm leading-7 text-[var(--ziwei-text-muted)]">
           {(center.soul || center.body) && <p>{[center.soul, center.body].filter(Boolean).join(" · ")}</p>}
@@ -386,6 +390,7 @@ export function ZiweiChartView({
   chart: ZiweiChart;
   subjectName?: string | null;
 }) {
+  const { t } = useI18n();
   const [mode, setMode] = useState<ZiweiChartMode>("natal");
   const cells = useMemo(() => getZiweiDisplayPalaces(chart), [chart]);
   const [selectedPalaceIndex, setSelectedPalaceIndex] = useState<number | null>(null);
@@ -441,7 +446,7 @@ export function ZiweiChartView({
         <div className="flex justify-end pt-4">
           <CopyContentButton
             className="border-[var(--ziwei-border)] bg-[var(--ziwei-surface)] text-[var(--ziwei-text-muted)] hover:bg-[var(--ziwei-surface-soft)] hover:text-[var(--ziwei-text)]"
-            label="复制命盘"
+            label={t("chart.copy")}
             text={copyText}
           />
         </div>
@@ -463,7 +468,7 @@ export function ZiweiChartView({
               )}
               onClick={() => setMode("natal")}
             >
-              本命盘
+              {t("chart.natal")}
             </Button>
             <Button
               type="button"
@@ -476,7 +481,7 @@ export function ZiweiChartView({
               )}
               onClick={() => setMode("fortune")}
             >
-              运势盘
+              {t("chart.fortune")}
             </Button>
           </div>
         </div>

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useI18n } from "@/components/i18n-provider";
 import {
   Select,
   SelectContent,
@@ -40,6 +41,7 @@ export function DivinationBaseInfoForm({
   isDatePickerOpen: boolean;
   onDatePickerOpenChange: (open: boolean) => void;
 }) {
+  const { t } = useI18n();
   const selectedDate = birthDate ? new Date(`${birthDate}T00:00:00`) : undefined;
   const minBirthMonth = new Date(1900, 0, 1);
   const maxBirthMonth = new Date(new Date().getFullYear() + 1, 11, 1);
@@ -49,8 +51,8 @@ export function DivinationBaseInfoForm({
     <>
       <section className="space-y-6">
         <div className="space-y-1">
-          <h3 className="text-2xl font-semibold tracking-tight text-foreground">基本信息</h3>
-          <p className="text-sm text-muted-foreground">先填写最基础的身份信息。</p>
+          <h3 className="text-2xl font-semibold tracking-tight text-foreground">{t("form.basicInfo")}</h3>
+          <p className="text-sm text-muted-foreground">{t("form.basicInfoHint")}</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -59,9 +61,9 @@ export function DivinationBaseInfoForm({
             name="subjectName"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>姓名 *</FormLabel>
+                <FormLabel>{t("form.name")} *</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="请输入姓名" className="h-11 rounded-md" />
+                  <Input {...field} placeholder={t("form.namePlaceholder")} className="h-11 rounded-md" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -73,18 +75,18 @@ export function DivinationBaseInfoForm({
             name="gender"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>性别 *</FormLabel>
+                <FormLabel>{t("form.gender")} *</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger className="h-11 rounded-md">
-                      <SelectValue placeholder="请选择性别" />
+                      <SelectValue placeholder={t("form.genderPlaceholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="male">男</SelectItem>
-                    <SelectItem value="female">女</SelectItem>
-                    <SelectItem value="other">其他</SelectItem>
-                    <SelectItem value="unknown">未知</SelectItem>
+                    <SelectItem value="male">{t("form.male")}</SelectItem>
+                    <SelectItem value="female">{t("form.female")}</SelectItem>
+                    <SelectItem value="other">{t("form.other")}</SelectItem>
+                    <SelectItem value="unknown">{t("form.unknown")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -96,8 +98,8 @@ export function DivinationBaseInfoForm({
 
       <section className="space-y-6">
         <div className="space-y-1">
-          <h3 className="text-2xl font-semibold tracking-tight text-foreground">时间信息</h3>
-          <p className="text-sm text-muted-foreground">出生时间越准确，排盘结果越稳定。</p>
+          <h3 className="text-2xl font-semibold tracking-tight text-foreground">{t("form.timeInfo")}</h3>
+          <p className="text-sm text-muted-foreground">{t("form.timeInfoHint")}</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
@@ -107,16 +109,16 @@ export function DivinationBaseInfoForm({
               name="calendarType"
               render={({ field }) => (
                 <FormItem className="space-y-3 text-sm">
-                  <FormLabel>出生日期 *</FormLabel>
+                  <FormLabel>{t("form.birthDate")} *</FormLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="h-11 rounded-md">
-                        <SelectValue placeholder="请选择历法" />
+                        <SelectValue placeholder={t("form.calendarPlaceholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="solar">阳历</SelectItem>
-                      <SelectItem value="lunar">农历</SelectItem>
+                      <SelectItem value="solar">{t("form.solar")}</SelectItem>
+                      <SelectItem value="lunar">{t("form.lunar")}</SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -135,7 +137,7 @@ export function DivinationBaseInfoForm({
                                 <span className={cn(!selectedDate && "text-muted-foreground")}>
                                   {selectedDate
                                     ? format(selectedDate, "yyyy年MM月dd日", { locale: zhCN })
-                                    : "请选择出生日期"}
+                                    : t("form.birthDatePlaceholder")}
                                 </span>
                                 <CalendarIcon className="size-4 opacity-60" />
                               </Button>
@@ -175,7 +177,7 @@ export function DivinationBaseInfoForm({
               name="birthPlace"
               render={({ field }) => (
                 <FormItem className="space-y-3 text-sm">
-                  <FormLabel>出生地点 *</FormLabel>
+                  <FormLabel>{t("form.birthPlace")} *</FormLabel>
                   <BirthPlaceInput
                     value={field.value ?? ""}
                     onChange={field.onChange}
@@ -200,7 +202,7 @@ export function DivinationBaseInfoForm({
               name="birthTime"
               render={({ field }) => (
                 <FormItem className="space-y-3 text-sm">
-                  <FormLabel>出生时辰 *</FormLabel>
+                  <FormLabel>{t("form.birthTime")} *</FormLabel>
                   <FormControl>
                     <Input {...field} type="time" className="h-11 rounded-md" />
                   </FormControl>
@@ -221,7 +223,7 @@ export function DivinationBaseInfoForm({
                         checked={Boolean(field.value)}
                         onChange={(event) => field.onChange(event.target.checked)}
                       />
-                      当前日期为农历闰月
+                      {t("form.leapMonth")}
                     </label>
                   </FormItem>
                 )}

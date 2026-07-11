@@ -17,9 +17,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { useI18n } from "@/components/i18n-provider";
 
 function createInitialValues(
   divinationType: BirthDivinationInputForm["divinationType"],
+  defaultQuestion = "请给我一份整体命盘解读。",
 ): BirthDivinationInputForm {
   return {
     divinationType,
@@ -30,7 +32,7 @@ function createInitialValues(
     birthPlaceMeta: null as BirthDivinationInputForm["birthPlaceMeta"],
     gender: "male",
     subjectName: "",
-    question: "请给我一份整体命盘解读。",
+    question: defaultQuestion,
     isLeapMonth: false,
   };
 }
@@ -106,24 +108,24 @@ const wuxingConcepts = [
 ] as const;
 
 function BaziConceptSection() {
+  const { t } = useI18n();
   return (
     <section className="space-y-10">
       <div className="space-y-4 text-center">
-        <Badge>概念导读</Badge>
+        <Badge>{t("divination.concept")}</Badge>
         <div className="space-y-3">
-          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是八字？</CardTitle>
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">{t("divination.baziConcept")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            八字也叫四柱命理，会把出生年、月、日、时组合成命盘，用来观察个性结构、
-            阶段起伏与五行之间的动态关系。
+            {t("concept.bazi.intro")}
           </CardDescription>
         </div>
       </div>
 
       <Card className="space-y-8 rounded-[2rem] bg-muted/45 px-6 py-8 shadow-none md:px-8">
         <div className="space-y-3 text-center">
-          <CardTitle className="text-3xl tracking-[0.06em]">四柱详解</CardTitle>
+          <CardTitle className="text-3xl tracking-[0.06em]">{t("concept.bazi.pillars")}</CardTitle>
           <CardDescription className="mx-auto max-w-2xl text-base leading-8">
-            八字由四柱组成，每一柱都对应人生里不同的观察层次。
+            {t("concept.bazi.pillarsIntro")}
           </CardDescription>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -136,8 +138,8 @@ function BaziConceptSection() {
                 {pillar.shortLabel}
               </div>
               <div className="space-y-2">
-                <h3 className="font-display text-3xl tracking-[0.04em]">{pillar.title}</h3>
-                <p className="text-sm leading-7 text-muted-foreground">{pillar.description}</p>
+                <h3 className="font-display text-3xl tracking-[0.04em]">{t(`concept.bazi.${pillar.key}Title`)}</h3>
+                <p className="text-sm leading-7 text-muted-foreground">{t(`concept.bazi.${pillar.key}`)}</p>
               </div>
             </article>
           ))}
@@ -146,10 +148,9 @@ function BaziConceptSection() {
 
       <div className="space-y-6">
         <div className="space-y-3 text-center">
-          <CardTitle className="text-3xl tracking-[0.06em] md:text-4xl">五行学说</CardTitle>
+          <CardTitle className="text-3xl tracking-[0.06em] md:text-4xl">{t("concept.bazi.elements")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            八字分析也会看木、火、土、金、水之间的相生相克，不同元素的偏强偏弱，
-            往往会影响一个人的表达方式和处事重心。
+            {t("concept.bazi.elementsIntro")}
           </CardDescription>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -169,8 +170,8 @@ function BaziConceptSection() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-display text-3xl tracking-[0.04em]">{item.element}</h3>
-                  <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+                  <h3 className="font-display text-3xl tracking-[0.04em]">{t(`concept.bazi.${item.element === "木" ? "wood" : item.element === "火" ? "fire" : item.element === "土" ? "earth" : item.element === "金" ? "metal" : "water"}Label`)}</h3>
+                  <p className="text-sm leading-7 text-muted-foreground">{t(`concept.bazi.${item.element === "木" ? "wood" : item.element === "火" ? "fire" : item.element === "土" ? "earth" : item.element === "金" ? "metal" : "water"}`)}</p>
                 </div>
               </article>
             );
@@ -182,6 +183,7 @@ function BaziConceptSection() {
 }
 
 function ZiweiConceptSection() {
+  const { t } = useI18n();
   const features = [
     {
       title: "十二宫位",
@@ -200,11 +202,11 @@ function ZiweiConceptSection() {
   return (
     <section className="space-y-8">
       <div className="space-y-4 text-center">
-        <Badge>概念导读</Badge>
+        <Badge>{t("divination.concept")}</Badge>
         <div className="space-y-3">
-          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是紫微斗数？</CardTitle>
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">{t("divination.ziweiConcept")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            紫微斗数会把个人信息映射到十二宫位与星曜组合中，用来观察人生主题、关系结构与阶段变化。
+            {t("concept.ziwei.intro")}
           </CardDescription>
         </div>
       </div>
@@ -215,8 +217,8 @@ function ZiweiConceptSection() {
             key={item.title}
             className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
           >
-            <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
-            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+            <h3 className="font-display text-3xl tracking-[0.04em]">{t(item.title === "十二宫位" ? "concept.ziwei.palacesTitle" : item.title === "主星组合" ? "concept.ziwei.starsTitle" : "concept.ziwei.modernTitle")}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{t(item.title === "十二宫位" ? "concept.ziwei.palaces" : item.title === "主星组合" ? "concept.ziwei.stars" : "concept.ziwei.modern")}</p>
           </article>
         ))}
       </div>
@@ -225,6 +227,7 @@ function ZiweiConceptSection() {
 }
 
 function ChengguConceptSection() {
+  const { t } = useI18n();
   const features = [
     {
       title: "四项定骨重",
@@ -243,11 +246,11 @@ function ChengguConceptSection() {
   return (
     <section className="space-y-8">
       <div className="space-y-4 text-center">
-        <Badge>概念导读</Badge>
+        <Badge>{t("divination.concept")}</Badge>
         <div className="space-y-3">
-          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是袁天罡称骨？</CardTitle>
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">{t("divination.chengguConcept")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            称骨算命会把出生的农历年、月、日、时换算成对应骨重，用总骨重和歌诀去看一生的总体基调。
+            {t("concept.chenggu.intro")}
           </CardDescription>
         </div>
       </div>
@@ -258,8 +261,8 @@ function ChengguConceptSection() {
             key={item.title}
             className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
           >
-            <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
-            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+            <h3 className="font-display text-3xl tracking-[0.04em]">{t(item.title === "四项定骨重" ? "concept.chenggu.weightsTitle" : item.title === "轻量级切入" ? "concept.chenggu.lightTitle" : "concept.chenggu.modernTitle")}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{t(item.title === "四项定骨重" ? "concept.chenggu.weights" : item.title === "轻量级切入" ? "concept.chenggu.light" : "concept.chenggu.modern")}</p>
           </article>
         ))}
       </div>
@@ -276,6 +279,7 @@ export function DivinationForm({
   submitLabel?: string;
   conceptSection?: ReactNode;
 }) {
+  const { t } = useI18n();
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [prefillRecords, setPrefillRecords] = useState<DivinationPrefillRecord[]>([]);
@@ -284,7 +288,7 @@ export function DivinationForm({
   const [isPending, startTransition] = useTransition();
   const form = useForm<BirthDivinationInputForm>({
     resolver: zodResolver(birthDivinationInputSchema),
-    defaultValues: createInitialValues(divinationType),
+    defaultValues: createInitialValues(divinationType, t("form.defaultQuestion")),
   });
 
   useEffect(() => {
@@ -340,7 +344,7 @@ export function DivinationForm({
         const payload = (await response.json().catch(() => null)) as
           | { error?: string }
           | null;
-        setSubmitError(payload?.error ?? "测算创建失败。");
+        setSubmitError(payload?.error ?? t("form.createFailed"));
         return;
       }
 
@@ -389,7 +393,7 @@ export function DivinationForm({
 
             <div className="space-y-3 border-t border-border pt-6">
               <Button className="h-11 w-full rounded-md" type="submit" disabled={isPending}>
-                {isPending ? "正在排盘..." : submitLabel}
+                {isPending ? t("form.submitting") : submitLabel === "排盘" ? t("form.submit") : submitLabel}
               </Button>
               {submitError ? <p className="text-center text-sm text-fire">{submitError}</p> : null}
             </div>

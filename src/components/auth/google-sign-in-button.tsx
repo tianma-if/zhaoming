@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 function GoogleMark() {
   return (
@@ -47,6 +48,7 @@ export function GoogleSignInButton({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useI18n();
 
   async function handleSignIn() {
     setIsLoading(true);
@@ -61,14 +63,14 @@ export function GoogleSignInButton({
 
       if (result.error) {
         finishAuthTransition();
-        setError(result.error.message ?? "Google 登录暂时不可用。");
+        setError(result.error.message ?? t("auth.googleUnavailable"));
       }
     } catch (caughtError) {
       finishAuthTransition();
       setError(
         caughtError instanceof Error
           ? caughtError.message
-          : "Google 登录暂时不可用。",
+          : t("auth.googleUnavailable"),
       );
     } finally {
       setIsLoading(false);
@@ -91,7 +93,7 @@ export function GoogleSignInButton({
           <span className="mr-3">
             <GoogleMark />
           </span>
-          {isLoading ? "正在跳转…" : "使用谷歌账号登录"}
+          {isLoading ? t("auth.googlePending") : t("auth.google")}
         </Button>
         {error ? <p className="text-sm text-fire">{error}</p> : null}
       </div>

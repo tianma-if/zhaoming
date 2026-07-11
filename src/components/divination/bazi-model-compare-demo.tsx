@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ComparableAiModel } from "@/lib/ai/model-comparison";
+import { useI18n } from "@/components/i18n-provider";
 
 interface BaziRecordOption {
   id: string;
@@ -211,6 +212,7 @@ export function BaziModelCompareDemo({
   models: ComparableAiModel[];
   initialDivinationId?: string;
 }) {
+  const { t } = useI18n();
   const fallbackDivinationId =
     initialDivinationId && records.some((item) => item.id === initialDivinationId)
       ? initialDivinationId
@@ -230,7 +232,7 @@ export function BaziModelCompareDemo({
 
   const handleGenerate = () => {
     if (!selectedDivinationId) {
-      setError("请先选择一个八字记录。");
+      setError(t("compare.selectFirst"));
       return;
     }
 
@@ -254,7 +256,7 @@ export function BaziModelCompareDemo({
       if (!response.ok) {
         setResult(null);
         setError(
-          "error" in payload ? payload.error ?? "模型对比失败，请稍后再试。" : "模型对比失败，请稍后再试。",
+          "error" in payload ? payload.error ?? t("compare.failed") : t("compare.failed"),
         );
         return;
       }
@@ -269,24 +271,23 @@ export function BaziModelCompareDemo({
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(220px,0.8fr)_auto] lg:items-end">
           <div className="space-y-2">
             <Badge>Same Prompt / Multi Model</Badge>
-            <CardTitle className="text-3xl tracking-[0.04em]">八字模型对比 Demo</CardTitle>
+            <CardTitle className="text-3xl tracking-[0.04em]">{t("compare.title")}</CardTitle>
             <CardDescription className="max-w-3xl text-sm leading-7">
-              固定同一条八字记录、同一份 system prompt 与输入数据，并排查看 DeepSeek 与
-              Gemini 在文风、结构、收尾和免责声明上的区别。
+              {t("compare.description")}
             </CardDescription>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-1">
             <div className="space-y-2">
-              <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">八字记录</p>
+              <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">{t("compare.record")}</p>
               <Select value={selectedDivinationId} onValueChange={setSelectedDivinationId}>
                 <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue placeholder="选择一个八字记录" />
+                  <SelectValue placeholder={t("compare.selectRecord")} />
                 </SelectTrigger>
                 <SelectContent>
                   {records.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
-                      {(item.subjectName?.trim() || "未命名命盘") + " · " + item.createdAt}
+                      {(item.subjectName?.trim() || t("compare.unnamed")) + " · " + item.createdAt}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -294,14 +295,14 @@ export function BaziModelCompareDemo({
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">输出模式</p>
+              <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">{t("compare.mode")}</p>
               <Select value={mode} onValueChange={(value) => setMode(value as "short" | "full")}>
                 <SelectTrigger className="h-11 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="full">完整解读</SelectItem>
-                  <SelectItem value="short">短判词</SelectItem>
+                  <SelectItem value="full">{t("compare.full")}</SelectItem>
+                  <SelectItem value="short">{t("compare.short")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -314,14 +315,14 @@ export function BaziModelCompareDemo({
             type="button"
           >
             {isPending ? <LoaderCircle className="size-4 animate-spin" /> : <Sparkles size={16} />}
-            {isPending ? "对比生成中" : "开始对比"}
+            {isPending ? t("compare.generating") : t("compare.start")}
           </Button>
         </div>
 
         {selectedRecord ? (
           <div className="mt-5 rounded-[1.25rem] border border-border/70 bg-muted/30 p-4 text-sm leading-7">
             <p className="font-medium text-foreground">
-              {selectedRecord.subjectName?.trim() || "未命名命盘"}
+              {selectedRecord.subjectName?.trim() || t("compare.unnamed")}
             </p>
             <p className="mt-1 text-muted-foreground">{selectedRecord.question}</p>
           </div>
@@ -345,9 +346,9 @@ export function BaziModelCompareDemo({
       <Collapsible className="rounded-[1.75rem] border border-border bg-white/95 p-0 shadow-none">
         <CollapsibleTrigger className="flex w-full items-center justify-between px-6 py-5 text-left">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground">查看本次实际使用的 Prompt</p>
+            <p className="text-sm font-medium text-foreground">{t("compare.prompt")}</p>
             <p className="text-sm text-muted-foreground">
-              这里会展示完全相同的 system prompt 和拼装后的命盘输入，方便排除 prompt 干扰。
+              {t("compare.promptDescription")}
             </p>
           </div>
           <ChevronDown className="size-4 text-muted-foreground" />
@@ -356,13 +357,13 @@ export function BaziModelCompareDemo({
           <div className="space-y-2">
             <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">System</p>
             <pre className="max-h-[420px] overflow-auto rounded-[1.2rem] bg-muted/35 p-4 text-sm leading-7 whitespace-pre-wrap">
-              {result?.system ?? "生成后可在这里核对 system prompt。"}
+              {result?.system ?? t("compare.systemPlaceholder")}
             </pre>
           </div>
           <div className="space-y-2">
             <p className="text-xs tracking-[0.24em] text-muted-foreground uppercase">Prompt</p>
             <pre className="max-h-[420px] overflow-auto rounded-[1.2rem] bg-muted/35 p-4 text-sm leading-7 whitespace-pre-wrap">
-              {result?.prompt ?? "生成后可在这里核对拼装后的命盘输入。"}
+              {result?.prompt ?? t("compare.promptPlaceholder")}
             </pre>
           </div>
         </CollapsibleContent>
@@ -404,7 +405,7 @@ export function BaziModelCompareDemo({
                       }
                       variant="outline"
                     >
-                      {disclaimerMatches.length ? "命中免责声明" : "未命中免责声明"}
+                      {disclaimerMatches.length ? t("compare.hit") : t("compare.noHit")}
                     </Badge>
                     {disclaimerMatches.map((match) => (
                       <Badge
@@ -422,7 +423,7 @@ export function BaziModelCompareDemo({
               <div className="flex-1 px-6 py-5">
                 {!result ? (
                   <p className="text-sm leading-7 text-muted-foreground">
-                    还没开始生成。点上面的“开始对比”后，这里会显示该模型的完整输出。
+                    {t("compare.notStarted")}
                   </p>
                 ) : output?.error ? (
                   <p className="text-sm leading-7 text-destructive">{output.error}</p>
@@ -430,16 +431,16 @@ export function BaziModelCompareDemo({
                   <div className="space-y-4">
                     {disclaimerMatches.length ? (
                       <div className="rounded-[1.1rem] border border-amber-200 bg-amber-50/80 p-4 text-sm leading-6 text-amber-950">
-                        <p className="font-medium">检测到可能影响沉浸感的免责声明或劝退收尾。</p>
+                        <p className="font-medium">{t("compare.warningTitle")}</p>
                         <p className="mt-1 text-amber-900/90">
-                          已在正文中高亮命中词，方便你快速比较哪一档模型更容易自己踩刹车。
+                          {t("compare.warningDescription")}
                         </p>
                       </div>
                     ) : null}
                     <HighlightedMarkdownRenderer content={output.text} regex={highlightRegex} />
                   </div>
                 ) : (
-                  <p className="text-sm leading-7 text-muted-foreground">该模型没有返回内容。</p>
+                  <p className="text-sm leading-7 text-muted-foreground">{t("compare.noOutput")}</p>
                 )}
               </div>
             </Card>

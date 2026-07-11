@@ -5,9 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getPublishedPosts } from "@/lib/blog/posts";
 import { formatDateTime } from "@/lib/utils";
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 export default async function BlogPage() {
   const posts = await getPublishedPosts();
+  const locale = await getLocale();
 
   return (
     <main className="min-h-screen">
@@ -15,7 +18,7 @@ export default async function BlogPage() {
       <section className="mx-auto max-w-5xl px-6 pb-20 pt-10 md:px-10 md:pt-20">
         <div className="space-y-4">
           <p className="text-xs tracking-[0.36em] text-muted-foreground">EDITORIAL</p>
-          <h1 className="font-display text-6xl tracking-[0.06em]">博客引擎</h1>
+          <h1 className="font-display text-6xl tracking-[0.06em]">{translate(locale, "blog.title")}</h1>
           <p className="max-w-2xl text-sm leading-8 text-muted-foreground">
             `/api/automation/publish-blog` 已预留给外部自动化脚本写入 Markdown，并在发布后触发 ISR。
           </p>
@@ -46,7 +49,7 @@ export default async function BlogPage() {
           ) : (
             <Card>
               <p className="text-sm leading-8 text-muted-foreground">
-                目前还没有已发布文章。等自动化写作脚本接入后，这里会展示 SEO 内容流。
+                {translate(locale, "blog.empty")}
               </p>
             </Card>
           )}

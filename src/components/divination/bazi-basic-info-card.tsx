@@ -1,6 +1,7 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CopyContentButton } from "./copy-content-button";
+import { useI18n } from "@/components/i18n-provider";
 
 interface SummaryItem {
   label: string;
@@ -33,18 +34,19 @@ export function BaziBasicInfoCard({
   coreSummary: SummaryItem[];
   derivedSummary: SummaryItem[];
 }) {
+  const { t } = useI18n();
   const copyText = formatSummaryCopy({ baziText, coreSummary, derivedSummary });
 
   return (
     <Card className="space-y-3 rounded-[1.6rem] border border-border bg-white">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <CardTitle className="text-[1.7rem] tracking-[0.04em]">基本信息</CardTitle>
+          <CardTitle className="text-[1.7rem] tracking-[0.04em]">{t("chart.basicInfo")}</CardTitle>
           <CardDescription className="text-sm text-foreground">八字：{baziText}</CardDescription>
         </div>
         <CopyContentButton
           className="h-8 rounded-md px-2.5 text-xs"
-          label="复制内容"
+          label={t("chart.copy")}
           text={copyText}
         />
       </div>

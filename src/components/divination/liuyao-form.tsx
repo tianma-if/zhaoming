@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useI18n } from "@/components/i18n-provider";
 
 const lineLabels = ["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"] as const;
 
@@ -116,11 +117,11 @@ function createInitialValues(): LiuyaoInputForm {
   };
 }
 
-function getLineMeta(value: number) {
-  if (value === 6) return { isYang: false, isMoving: true, label: "老阴", marker: "×" };
-  if (value === 7) return { isYang: true, isMoving: false, label: "少阳", marker: "" };
-  if (value === 8) return { isYang: false, isMoving: false, label: "少阴", marker: "" };
-  return { isYang: true, isMoving: true, label: "老阳", marker: "○" };
+function getLineMeta(value: number, t: (key: string) => string) {
+  if (value === 6) return { isYang: false, isMoving: true, label: t("divination.oldYin"), marker: "×" };
+  if (value === 7) return { isYang: true, isMoving: false, label: t("divination.youngYang"), marker: "" };
+  if (value === 8) return { isYang: false, isMoving: false, label: t("divination.youngYin"), marker: "" };
+  return { isYang: true, isMoving: true, label: t("divination.oldYang"), marker: "○" };
 }
 
 function toggleLineMoving(value: number) {
@@ -158,7 +159,7 @@ function getHexagramSymbol(name: string) {
 }
 
 function renderLineStroke(value: number) {
-  const { isYang } = getLineMeta(value);
+  const isYang = value === 7 || value === 9;
 
   if (isYang) {
     return <div className="h-3.5 w-full rounded-full bg-black" />;
@@ -185,6 +186,7 @@ function getChangeBadgeClass(value: number) {
 }
 
 function LiuyaoConceptSection() {
+  const { t } = useI18n();
   const items = [
     {
       title: "围绕具体问题起卦",
@@ -203,11 +205,11 @@ function LiuyaoConceptSection() {
   return (
     <section className="space-y-8">
       <div className="space-y-4 text-center">
-        <Badge>概念导读</Badge>
+        <Badge>{t("divination.concept")}</Badge>
         <div className="space-y-3">
-          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">什么是六爻？</CardTitle>
+          <CardTitle className="text-4xl tracking-[0.06em] md:text-5xl">{t("divination.liuyaoConcept")}</CardTitle>
           <CardDescription className="mx-auto max-w-3xl text-base leading-8">
-            六爻占卜会围绕一个明确问题起卦，通过六条爻位、本卦、动爻和变卦，观察事情的当下结构与变化方向。
+            {t("concept.liuyao.intro")}
           </CardDescription>
         </div>
       </div>
@@ -218,8 +220,8 @@ function LiuyaoConceptSection() {
             key={item.title}
             className="space-y-4 rounded-[1.5rem] border border-border bg-white p-6 shadow-[0_16px_32px_-30px_rgba(22,20,17,0.18)]"
           >
-            <h3 className="font-display text-3xl tracking-[0.04em]">{item.title}</h3>
-            <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
+            <h3 className="font-display text-3xl tracking-[0.04em]">{t(item.title === "围绕具体问题起卦" ? "concept.liuyao.problemTitle" : item.title === "看现状，也看变化" ? "concept.liuyao.changeTitle" : "concept.liuyao.basicTitle")}</h3>
+            <p className="text-sm leading-7 text-muted-foreground">{t(item.title === "围绕具体问题起卦" ? "concept.liuyao.problem" : item.title === "看现状，也看变化" ? "concept.liuyao.change" : "concept.liuyao.basic")}</p>
           </article>
         ))}
       </div>
@@ -228,6 +230,7 @@ function LiuyaoConceptSection() {
 }
 
 export function LiuyaoForm() {
+  const { t } = useI18n();
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -302,7 +305,7 @@ export function LiuyaoForm() {
 
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        setSubmitError(payload?.error ?? "起卦失败。");
+        setSubmitError(payload?.error ?? t("divination.castFailed"));
         return;
       }
 
@@ -326,8 +329,8 @@ export function LiuyaoForm() {
           <Card className="space-y-6 rounded-xl p-5 shadow-none">
             <section className="space-y-5">
               <div className="space-y-1">
-                <h3 className="text-xl font-semibold tracking-tight text-foreground">求测信息</h3>
-                <p className="text-xs text-muted-foreground">先确定你想问什么，以及何时起卦。</p>
+                <h3 className="text-xl font-semibold tracking-tight text-foreground">{t("divination.questionInfo")}</h3>
+                <p className="text-xs text-muted-foreground">{t("divination.questionInfoHint")}</p>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -336,9 +339,9 @@ export function LiuyaoForm() {
                   name="subjectName"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>求测人 *</FormLabel>
+                      <FormLabel>{t("divination.person")} *</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="请输入姓名" className="h-9 rounded-md text-sm" />
+                        <Input {...field} placeholder={t("form.namePlaceholder")} className="h-9 rounded-md text-sm" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -349,18 +352,18 @@ export function LiuyaoForm() {
                   name="gender"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel>性别</FormLabel>
+                      <FormLabel>{t("form.gender")}</FormLabel>
                       <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger className="h-9 rounded-md text-sm">
-                            <SelectValue placeholder="请选择性别" />
+                            <SelectValue placeholder={t("form.genderPlaceholder")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="male">男</SelectItem>
-                          <SelectItem value="female">女</SelectItem>
-                          <SelectItem value="other">其他</SelectItem>
-                          <SelectItem value="unknown">未知</SelectItem>
+                          <SelectItem value="male">{t("form.male")}</SelectItem>
+                          <SelectItem value="female">{t("form.female")}</SelectItem>
+                          <SelectItem value="other">{t("form.other")}</SelectItem>
+                          <SelectItem value="unknown">{t("form.unknown")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -374,11 +377,11 @@ export function LiuyaoForm() {
                 name="question"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>所问之事 *</FormLabel>
+                      <FormLabel>{t("divination.question")} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="例如：这次合作是否适合继续推进？"
+                        placeholder={t("divination.questionPlaceholder")}
                         className="h-9 rounded-md text-sm"
                       />
                     </FormControl>
@@ -389,11 +392,11 @@ export function LiuyaoForm() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-md border border-black/8 bg-white/60 px-3 py-2">
-                  <p className="text-sm font-medium text-foreground">手动修改起卦时间</p>
+                  <p className="text-sm font-medium text-foreground">{t("divination.manualTime")}</p>
                   <Switch
                     checked={showManualDivinationTime}
                     onCheckedChange={toggleManualDivinationTime}
-                    aria-label="手动修改起卦时间"
+                    aria-label={t("divination.manualTime")}
                   />
                 </div>
 
@@ -404,7 +407,7 @@ export function LiuyaoForm() {
                       name="divinationDate"
                       render={({ field }) => (
                         <FormItem className="space-y-2">
-                          <FormLabel>起卦日期 *</FormLabel>
+                          <FormLabel>{t("divination.castDate")} *</FormLabel>
                           <FormControl>
                             <Input {...field} type="date" className="h-9 rounded-md text-sm" />
                           </FormControl>
@@ -417,7 +420,7 @@ export function LiuyaoForm() {
                       name="divinationTime"
                       render={({ field }) => (
                         <FormItem className="space-y-2">
-                          <FormLabel>起卦时间 *</FormLabel>
+                          <FormLabel>{t("divination.castTime")} *</FormLabel>
                           <FormControl>
                             <Input {...field} type="time" className="h-9 rounded-md text-sm" />
                           </FormControl>
@@ -434,10 +437,10 @@ export function LiuyaoForm() {
               <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold tracking-tight text-foreground">手动起卦</h3>
+                    <h3 className="text-xl font-semibold tracking-tight text-foreground">{t("divination.manualCast")}</h3>
                     <CircleHelp className="size-4 text-black/40" />
                   </div>
-                  <p className="text-xs text-muted-foreground">点击中间爻位可在少阳、少阴、老阳、老阴四种状态间切换，右侧按钮可快速切换是否为变爻。</p>
+                  <p className="text-xs text-muted-foreground">{t("divination.manualCastHint")}</p>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
                   <Button
@@ -447,7 +450,7 @@ export function LiuyaoForm() {
                     onClick={randomizeLines}
                   >
                     <Coins className="size-3.5" />
-                    铜钱摇卦
+                    {t("divination.coinCast")}
                   </Button>
                 </div>
               </div>
@@ -455,13 +458,13 @@ export function LiuyaoForm() {
               <div className="grid gap-3 xl:grid-cols-[minmax(0,0.9fr)_minmax(18rem,0.88fr)]">
                 <div className="rounded-[1rem] border border-black/12 bg-white p-3">
                   <div className="mb-2">
-                    <p className="text-xs font-medium tracking-[0.08em] text-black/40">卦象预设</p>
+                    <p className="text-xs font-medium tracking-[0.08em] text-black/40">{t("divination.preset")}</p>
                   </div>
 
                   <div className="space-y-3">
                     {displayLineEntries.map(({ label, index }) => {
                       const currentValue = Number(lineValues[index]) || 8;
-                      const meta = getLineMeta(currentValue);
+                      const meta = getLineMeta(currentValue, t);
 
                       return (
                         <div
@@ -480,7 +483,7 @@ export function LiuyaoForm() {
                             </button>
                             {meta.isMoving ? (
                               <span className="absolute -right-1.5 -top-1.5 rounded-full border border-white bg-black px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white shadow-sm">
-                                变
+                                {t("chart.changedLine")}
                               </span>
                             ) : null}
                           </div>
@@ -496,7 +499,7 @@ export function LiuyaoForm() {
                             className={`h-9 rounded-xl px-0 text-sm font-semibold ${getChangeBadgeClass(currentValue)}`}
                             onClick={() => updateLineValue(index, toggleLineMoving(currentValue))}
                           >
-                            变爻
+                            {t("divination.movingLineLabel")}
                           </Button>
                         </div>
                       );
@@ -506,15 +509,15 @@ export function LiuyaoForm() {
 
                 <div className="space-y-2.5 rounded-[1rem] border border-black/12 bg-white p-2.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs font-medium tracking-[0.08em] text-black/40">实时成卦</p>
+                    <p className="text-xs font-medium tracking-[0.08em] text-black/40">{t("divination.liveResult")}</p>
                     <Badge variant="outline" className="rounded-full border-black/10 bg-white px-2 py-0.5 text-[10px] text-black/60">
-                      {preview.movingLines.length ? `动爻 ${preview.movingLines.join("、")}` : "静卦"}
+                      {preview.movingLines.length ? `${t("divination.movingLines")} ${preview.movingLines.join("、")}` : t("divination.stillHexagram")}
                     </Badge>
                   </div>
 
                   <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-[0.9rem] border border-black/10 bg-[#f8f8f6] px-4 py-5">
                     <div className="text-center">
-                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">本卦</p>
+                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">{t("divination.originalHexagram")}</p>
                       <p className="mt-1 text-lg font-semibold tracking-[0.08em] text-foreground">
                         {preview.original.name}
                       </p>
@@ -523,17 +526,17 @@ export function LiuyaoForm() {
                       {getHexagramSymbol(preview.original.name)}
                     </span>
                     <p className="text-xs text-black/55">
-                      {preview.original.upperTrigram}上{preview.original.lowerTrigram}下
+                      {preview.original.upperTrigram} {t("divination.upperTrigram")} · {preview.original.lowerTrigram} {t("divination.lowerTrigram")}
                     </p>
                   </div>
 
                   <div className="grid gap-2 md:grid-cols-2">
                     <div className="rounded-[0.9rem] border border-black/10 bg-white p-2">
-                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">本卦含义</p>
+                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">{t("divination.originalMeaning")}</p>
                       <p className="mt-1 text-[11px] leading-4 text-black/68">{preview.original.description}</p>
                     </div>
                     <div className="rounded-[0.9rem] border border-black/10 bg-white p-2">
-                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">变卦导向</p>
+                      <p className="text-[10px] tracking-[0.18em] text-black/45 uppercase">{t("divination.changedDirection")}</p>
                       <p className="mt-1 text-[11px] leading-4 text-black/68">{preview.changed.description}</p>
                     </div>
                   </div>
@@ -544,7 +547,7 @@ export function LiuyaoForm() {
             <div className="space-y-3 border-t border-border pt-6">
               <div className="flex flex-wrap gap-3">
                 <Button className="h-11 flex-1 rounded-md" type="submit" disabled={isPending}>
-                  {isPending ? "正在起卦..." : "开始起卦"}
+                  {isPending ? t("divination.casting") : t("divination.startCast")}
                 </Button>
                 <Button
                   type="button"
@@ -553,7 +556,7 @@ export function LiuyaoForm() {
                   onClick={() => form.reset(createInitialValues())}
                 >
                   <RefreshCcw className="size-4" />
-                  重置
+                  {t("records.reset")}
                 </Button>
               </div>
               {submitError ? <p className="text-center text-sm text-fire">{submitError}</p> : null}

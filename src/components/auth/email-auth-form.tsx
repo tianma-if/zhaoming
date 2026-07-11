@@ -19,16 +19,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/components/i18n-provider";
 
 type AuthMode = "sign-in" | "sign-up";
 
-const emailAuthSchema = z.object({
-  email: z.email("请输入有效的邮箱地址。"),
-  password: z.string().min(8, "密码至少 8 个字符。"),
-  acceptedTerms: z.boolean().refine((value) => value, "请先阅读并同意相关条款。"),
-});
-
-type EmailAuthValues = z.infer<typeof emailAuthSchema>;
+type EmailAuthValues = {
+  email: string;
+  password: string;
+  acceptedTerms: boolean;
+};
 
 const defaultValues: EmailAuthValues = {
   email: "",
@@ -63,12 +62,18 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [helperMessage, setHelperMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { t } = useI18n();
+  const emailAuthSchema = z.object({
+    email: z.email(t("auth.invalidEmail")),
+    password: z.string().min(8, t("auth.passwordMin")),
+    acceptedTerms: z.boolean().refine((value) => value, t("auth.acceptTerms")),
+  });
   const form = useForm<EmailAuthValues>({
     resolver: zodResolver(emailAuthSchema),
     defaultValues,
   });
 
-  const submitLabel = mode === "sign-in" ? "登录" : "创建账号";
+  const submitLabel = mode === "sign-in" ? t("auth.signIn") : t("auth.createAccount");
 
   function handleSubmit(values: EmailAuthValues) {
     setSubmitError(null);
@@ -84,7 +89,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
           });
 
           if (result.error) {
-            setSubmitError(result.error.message ?? "邮箱或密码不正确。");
+            setSubmitError(result.error.message ?? t("auth.invalidCredentials"));
             return;
           }
         } else {
@@ -96,14 +101,14 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
           });
 
           if (result.error) {
-            setSubmitError(result.error.message ?? "注册失败，请稍后再试。");
+            setSubmitError(result.error.message ?? t("auth.signUpFailed"));
             return;
           }
         }
 
         window.location.assign(callbackURL);
       } catch (caughtError) {
-        setSubmitError(getErrorMessage(caughtError));
+          setSubmitError(getErrorMessage(caughtError));
       }
     });
   }
@@ -122,7 +127,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
             )}
             onClick={() => setMode("sign-in")}
           >
-            登录
+            {t("auth.signIn")}
           </button>
           <button
             type="button"
@@ -134,7 +139,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
             )}
             onClick={() => setMode("sign-up")}
           >
-            注册
+            {t("auth.signUp")}
           </button>
         </div>
 
@@ -143,7 +148,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
           name="email"
           render={({ field }) => (
             <FormItem className="space-y-3">
-              <FormLabel className="text-base text-[#1f1b17]">邮箱</FormLabel>
+              <FormLabel className="text-base text-[#1f1b17]">{t("auth.email")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -164,15 +169,15 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
           render={({ field }) => (
             <FormItem className="space-y-3">
               <div className="flex items-center justify-between gap-4">
-                <FormLabel className="text-base text-[#1f1b17]">密码</FormLabel>
+                <FormLabel className="text-base text-[#1f1b17]">{t("auth.password")}</FormLabel>
                 <button
                   type="button"
                   className="text-sm text-[#7d746a] transition hover:text-[#151515]"
                   onClick={() =>
-                    setHelperMessage("暂未开放密码找回，可先使用 Google 登录或重新注册。")
+                    setHelperMessage(t("auth.forgotHint"))
                   }
                 >
-                  忘记密码？
+                  {t("auth.forgot")}
                 </button>
               </div>
 
@@ -182,7 +187,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
                     {...field}
                     type={showPassword ? "text" : "password"}
                     autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-                    placeholder="至少 8 个字符"
+                    placeholder={t("auth.passwordPlaceholder")}
                     className="h-14 rounded-2xl border-[#ded8d0] px-5 pr-14 text-base placeholder:text-[#aaa39a] focus:border-[#151515]/22"
                   />
                 </FormControl>
@@ -195,7 +200,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
                   {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
                 </button>
               </div>
-              <FormDescription className="text-[#8d857c]">至少 8 个字符</FormDescription>
+              <FormDescription className="text-[#8d857c]">{t("auth.passwordHint")}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -214,16 +219,16 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
                   className="mt-1 size-5 rounded border border-[#cfc7be] text-[#151515] accent-[#151515]"
                 />
                 <span>
-                  我已阅读并同意
+                  {t("auth.agree")}
                   {" "}
                   <Link href="/" className="font-medium text-[#151515] underline underline-offset-4">
-                    用户协议
+                    {t("auth.terms")}
                   </Link>
                   {" "}
-                  和
+                  {t("auth.and")}
                   {" "}
                   <Link href="/" className="font-medium text-[#151515] underline underline-offset-4">
-                    隐私政策
+                    {t("auth.privacy")}
                   </Link>
                 </span>
               </label>
@@ -240,7 +245,7 @@ export function EmailAuthForm({ callbackURL = "/divinations" }: { callbackURL?: 
           disabled={isPending}
           className="h-14 w-full rounded-2xl bg-[#151515] text-base text-white hover:bg-[#151515]/94"
         >
-          {isPending ? "处理中…" : submitLabel}
+          {isPending ? t("auth.processing") : submitLabel}
         </Button>
       </form>
     </Form>

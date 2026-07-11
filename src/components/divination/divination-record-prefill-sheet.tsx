@@ -8,6 +8,7 @@ import type { BirthDivinationInputForm } from "@/lib/divination/schemas";
 import { formatDateTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/components/i18n-provider";
 import {
   Sheet,
   SheetContent,
@@ -36,6 +37,7 @@ export function DivinationRecordPrefillSheet({
   records: DivinationPrefillRecord[];
   isLoading?: boolean;
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const sortedRecords = useMemo(
     () => [...records].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
@@ -51,19 +53,19 @@ export function DivinationRecordPrefillSheet({
       <SheetTrigger asChild>
         <Button variant="outline" className="rounded-xl px-4" disabled={isLoading}>
           <History className="size-4" />
-          {isLoading ? "正在加载记录..." : "从记录填充"}
+          {isLoading ? t("page.prefillLoading") : t("page.prefill")}
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-lg">
         <SheetHeader className="border-b border-border px-6 py-6">
-          <SheetTitle>选择历史记录</SheetTitle>
-          <SheetDescription>选择一条已有记录，快速填入当前排盘表单。</SheetDescription>
+          <SheetTitle>{t("page.selectHistory")}</SheetTitle>
+          <SheetDescription>{t("page.selectHistoryDescription")}</SheetDescription>
         </SheetHeader>
 
         <div className="space-y-3 overflow-y-auto px-6 py-6">
           {isLoading ? (
             <div className="rounded-2xl border border-dashed border-border bg-muted/20 px-4 py-5 text-sm text-muted-foreground">
-              正在读取最近测算记录，稍等片刻。
+              {t("page.readingHistoryLoading")}
             </div>
           ) : null}
 
@@ -92,11 +94,11 @@ export function DivinationRecordPrefillSheet({
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-foreground">
-                    {record.subjectName || "未命名记录"}
+                    {record.subjectName || t("page.unnamed")}
                   </span>
                   {record.source === "sample" ? (
                     <Badge variant="secondary" className="rounded-full px-2 py-0 text-[11px]">
-                      测试
+                      {t("records.type")}
                     </Badge>
                   ) : null}
                   <span className="text-xs text-muted-foreground">
@@ -107,12 +109,12 @@ export function DivinationRecordPrefillSheet({
                   {record.birthDate} {record.birthTime}
                 </p>
                 <p className="line-clamp-1 text-sm text-muted-foreground">
-                  {record.birthPlace || "未填写出生地"}
+                  {record.birthPlace || t("page.notProvidedPlace")}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {record.source === "sample"
-                    ? "产品内置测试记录"
-                    : `创建时间：${formatDateTime(record.createdAt)}`}
+                    ? t("page.builtInSample")
+                    : t("page.createdAt", { time: formatDateTime(record.createdAt) })}
                 </p>
               </div>
               <ChevronRight className="size-4 text-muted-foreground" />

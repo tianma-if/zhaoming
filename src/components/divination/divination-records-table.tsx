@@ -29,6 +29,7 @@ import { DataTable } from "@/components/ui/table/data-table";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import { DataTableViewOptions } from "@/components/ui/table/data-table-view-options";
 import { formatDateTime } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 export interface DivinationRecordTableRow {
   id: string;
@@ -40,18 +41,12 @@ export interface DivinationRecordTableRow {
   created_at: string;
 }
 
-const columnLabels: Record<string, string> = {
-  typeLabel: "类型",
-  subjectName: "测算人姓名",
-  question: "问题",
-  created_at: "创建时间",
-};
-
 interface DivinationRecordsTableProps {
   data: DivinationRecordTableRow[];
 }
 
 export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
+  const { t } = useI18n();
   const [sorting, setSorting] = useState<SortingState>([{ id: "created_at", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -64,18 +59,18 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
     () => [
       {
         accessorKey: "typeLabel",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="类型" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t("records.type")} />,
         cell: ({ row }) => <span className="font-medium">{row.original.typeLabel}</span>,
         filterFn: (row, _id, value) => row.original.type === value,
       },
       {
         accessorKey: "subjectName",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="测算人姓名" />,
-        cell: ({ row }) => <span>{row.original.subjectName || "未填写"}</span>,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t("records.subject")} />,
+        cell: ({ row }) => <span>{row.original.subjectName || t("records.emptyName")}</span>,
       },
       {
         accessorKey: "question",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="问题" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t("records.question")} />,
         cell: ({ row }) => (
           <div className="max-w-xl whitespace-normal line-clamp-2 leading-7">
             {row.original.question}
@@ -84,7 +79,7 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
       },
       {
         accessorKey: "created_at",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="创建时间" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t("records.created")} />,
         cell: ({ row }) => (
           <span className="text-muted-foreground">
             {formatDateTime(row.original.created_at)}
@@ -98,7 +93,7 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
           <div className="text-right">
             <Button asChild variant="ghost" size="sm" className="rounded-full">
               <Link href={`/divinations/${row.original.id}`}>
-                打开
+                {t("records.open")}
                 <ArrowUpRight className="size-4" />
               </Link>
             </Button>
@@ -106,7 +101,7 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
         ),
       },
     ],
-    [],
+    [t],
   );
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -147,7 +142,7 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
               onChange={(event) =>
                 table.getColumn("question")?.setFilterValue(event.target.value)
               }
-              placeholder="搜索问题..."
+              placeholder={t("records.search")}
               className="pl-9"
             />
           </div>
@@ -158,10 +153,10 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
             }
           >
             <SelectTrigger className="w-full md:w-36">
-              <SelectValue placeholder="类型" />
+              <SelectValue placeholder={t("records.type")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">全部类型</SelectItem>
+              <SelectItem value="all">{t("records.allTypes")}</SelectItem>
               {typeOptions.map(([value, label]) => (
                 <SelectItem key={value} value={value}>
                   {label}
@@ -177,11 +172,11 @@ export function DivinationRecordsTable({ data }: DivinationRecordsTableProps) {
               onClick={() => table.resetColumnFilters()}
             >
               <RotateCcw className="size-4" />
-              重置
+              {t("records.reset")}
             </Button>
           ) : null}
         </div>
-        <DataTableViewOptions table={table} labels={columnLabels} />
+        <DataTableViewOptions table={table} labels={{ typeLabel: t("records.type"), subjectName: t("records.subject"), question: t("records.question"), created_at: t("records.created") }} />
       </div>
     </DataTable>
   );

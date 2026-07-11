@@ -1,17 +1,12 @@
 import type { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useI18n } from "@/components/i18n-provider";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
-const pillarStages: Record<string, string> = {
-  year: "童年到青年",
-  month: "成年基础运",
-  day: "自身性格",
-  time: "中年到晚年",
-};
-
 export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
+  const { t } = useI18n();
   const tenGodCounts = view.pillars
     .flatMap((pillar) => [
       pillar.shiShenGan,
@@ -30,7 +25,7 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
   return (
     <Card className="space-y-4 rounded-[1.6rem] border border-border bg-white">
       <div>
-        <CardTitle className="text-2xl tracking-[0.04em]">十神分析</CardTitle>
+        <CardTitle className="text-2xl tracking-[0.04em]">{t("chart.tenGodAnalysis")}</CardTitle>
       </div>
 
       <Separator />
@@ -41,13 +36,13 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
             {
               key: `${pillar.key}-gan`,
               name: pillar.shiShenGan,
-              source: "天干",
+              source: t("chart.heavenlyStemShort"),
               stem: pillar.heavenlyStem,
             },
             ...pillar.hiddenStemDetails.map((item, index) => ({
               key: `${pillar.key}-${item.stem}-${item.shiShen}`,
               name: item.shiShen,
-              source: "藏干",
+              source: t("chart.hiddenStem"),
               stem: item.stem,
               order: index + 1,
             })),
@@ -58,13 +53,13 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
               <div className="text-center">
                 <h3 className="text-lg font-semibold tracking-[0.04em]">{pillar.label}</h3>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  ({pillarStages[pillar.key]})
+                  ({t(pillar.key === "year" ? "chart.childToYouth" : pillar.key === "month" ? "chart.adultBase" : pillar.key === "day" ? "chart.selfCharacter" : "chart.midToLate")})
                 </p>
               </div>
 
               <div className="space-y-2">
                 {entries.map((entry) => {
-                  const isHiddenStem = entry.source === "藏干";
+                  const isHiddenStem = entry.source === t("chart.hiddenStem");
                   const sourceLabel =
                     isHiddenStem && "order" in entry
                       ? `${entry.source} ${entry.order}`
@@ -96,7 +91,7 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
                       </div>
 
                       <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
-                        天干：<span className="font-medium text-foreground">{entry.stem}</span>
+                        {t("chart.heavenlyStemShort")}：<span className="font-medium text-foreground">{entry.stem}</span>
                       </p>
                     </article>
                   );
@@ -108,9 +103,9 @@ export function BaziTenGodAnalysis({ view }: { view: BaziViewModel }) {
       </div>
 
       <div className="space-y-1.5 rounded-[1.1rem] bg-muted/25 p-3 text-xs">
-        <p className="font-medium">总体特征分析：</p>
+        <p className="font-medium">{t("chart.overallTraits")}</p>
         <p className="text-muted-foreground">
-          日主所见十神分布：{tenGodSummary || "暂无十神数据"}。
+          {t("chart.tenGodDistribution")}{tenGodSummary || t("chart.noTenGod")}。
         </p>
       </div>
     </Card>

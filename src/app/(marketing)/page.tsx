@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { getAuthSession } from "@/lib/auth/session";
 import { getEnv } from "@/lib/env";
+import { translate } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n-server";
 
 type SystemItem = {
   title: string;
@@ -86,6 +88,11 @@ export default async function HomePage() {
   const session = await getAuthSession();
   const user = session?.user ?? null;
   const googleClientId = getEnv().GOOGLE_CLIENT_ID ?? null;
+  const locale = await getLocale();
+  const t = (key: string) => translate(locale, key);
+  const categoryKeys: Record<string, string> = { 命理类: "home.category.metaphysics", 占卜类: "home.category.divination", 相术类: "home.category.physiognomy" };
+  const titleKeys: Record<string, string> = { 八字算命: "home.bazi", 紫微斗数: "home.ziwei", 袁天罡称骨算命: "dashboard.chenggu", 六爻占卜: "dashboard.liuyao", 梅花易数: "dashboard.meihua", 三式: "dashboard.sanshi", 面相学: "dashboard.face", 手相学: "dashboard.palm" };
+  const bodyKeys: Record<string, string> = { 八字算命: "home.baziBody", 紫微斗数: "home.ziweiBody", 袁天罡称骨算命: "home.chengguBody", 六爻占卜: "home.liuyaoBody", 梅花易数: "home.meihuaBody", 三式: "home.sanshiBody", 面相学: "home.faceBody", 手相学: "home.palmBody" };
   const interactiveCardClassName =
     "group transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-[#111111] hover:shadow-[0_24px_44px_-30px_rgba(17,17,17,0.28)]";
 
@@ -103,7 +110,7 @@ export default async function HomePage() {
           照命
         </h1>
         <p className="mt-4 text-xl text-[#7d7d7d] md:text-[1.6rem]">
-          AI 解构命运的底层代码
+          {t("home.tagline")}
         </p>
 
         <div className="mt-8 flex flex-col items-center gap-5 md:flex-row md:gap-6">
@@ -113,11 +120,11 @@ export default async function HomePage() {
                 size="default"
                 className="h-12 min-w-52 rounded-2xl bg-[#111111] px-6 text-base text-white hover:bg-[#111111]/95"
               >
-                八字分析
+                {t("home.bazi")}
                 <ChevronRight className="ml-1.5 size-4" />
               </Button>
             </Link>
-            <p className="pl-2 text-sm text-[#8a8a8a]">命盘结构解读</p>
+            <p className="pl-2 text-sm text-[#8a8a8a]">{t("home.baziNote")}</p>
           </div>
 
           <div className="hidden h-10 w-px bg-[#e6e6e6] md:block" />
@@ -129,11 +136,11 @@ export default async function HomePage() {
                 variant="outline"
                 className="h-12 min-w-52 rounded-2xl border-[#bfbfbf] bg-white px-6 text-base text-[#111111] hover:bg-[#fafafa]"
               >
-                紫微斗数
+                {t("home.ziwei")}
                 <ChevronRight className="ml-1.5 size-4" />
               </Button>
             </Link>
-            <p className="pl-2 text-sm text-[#8a8a8a]">命宫格局阅读</p>
+            <p className="pl-2 text-sm text-[#8a8a8a]">{t("home.ziweiNote")}</p>
           </div>
         </div>
 
@@ -142,7 +149,7 @@ export default async function HomePage() {
       <section className="mx-auto w-full max-w-6xl px-6 py-4 md:px-10 md:py-6">
         <div className="space-y-3 text-center">
           <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
-            分析系统
+            {t("home.systems")}
           </h2>
         </div>
 
@@ -152,7 +159,7 @@ export default async function HomePage() {
               <div className="flex items-center gap-5">
                 <div className="h-px flex-1 bg-[#ececec]" />
                 <h3 className="shrink-0 text-2xl font-semibold tracking-[0.06em] text-[#111111]">
-                  {group.category}
+                  {categoryKeys[group.category] ? t(categoryKeys[group.category]) : group.category}
                 </h3>
                 <div className="h-px flex-1 bg-[#ececec]" />
               </div>
@@ -169,7 +176,7 @@ export default async function HomePage() {
                           <Target className="size-5" />
                         </div>
                         <CardTitle className="mt-6 font-sans text-[1.9rem] leading-[1.3] tracking-[-0.02em] text-[#111111]">
-                          {item.title}
+                          {titleKeys[item.title] ? t(titleKeys[item.title]) : item.title}
                         </CardTitle>
                         {item.alias ? (
                           <p className="mt-2 text-sm tracking-[0.08em] text-[#8a8a8a]">
@@ -177,7 +184,7 @@ export default async function HomePage() {
                           </p>
                         ) : null}
                         <CardDescription className="mt-5 text-lg leading-10 text-[#707070]">
-                          {item.body}
+                          {bodyKeys[item.title] ? t(bodyKeys[item.title]) : item.body}
                         </CardDescription>
                       </div>
                     </div>
@@ -187,12 +194,12 @@ export default async function HomePage() {
                         href={item.href}
                         className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3"
                       >
-                        立即体验
+                        {t("home.explore")}
                         <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
                       </Link>
                     ) : (
                       <div className="mt-8 inline-flex items-center gap-2 text-lg font-medium text-[#111111] transition duration-300 group-hover:gap-3">
-                        敬请期待
+                        {t("home.comingSoon")}
                         <ChevronRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
                       </div>
                     )}

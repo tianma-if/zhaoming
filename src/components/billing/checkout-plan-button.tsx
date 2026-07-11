@@ -4,13 +4,14 @@ import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import type { CreditPackId } from "@/lib/billing/plans";
+import { useI18n } from "@/components/i18n-provider";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error && error.message) {
     return error.message;
   }
 
-  return "当前无法跳转到支付页，请稍后再试。";
+  return "Unable to open checkout. Please try again later.";
 }
 
 type BillingCheckoutResponse = {
@@ -30,6 +31,7 @@ export function CheckoutPlanButton({
   buttonClassName?: string;
   className?: string;
 }) {
+  const { t } = useI18n();
   const pathname = usePathname();
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -59,13 +61,13 @@ export function CheckoutPlanButton({
         }
 
         if (!response.ok || !payload.provider || !payload.mode) {
-          setSubmitError(payload.error ?? "当前无法创建支付订单，请稍后再试。");
+          setSubmitError(payload.error ?? t("billing.orderError"));
           return;
         }
 
         if (payload.mode === "redirect") {
           if (!payload.checkoutUrl) {
-            setSubmitError("当前账单平台没有返回可跳转的支付链接。");
+            setSubmitError(t("billing.urlError"));
             return;
           }
 
@@ -86,7 +88,7 @@ export function CheckoutPlanButton({
         disabled={isPending}
         onClick={handleCheckout}
       >
-        {isPending ? "跳转中..." : "选择套餐"}
+        {isPending ? t("billing.redirecting") : t("billing.choose")}
       </Button>
       {submitError ? <p className="text-xs text-fire">{submitError}</p> : null}
     </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist_Mono, Noto_Sans_SC } from "next/font/google";
 import { getAppBaseUrl } from "@/lib/env";
+import { getLocale } from "@/lib/i18n-server";
+import { I18nProvider } from "@/components/i18n-provider";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -29,14 +31,16 @@ export const metadata: Metadata = {
   description: "将传统命理排盘与现代大模型解读结合的极简 AI SaaS 平台。",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
       className={`${display.variable} ${geistMono.variable} ${sans.variable} h-full`}
     >
@@ -47,7 +51,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full bg-background text-foreground antialiased">
-        {children}
+        <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>
   );

@@ -15,15 +15,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/components/i18n-provider";
 
 export function DashboardUserMenu() {
   const router = useRouter();
   const { isMobile } = useSidebar();
   const [isPending, setIsPending] = useState(false);
+  const { t } = useI18n();
   const { data: session, isPending: isSessionPending } = authClient.useSession();
   const user = session?.user;
   const email = user?.email ?? (isSessionPending ? "loading@zhaoming.local" : "guest@zhaoming.local");
-  const displayName = user?.name || (user ? email : "游客模式");
+  const displayName = user?.name || (user ? email : t("dashboard.userMode"));
   const initials = displayName.slice(0, 1).toUpperCase();
 
   async function handleSignOut() {
@@ -55,7 +57,7 @@ export function DashboardUserMenu() {
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{displayName}</span>
                 <span className="truncate text-xs text-sidebar-foreground/70">
-                  {isSessionPending ? "正在加载..." : email}
+                  {isSessionPending ? t("dashboard.loading") : email}
                 </span>
               </div>
             </SidebarMenuButton>
@@ -82,11 +84,11 @@ export function DashboardUserMenu() {
             <DropdownMenuGroup>
               <DropdownMenuItem disabled={isSessionPending} onSelect={() => router.push("/divinations/new")}>
                 <Sparkles className="size-4" />
-                新建测算
+                {t("nav.newDivination")}
               </DropdownMenuItem>
               <DropdownMenuItem disabled={isSessionPending} onSelect={() => router.push("/profile")}>
                 <UserRound className="size-4" />
-                个人资料
+                {t("dashboard.profile")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             {process.env.NEXT_PUBLIC_AUTH_MODE !== "none" && (
@@ -94,7 +96,7 @@ export function DashboardUserMenu() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem disabled={isPending || isSessionPending || !user} onSelect={handleSignOut}>
                   <LogOut className="size-4" />
-                  {isPending ? "退出中..." : "退出登录"}
+                  {isPending ? t("dashboard.signingOut") : t("dashboard.signOut")}
                 </DropdownMenuItem>
               </>
             )}

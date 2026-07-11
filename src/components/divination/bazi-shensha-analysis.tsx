@@ -1,6 +1,7 @@
 import type { getBaziViewModel } from "@/lib/divination/renderers/bazi-view-model";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getBaziShenShaBrief } from "@/lib/divination/bazi-shensha-briefs";
+import { useI18n } from "@/components/i18n-provider";
 
 type BaziViewModel = ReturnType<typeof getBaziViewModel>;
 
@@ -17,10 +18,11 @@ function getShenShaTitleClass(label: string) {
 }
 
 export function BaziShenShaAnalysis({ view }: { view: BaziViewModel }) {
+  const { t } = useI18n();
   return (
     <Card className="space-y-4 rounded-[1.6rem] border border-border bg-white">
       <div>
-        <CardTitle className="text-2xl tracking-[0.04em]">神煞分析</CardTitle>
+        <CardTitle className="text-2xl tracking-[0.04em]">{t("chart.spiritAnalysis")}</CardTitle>
       </div>
 
       <div className="space-y-3">

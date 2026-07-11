@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/components/i18n-provider";
 
 interface AiReportCardProps {
   id?: string;
@@ -20,13 +21,16 @@ interface AiReportCardProps {
 
 export function AiReportCard({
   id,
-  title = "AI 解读报告",
+  title,
   content,
   isLoading = false,
   errorMessage,
-  loadingMessage = "正在根据命盘结构生成 AI 解读，请稍候片刻。",
+  loadingMessage,
   className,
 }: AiReportCardProps) {
+  const { t } = useI18n();
+  const resolvedTitle = title ?? t("ai.title");
+  const resolvedLoadingMessage = loadingMessage ?? t("ai.loading");
   const [isOpen, setIsOpen] = useState(true);
   const hasContent = Boolean(content.trim());
   const CollapseIcon = isOpen ? ChevronUp : ChevronDown;
@@ -39,11 +43,11 @@ export function AiReportCard({
       >
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 border-b border-border px-6 py-4">
           <div className="space-y-3">
-            <CardTitle className="text-xl tracking-[0.02em] sm:text-2xl">{title}</CardTitle>
+            <CardTitle className="text-xl tracking-[0.02em] sm:text-2xl">{resolvedTitle}</CardTitle>
           </div>
           <CollapsibleTrigger asChild>
             <Button
-              aria-label={isOpen ? "收起 AI 解读报告" : "展开 AI 解读报告"}
+              aria-label={isOpen ? t("ai.collapse") : t("ai.expand")}
               className="h-9 w-9 rounded-full border border-border bg-white/70 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
               size="sm"
               type="button"
@@ -59,7 +63,7 @@ export function AiReportCard({
             {hasContent ? (
               <MarkdownRenderer content={content} />
             ) : isLoading ? (
-              <p className="text-sm leading-7 text-muted-foreground">{loadingMessage}</p>
+              <p className="text-sm leading-7 text-muted-foreground">{resolvedLoadingMessage}</p>
             ) : null}
 
             {errorMessage ? <p className="mt-4 text-sm text-destructive">{errorMessage}</p> : null}

@@ -12,8 +12,10 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useI18n } from "@/components/i18n-provider";
 
 export function SubscriptionPlansDialog() {
+  const { t } = useI18n();
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -22,17 +24,17 @@ export function SubscriptionPlansDialog() {
           className="h-10 justify-start rounded-md bg-background shadow-none group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
         >
           <Sparkles className="size-4" />
-          <span className="group-data-[collapsible=icon]:hidden">解锁完整 AI 报告</span>
+          <span className="group-data-[collapsible=icon]:hidden">{t("billing.unlock")}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <Badge variant="secondary" className="w-fit gap-1.5">
             <WandSparkles className="size-3.5" />
-            AI 报告次数包
+            {t("billing.packs")}
           </Badge>
           <DialogDescription>
-            注册赠送 1 次免费 AI 解读。用完后可继续按次购买，支付完成后次数会自动加到当前账户。
+            {t("billing.description")}
           </DialogDescription>
         </DialogHeader>
 

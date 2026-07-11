@@ -26,17 +26,29 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { DashboardUserMenu } from "./dashboard-user-menu";
+import { useI18n } from "@/components/i18n-provider";
+
+const navTranslationKeys: Record<string, string> = {
+  "工作台": "dashboard.records", "测算记录": "dashboard.records", "命理类": "dashboard.metaphysics", "占卜类": "dashboard.divination", "相术与工具": "dashboard.tools", "八字算命": "dashboard.bazi", "紫微斗数": "dashboard.ziwei", "袁天罡称骨": "dashboard.chenggu", "六爻占卜": "dashboard.liuyao", "梅花易数": "dashboard.meihua", "三式": "dashboard.sanshi", "面相学": "dashboard.face", "手相学": "dashboard.palm", "AI 老黄历": "dashboard.calendar",
+};
+const navNoteKeys: Record<string, string> = {
+  "四柱推命": "dashboard.baziNote", "命宫排盘": "dashboard.ziweiNote", "骨重歌诀": "dashboard.chengguNote", "起卦解读": "dashboard.liuyaoNote", "象数起卦": "dashboard.meihuaNote", "奇门遁甲、太乙神数、大六壬": "dashboard.sanshiNote",
+};
 
 function NavItem({
   item,
   activeHref,
+  t,
 }: {
   item: DashboardNavItem;
   activeHref: string | null;
+  t: (key: string) => string;
 }) {
   const Icon = item.icon;
+  const title = navTranslationKeys[item.title] ? t(navTranslationKeys[item.title]) : item.title;
+  const note = item.note && navNoteKeys[item.note] ? t(navNoteKeys[item.note]) : item.note;
   const isActive = item.href ? activeHref === item.href : false;
-  const hasNote = Boolean(item.note);
+  const hasNote = Boolean(note);
   const baseItemClassName = cn(
     "rounded-md p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground [&>svg]:size-4",
     hasNote ? "h-auto min-h-8 items-start [&>svg]:mt-0.5" : "h-8",
@@ -52,12 +64,12 @@ function NavItem({
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
             <SidebarMenuButton
-              tooltip={item.title}
+              tooltip={title}
               isActive={isActive}
               className={baseItemClassName}
             >
               <Icon />
-              <span>{item.title}</span>
+              <span>{title}</span>
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
@@ -67,7 +79,7 @@ function NavItem({
                 <SidebarMenuSubItem key={child.title}>
                   <SidebarMenuSubButton asChild isActive={activeHref === child.href}>
                     <Link href={child.href ?? "#"}>
-                      <span>{child.title}</span>
+                      <span>{navTranslationKeys[child.title] ? t(navTranslationKeys[child.title]) : child.title}</span>
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
@@ -84,22 +96,22 @@ function NavItem({
       {item.href ? (
         <SidebarMenuButton
           asChild
-          tooltip={item.title}
+          tooltip={title}
           isActive={isActive}
           className={baseItemClassName}
         >
           <Link href={item.href}>
             <Icon />
             <span className="min-w-0">
-              <span className="block truncate">{item.title}</span>
-              {item.note ? (
+              <span className="block truncate">{title}</span>
+              {note ? (
                 <span
                   className={cn(
                     "block truncate text-[11px] font-normal",
                     isActive ? "text-sidebar-accent-foreground/70" : "text-sidebar-foreground/55",
                   )}
                 >
-                  {item.note}
+                  {note}
                 </span>
               ) : null}
             </span>
@@ -107,16 +119,16 @@ function NavItem({
         </SidebarMenuButton>
       ) : (
         <SidebarMenuButton
-          tooltip={item.title}
+          tooltip={title}
           aria-disabled="true"
           className="h-auto min-h-8 cursor-default items-start rounded-md p-2 opacity-70 hover:bg-transparent hover:text-sidebar-foreground [&>svg]:mt-0.5 [&>svg]:size-4"
         >
           <Icon />
           <span className="min-w-0">
-            <span className="block truncate">{item.title}</span>
-            {item.note ? (
+            <span className="block truncate">{title}</span>
+            {note ? (
               <span className="block truncate text-xs font-normal text-sidebar-foreground/55">
-                {item.note}
+                {note}
               </span>
             ) : null}
           </span>
@@ -128,6 +140,7 @@ function NavItem({
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { t } = useI18n();
   const activeHref = getActiveDashboardHref(pathname);
 
   return (
@@ -144,7 +157,7 @@ export function AppSidebar() {
           </span>
           <span className="grid min-w-0 gap-0.5 group-data-[collapsible=icon]:hidden">
             <span className="truncate text-lg font-semibold leading-none">照命</span>
-            <span className="truncate text-xs text-sidebar-foreground/60">AI 命理工作台</span>
+            <span className="truncate text-xs text-sidebar-foreground/60">{t("brand.subtitle")}</span>
           </span>
         </Link>
       </SidebarHeader>
@@ -152,11 +165,11 @@ export function AppSidebar() {
         {dashboardNavGroups.map((group) => (
           <SidebarGroup key={group.label} className="py-0">
             <SidebarGroupLabel className="px-2 text-xs font-medium text-sidebar-foreground/70">
-              {group.label}
+              {navTranslationKeys[group.label] ? t(navTranslationKeys[group.label]) : group.label}
             </SidebarGroupLabel>
             <SidebarMenu>
               {group.items.map((item) => (
-                <NavItem key={`${group.label}-${item.title}`} item={item} activeHref={activeHref} />
+                <NavItem key={`${group.label}-${item.title}`} item={item} activeHref={activeHref} t={t} />
               ))}
             </SidebarMenu>
           </SidebarGroup>
