@@ -103,7 +103,7 @@ export default async function HomePage() {
           照命
         </h1>
         <p className="mt-4 text-xl text-[#7d7d7d] md:text-[1.6rem]">
-          AI 解构命运的底层代码
+          用现代视觉语言，重构传统命理之美
         </p>
 
         <div className="mt-8 flex flex-col items-center gap-5 md:flex-row md:gap-6">
@@ -144,7 +144,6 @@ export default async function HomePage() {
           <h2 className="text-4xl font-semibold text-[#111111] md:text-5xl">
             分析系统
           </h2>
-          <p className="text-lg text-[#8a8a8a]">以命理、占卜、相术三条主线组织你的产品能力地图</p>
         </div>
 
         <div className="mt-8 space-y-8">
