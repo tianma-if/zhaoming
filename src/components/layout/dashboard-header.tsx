@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { DashboardBreadcrumbs } from "@/components/layout/dashboard-breadcrumbs";
