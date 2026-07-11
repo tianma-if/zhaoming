@@ -23,19 +23,6 @@
 - 生产域名：[https://www.zhaoming.app](https://www.zhaoming.app)
 - 部署平台：`Vercel`
 
-## 当前能力
-
-当前版本已完成第一阶段基础设施与核心链路：
-
-- Google OAuth 登录入口已接入 `Better Auth`
-- 主数据库使用 `Neon Postgres`
-- 用户业务档案表 `public.users` 已预留账单客户标识、订阅状态与 `credits`
-- 测算记录表 `public.divinations` 已支持保存输入参数、排盘 JSON、AI 输出
-- 博客表 `public.posts` 与 `/api/automation/publish-blog` 已预留自动化 SEO 入口
-- 已预留支付 Webhook 路由，并支持后续切换不同账单提供商
-- 八字排盘与基础工作台 UI 已接入
-- 紫微斗数 `4 x 4` 中空环形网格 UI 已接入
-- AI 解盘支持流式输出
 
 ## 技术栈
 
