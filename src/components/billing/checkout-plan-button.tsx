@@ -1,10 +1,8 @@
 "use client";
 
-import type { Environments } from "@paddle/paddle-js";
 import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { getPaddleClient } from "@/lib/billing/paddle-client";
 import type { CreditPackId } from "@/lib/billing/plans";
 
 function getErrorMessage(error: unknown) {
@@ -18,23 +16,9 @@ function getErrorMessage(error: unknown) {
 type BillingCheckoutResponse = {
   error?: string;
   loginUrl?: string;
-  provider?: "stripe" | "paddle";
-  mode?: "redirect" | "overlay";
+  provider?: "stripe";
+  mode?: "redirect";
   checkoutUrl?: string;
-  clientToken?: string;
-  environment?: Environments;
-  priceId?: string;
-  successUrl?: string;
-  customer?: {
-    email: string;
-    id: string;
-    name: string | null;
-  };
-  customData?: {
-    userId: string;
-    planId: string;
-    credits: number;
-  };
 };
 
 export function CheckoutPlanButton({
@@ -88,44 +72,6 @@ export function CheckoutPlanButton({
           window.location.assign(payload.checkoutUrl);
           return;
         }
-
-        if (
-          !payload.clientToken ||
-          !payload.environment ||
-          !payload.priceId ||
-          !payload.successUrl ||
-          !payload.customer ||
-          !payload.customData
-        ) {
-          setSubmitError("当前账单平台尚未完成前端结账配置。");
-          return;
-        }
-
-        const paddle = await getPaddleClient(payload.clientToken, payload.environment);
-
-        if (!paddle) {
-          setSubmitError("当前无法加载支付结账组件，请稍后再试。");
-          return;
-        }
-
-        paddle.Checkout.open({
-          items: [
-            {
-              priceId: payload.priceId,
-              quantity: 1,
-            },
-          ],
-          customer: {
-            email: payload.customer.email,
-          },
-          customData: payload.customData,
-          settings: {
-            displayMode: "overlay",
-            theme: "light",
-            locale: "zh",
-            successUrl: payload.successUrl,
-          },
-        });
       } catch (error) {
         setSubmitError(getErrorMessage(error));
       }

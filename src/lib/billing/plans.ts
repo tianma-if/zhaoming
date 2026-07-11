@@ -62,12 +62,6 @@ const stripePriceEnvKeyByPlanId: Record<CreditPackId, keyof ReturnType<typeof ge
   "deep-dive-pack": "STRIPE_PRICE_DEEP_DIVE_PACK",
 };
 
-const paddlePriceEnvKeyByPlanId: Record<CreditPackId, keyof ReturnType<typeof getEnv>> = {
-  "single-report": "PADDLE_PRICE_SINGLE_REPORT",
-  "popular-pack": "PADDLE_PRICE_POPULAR_PACK",
-  "deep-dive-pack": "PADDLE_PRICE_DEEP_DIVE_PACK",
-};
-
 export function getCreditPack(planId: string) {
   return creditPacks.find((pack) => pack.id === planId) ?? null;
 }
@@ -79,13 +73,6 @@ export function getStripePriceIdForPack(planId: CreditPackId) {
   return typeof priceId === "string" ? priceId : null;
 }
 
-export function getPaddlePriceIdForPack(planId: CreditPackId) {
-  const env = getEnv();
-  const priceId = env[paddlePriceEnvKeyByPlanId[planId]];
-
-  return typeof priceId === "string" ? priceId : null;
-}
-
 export function getBillingPriceIdForPack(provider: BillingProvider, planId: CreditPackId) {
-  return provider === "paddle" ? getPaddlePriceIdForPack(planId) : getStripePriceIdForPack(planId);
+  return getStripePriceIdForPack(planId);
 }

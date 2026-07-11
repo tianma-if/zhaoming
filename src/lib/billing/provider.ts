@@ -1,7 +1,7 @@
 import { getBillingProvider as getConfiguredBillingProvider } from "@/lib/env";
 
-export type BillingProvider = "stripe" | "paddle";
+export type BillingProvider = "stripe";
 
 export function getBillingProvider(): BillingProvider {
-  return getConfiguredBillingProvider();
+  return getConfiguredBillingProvider() as BillingProvider;
 }

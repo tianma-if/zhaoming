@@ -1,39 +1,19 @@
 import type { User } from "better-auth";
 import { getCreditPack, getBillingPriceIdForPack } from "@/lib/billing/plans";
-import { getBillingProvider, type BillingProvider } from "@/lib/billing/provider";
+import { type BillingProvider } from "@/lib/billing/provider";
 import { ensureUserProfile, getUserProfile, upsertBillingCheckoutSession } from "@/lib/data";
 import {
   getAppBaseUrl,
-  getPaddleEnvironment,
   hasBillingCheckoutEnv,
   hasStripeSecretEnv,
 } from "@/lib/env";
 import { getStripe } from "@/lib/stripe";
 
-export type BillingCheckoutIntent =
-  | {
-      provider: "stripe";
-      mode: "redirect";
-      checkoutUrl: string;
-    }
-  | {
-      provider: "paddle";
-      mode: "overlay";
-      clientToken: string;
-      environment: "sandbox" | "production";
-      priceId: string;
-      successUrl: string;
-      customer: {
-        email: string;
-        id: string;
-        name: string | null;
-      };
-      customData: {
-        userId: string;
-        planId: string;
-        credits: number;
-      };
-    };
+export type BillingCheckoutIntent = {
+  provider: "stripe";
+  mode: "redirect";
+  checkoutUrl: string;
+};
 
 function getCheckoutSuccessUrl(credits: number) {
   const baseUrl = getAppBaseUrl() ?? "http://localhost:5555";
@@ -132,48 +112,6 @@ async function createStripeCheckoutIntent(input: {
   };
 }
 
-function createPaddleCheckoutIntent(input: {
-  user: User;
-  planId: string;
-}): BillingCheckoutIntent {
-  const pack = getCreditPack(input.planId);
-
-  if (!pack) {
-    throw new Error("未找到对应的套餐。");
-  }
-
-  const priceId = getBillingPriceIdForPack("paddle", pack.id);
-
-  if (!priceId) {
-    throw new Error("当前套餐尚未绑定 Paddle Price，请先补全环境变量。");
-  }
-
-  const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-
-  if (!clientToken) {
-    throw new Error("当前账单提供商尚未完成前端令牌配置。");
-  }
-
-  return {
-    provider: "paddle",
-    mode: "overlay",
-    clientToken,
-    environment: getPaddleEnvironment(),
-    priceId,
-    successUrl: getCheckoutSuccessUrl(pack.credits),
-    customer: {
-      email: input.user.email,
-      id: input.user.id,
-      name: input.user.name ?? null,
-    },
-    customData: {
-      userId: input.user.id,
-      planId: pack.id,
-      credits: pack.credits,
-    },
-  };
-}
-
 export async function createBillingCheckoutIntent(input: {
   user: User;
   planId: string;
@@ -183,9 +121,5 @@ export async function createBillingCheckoutIntent(input: {
     throw new Error("当前账单提供商尚未完成环境变量配置。");
   }
 
-  const provider = input.provider ?? getBillingProvider();
-
-  return provider === "paddle"
-    ? createPaddleCheckoutIntent(input)
-    : createStripeCheckoutIntent(input);
+  return createStripeCheckoutIntent(input);
 }
