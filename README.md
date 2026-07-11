@@ -56,46 +56,19 @@ cp .env.example .env.local
 
 ### 安装与启动
 
-安装依赖：
+1. **安装依赖**：
+   ```bash
+   bun install
+   ```
+2. **初始化数据库**：
+   - 生成/迁移 Better Auth 认证表：`bunx better-auth migrate`（若使用 Neon Auth 托管则在后台开启即可）。
+   - 按文件名编号顺序依次执行 [db/migrations/](./db/migrations/) 目录下的业务 SQL 脚本。
+3. **运行开发服务器**：
+   ```bash
+   bun run dev
+   ```
 
-```bash
-bun install
-```
-
-### 数据库初始化与迁移
-
-项目使用原始 `pg` 驱动执行 SQL 交互，表结构中业务表（`public.users`）外键关联了 `neon_auth.user`。因此，数据库的初始化和迁移需要遵循以下顺序：
-
-1. **初始化 Better Auth 认证表**：
-   - **Neon 托管用户**：直接在 Neon 后台开启 `Neon Auth` 即可，其会自动托管在 `neon_auth` 架构下。
-   - **普通/本地 PostgreSQL**：可以通过 `better-auth` 命令行生成并迁移认证表：
-     ```bash
-     bunx better-auth migrate
-     ```
-2. **执行业务迁移 SQL**：
-   在数据库中，按照文件名编号顺序依次执行 [db/migrations/](./db/migrations/) 目录下的全部 SQL 文件以初始化业务表（如 `users`、`divinations`、`posts` 等）：
-   - `0001_init.sql`
-   - `0002_add_chenggu_divination_type.sql`
-   - `0002_stripe_checkout_sessions.sql`
-   - `0003_add_sanshi_divination_type.sql`
-   - `0003_billing_provider_refactor.sql`
-
-启动开发服务器：
-
-```bash
-bun run dev
-```
-
-打开：
-
-- [http://localhost:5555](http://localhost:5555)
-
-常用检查命令：
-
-```bash
-bun run lint
-bun run build
-```
+本地默认访问地址为 `http://localhost:5555`。可以使用 `bun run lint` 或 `bun run build` 进行代码规范检查与编译。
 
 补充说明：
 
